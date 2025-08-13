@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Tasks Dashboard - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-tasks me-2"></i>Task Management</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Task
+            </a>
+            <a href="{{ url_for('task_productivity') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-chart-line"></i> Productivity
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tasks</h5>
+                    <h2>{{ stats.total_tasks }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h2>{{ stats.pending }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Overdue</h5>
+                    <h2>{{ stats.overdue }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h2>{{ stats.completed }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Filters -->
+    <div class="btn-group mb-3" role="group">
+        <a href="{{ url_for('tasks_dashboard', view='all') }}" 
+           class="btn {{ 'btn-primary' if current_view == 'all' else 'btn-outline-primary' }}">
+            All Tasks
+        </a>
+        <a href="{{ url_for('tasks_dashboard', view='today') }}" 
+           class="btn {{ 'btn-primary' if current_view == 'today' else 'btn-outline-primary' }}">
+            Today
+        </a>
+        <a href="{{ url_for('tasks_dashboard', view='week') }}" 
+           class="btn {{ 'btn-primary' if current_view == 'week' else 'btn-outline-primary' }}">
+            This Week
+        </a>
+        <a href="{{ url_for('tasks_dashboard', view='overdue') }}" 
+           class="btn {{ 'btn-danger' if current_view == 'overdue' else 'btn-outline-danger' }}">
+            Overdue
+        </a>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Priority</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr class="{{ 'table-danger' if task.is_overdue() else '' }}">
+                        <td>
+                            {% if task.priority == 'urgent' %}
+                                <span class="badge bg-danger">URGENT</span>
+                            {% elif task.priority == 'high' %}
+                                <span class="badge bg-warning">HIGH</span>
+                            {% elif task.priority == 'medium' %}
+                                <span class="badge bg-info">MEDIUM</span>
+                            {% else %}
+                                <span class="badge bg-secondary">LOW</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('view_task', task_id=task.id) }}">
+                                {{ task.task_title }}
+                            </a>
+                            {% if task.candidate %}
+                                <br><small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ task.candidate.first_name }} {{ task.candidate.last_name }}
+                                </small>
+                            {% endif %}
+                        </td>
+                        <td>{{ task.task_type.replace('_', ' ').title() }}</td>
+                        <td>
+                            {{ task.due_date.strftime('%b %d, %Y %I:%M %p') }}
+                            {% if task.is_overdue() %}
+                                <span class="badge bg-danger">OVERDUE</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif task.status == 'in_progress' %}
+                                <span class="badge bg-primary">In Progress</span>
+                            {% elif task.status == 'cancelled' %}
+                                <span class="badge bg-secondary">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ task.assigned_to or 'Unassigned' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('view_task', task_id=task.id) }}" 
+                                   class="btn btn-outline-primary" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if task.status not in ['completed', 'cancelled'] %}
+                                    <form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}" 
+                                          style="display: inline;">
+                                        <button type="submit" class="btn btn-outline-success btn-sm" title="Complete">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('snooze_task', task_id=task.id) }}" 
+                                          style="display: inline;">
+                                        <input type="hidden" name="days" value="1">
+                                        <button type="submit" class="btn btn-outline-warning btn-sm" title="Snooze 1 day">
+                                            <i class="fas fa-clock"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No tasks found. <a href="{{ url_for('create_task') }}">Create your first task</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Priority Breakdown -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Priority Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <span class="badge bg-danger">Urgent</span>
+                        <span class="float-end">{{ stats.by_priority.urgent }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-warning">High</span>
+                        <span class="float-end">{{ stats.by_priority.high }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-info">Medium</span>
+                        <span class="float-end">{{ stats.by_priority.medium }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-secondary">Low</span>
+                        <span class="float-end">{{ stats.by_priority.low }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Task Types</h5>
+                </div>
+                <div class="card-body">
+                    {% for task_type, count in stats.by_type.items() %}
+                    <div class="mb-2">
+                        <span>{{ task_type.replace('_', ' ').title() }}</span>
+                        <span class="float-end">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                    {% if not stats.by_type %}
+                    <p class="text-muted">No active tasks</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Task Productivity - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-chart-line me-2"></i>Task Productivity Report</h2>
+            <p class="text-muted">Analysis for the last {{ report.period_days }} days</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('tasks_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Tasks
+            </a>
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Tasks Created</h5>
+                    <h3>{{ report.tasks_created }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Tasks Completed</h5>
+                    <h3>{{ report.tasks_completed }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5>Completion Rate</h5>
+                    <h3>{{ report.completion_rate }}%</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>Busiest Day</h5>
+                    <h4>{{ report.busiest_day }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Key Insights</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Most common task type: <strong>{{ report.most_common_type.replace('_', ' ').title() }}</strong></li>
+                        <li>Busiest day of week: <strong>{{ report.busiest_day }}</strong></li>
+                        <li>Average tasks per day: <strong>{{ (report.tasks_created / report.period_days)|round(1) }}</strong></li>
+                        <li>Total tasks completed: <strong>{{ report.tasks_completed }}</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-trophy"></i> Performance Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" style="width: {{ report.completion_rate }}%">
+                            {{ report.completion_rate }}% Completion Rate
+                        </div>
+                    </div>
+                    <p>Keep up the great work! Your task completion rate shows strong productivity.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Performance -->
+    {% if report.by_assignee %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="fas fa-users"></i> Team Performance</h5>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Recruiter</th>
+                        <th>Completed</th>
+                        <th>On Time</th>
+                        <th>Late</th>
+                        <th>Total Time (hrs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignee, stats in report.by_assignee.items() %}
+                    <tr>
+                        <td>{{ assignee }}</td>
+                        <td>{{ stats.completed }}</td>
+                        <td><span class="badge bg-success">{{ stats.on_time }}</span></td>
+                        <td><span class="badge bg-danger">{{ stats.late }}</span></td>
+                        <td>{{ (stats.total_time / 60)|round(1) if stats.total_time else 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Period Selection -->
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-calendar"></i> Change Period</h5>
+        </div>
+        <div class="card-body">
+            <div class="btn-group">
+                <a href="{{ url_for('task_productivity', days=7) }}" 
+                   class="btn {{ 'btn-primary' if report.period_days == 7 else 'btn-outline-primary' }}">
+                    Last 7 Days
+                </a>
+                <a href="{{ url_for('task_productivity', days=30) }}" 
+                   class="btn {{ 'btn-primary' if report.period_days == 30 else 'btn-outline-primary' }}">
+                    Last 30 Days
+                </a>
+                <a href="{{ url_for('task_productivity', days=90) }}" 
+                   class="btn {{ 'btn-primary' if report.period_days == 90 else 'btn-outline-primary' }}">
+                    Last 90 Days
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

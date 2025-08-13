@@ -155,21 +155,44 @@ talent_pool_candidates = db.Table('talent_pool_candidates',
 )
 
 class RecruiterTask(db.Model):
-    """Task and follow-up management for recruiters"""
+    """Enhanced task and follow-up management for recruiters"""
     id = db.Column(db.Integer, primary_key=True)
-    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=False)
-    task_type = db.Column(db.String(50), nullable=False)  # follow_up, interview, call, email, assessment
+    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=True)
+    referral_id = db.Column(db.Integer, db.ForeignKey('candidate_referral.id'), nullable=True)
+    pool_id = db.Column(db.Integer, db.ForeignKey('talent_pool.id'), nullable=True)
+    
+    task_type = db.Column(db.String(50), nullable=False)  # follow_up, interview, reference_check, offer, onboarding, screening_call, assessment
     task_title = db.Column(db.String(200), nullable=False)
     task_description = db.Column(Text)
     due_date = db.Column(db.DateTime, nullable=False)
+    reminder_date = db.Column(db.DateTime)
     assigned_to = db.Column(db.String(100))
     priority = db.Column(db.String(20), default='medium')  # low, medium, high, urgent
-    status = db.Column(db.String(50), default='pending')  # pending, in_progress, completed, cancelled
+    status = db.Column(db.String(50), default='pending')  # pending, in_progress, completed, cancelled, overdue
     completed_date = db.Column(db.DateTime)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relationship
+    # Additional tracking
+    outcome = db.Column(Text)  # Result/outcome when completed
+    notes = db.Column(Text)
+    time_spent_minutes = db.Column(db.Integer)
+    
+    # Relationships
     candidate = db.relationship('ResumeAnalysis', backref='tasks')
+    referral = db.relationship('CandidateReferral', backref='tasks', foreign_keys=[referral_id])
+    pool = db.relationship('TalentPool', backref='tasks', foreign_keys=[pool_id])
+    
+    # Indexes for performance
+    __table_args__ = (
+        Index('ix_task_status_due', 'status', 'due_date'),
+        Index('ix_task_assigned', 'assigned_to', 'status'),
+    )
+    
+    def is_overdue(self):
+        """Check if task is overdue"""
+        if self.status in ['completed', 'cancelled']:
+            return False
+        return datetime.utcnow() > self.due_date if self.due_date else False
     
     def __repr__(self):
         return f'<RecruiterTask {self.task_title}>'

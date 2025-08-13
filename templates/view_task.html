@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Task: {{ task.task_title }} - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        <i class="fas fa-clipboard-check"></i> Task Details
+                        {% if task.priority == 'urgent' %}
+                            <span class="badge bg-danger">URGENT</span>
+                        {% elif task.priority == 'high' %}
+                            <span class="badge bg-warning">HIGH</span>
+                        {% elif task.priority == 'medium' %}
+                            <span class="badge bg-info">MEDIUM</span>
+                        {% else %}
+                            <span class="badge bg-secondary">LOW</span>
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5>{{ task.task_title }}</h5>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <p><strong>Type:</strong> {{ task.task_type.replace('_', ' ').title() }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if task.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% elif task.status == 'in_progress' %}
+                                    <span class="badge bg-primary">In Progress</span>
+                                {% elif task.status == 'cancelled' %}
+                                    <span class="badge bg-secondary">Cancelled</span>
+                                {% elif task.is_overdue() %}
+                                    <span class="badge bg-danger">Overdue</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Assigned To:</strong> {{ task.assigned_to or 'Unassigned' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Due Date:</strong> {{ task.due_date.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                            <p><strong>Created:</strong> {{ task.created_date.strftime('%B %d, %Y') }}</p>
+                            {% if task.completed_date %}
+                            <p><strong>Completed:</strong> {{ task.completed_date.strftime('%B %d, %Y') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if task.task_description %}
+                    <div class="mt-3">
+                        <h6>Description</h6>
+                        <p>{{ task.task_description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if task.candidate %}
+                    <div class="mt-3">
+                        <h6>Related Candidate</h6>
+                        <p>
+                            <a href="{{ url_for('candidate_detail', candidate_id=task.candidate.id) }}">
+                                {{ task.candidate.first_name }} {{ task.candidate.last_name }}
+                            </a>
+                            - {{ task.candidate.email }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if task.notes %}
+                    <div class="mt-3">
+                        <h6>Notes</h6>
+                        <p>{{ task.notes }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if task.outcome %}
+                    <div class="mt-3">
+                        <h6>Outcome</h6>
+                        <p>{{ task.outcome }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if task.status not in ['completed', 'cancelled'] %}
+                    <hr>
+                    
+                    <!-- Update Task Form -->
+                    <h5>Update Task</h5>
+                    <form method="POST" action="{{ url_for('update_task', task_id=task.id) }}">
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="pending" {% if task.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="2">{{ task.notes or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="outcome" class="form-label">Outcome (if completing)</label>
+                            <textarea class="form-control" id="outcome" name="outcome" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="time_spent" class="form-label">Time Spent (minutes)</label>
+                            <input type="number" class="form-control" id="time_spent" name="time_spent" min="0">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Update Task</button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-3">
+                        <form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Mark Complete
+                            </button>
+                        </form>
+                        
+                        <form method="POST" action="{{ url_for('snooze_task', task_id=task.id) }}" style="display: inline;">
+                            <input type="hidden" name="days" value="1">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-clock"></i> Snooze 1 Day
+                            </button>
+                        </form>
+                        
+                        <form method="POST" action="{{ url_for('cancel_task', task_id=task.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" 
+                                    onclick="return confirm('Are you sure you want to cancel this task?')">
+                                <i class="fas fa-times"></i> Cancel Task
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('tasks_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Tasks
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

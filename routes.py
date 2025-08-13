@@ -517,50 +517,9 @@ def analytics_dashboard():
     
     return render_template('analytics.html', metrics=metrics)
 
-@app.route('/tasks')
-def tasks_dashboard():
-    """Task management dashboard"""
-    from services.task_management import TaskManagementService
-    
-    task_service = TaskManagementService()
-    assigned_to = request.args.get('assigned_to')
-    
-    tasks = {
-        'upcoming': task_service.get_upcoming_tasks(assigned_to),
-        'overdue': task_service.get_overdue_tasks(assigned_to),
-        'statistics': task_service.get_task_statistics(assigned_to)
-    }
-    
-    return render_template('tasks.html', tasks=tasks)
 
-@app.route('/tasks/create', methods=['POST'])
-def create_task():
-    """Create a new task"""
-    from services.task_management import TaskManagementService
-    from datetime import datetime
-    
-    task_service = TaskManagementService()
-    
-    try:
-        due_date = datetime.strptime(request.form['due_date'], '%Y-%m-%d') if request.form.get('due_date') else None
-        
-        task = task_service.create_task(
-            candidate_id=int(request.form['candidate_id']),
-            task_type=request.form['task_type'],
-            title=request.form['title'],
-            description=request.form.get('description'),
-            due_date=due_date,
-            assigned_to=request.form.get('assigned_to'),
-            priority=request.form.get('priority', 'medium')
-        )
-        
-        flash('Task created successfully', 'success')
-        return redirect(url_for('tasks_dashboard'))
-        
-    except Exception as e:
-        logging.error(f"Error creating task: {e}")
-        flash('Error creating task', 'error')
-        return redirect(url_for('tasks_dashboard'))
+
+
 
 @app.route('/ai-recommendations/<int:candidate_id>')
 def ai_recommendations(candidate_id):
@@ -1178,3 +1137,202 @@ def salary_benchmark():
                              links=links)
     
     return render_template('salary_benchmark.html')
+
+# ============= Task Management Routes =============
+
+@app.route('/tasks')
+def tasks_dashboard():
+    """Main task management dashboard"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    
+    # Get filter parameters
+    status = request.args.get('status')
+    priority = request.args.get('priority')
+    task_type = request.args.get('task_type')
+    view = request.args.get('view', 'all')  # all, today, week, overdue
+    
+    # Get tasks based on view
+    if view == 'today':
+        tasks = service.get_today_tasks()
+    elif view == 'week':
+        tasks = service.get_tasks(upcoming_days=7)
+    elif view == 'overdue':
+        tasks = service.get_overdue_tasks()
+    else:
+        tasks = service.get_tasks(status=status, priority=priority, task_type=task_type)
+    
+    # Get statistics
+    stats = service.get_task_statistics()
+    
+    return render_template('tasks_dashboard.html', 
+                         tasks=tasks, 
+                         stats=stats,
+                         current_view=view,
+                         current_status=status,
+                         current_priority=priority,
+                         current_type=task_type)
+
+@app.route('/tasks/create', methods=['GET', 'POST'])
+def create_task():
+    """Create new task"""
+    from services.task_management import TaskManagementService
+    
+    if request.method == 'POST':
+        service = TaskManagementService()
+        
+        # Parse form data
+        title = request.form.get('title')
+        task_type = request.form.get('task_type')
+        priority = request.form.get('priority', 'medium')
+        description = request.form.get('description')
+        assigned_to = request.form.get('assigned_to')
+        due_date_str = request.form.get('due_date')
+        reminder_date_str = request.form.get('reminder_date')
+        candidate_id = request.form.get('candidate_id')
+        
+        # Parse dates
+        from datetime import datetime
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%dT%H:%M') if due_date_str else None
+        reminder_date = datetime.strptime(reminder_date_str, '%Y-%m-%dT%H:%M') if reminder_date_str else None
+        
+        # Create task
+        try:
+            task = service.create_task(
+                title=title,
+                task_type=task_type,
+                due_date=due_date,
+                priority=priority,
+                description=description,
+                assigned_to=assigned_to,
+                candidate_id=int(candidate_id) if candidate_id else None,
+                reminder_date=reminder_date
+            )
+            flash(f'Task "{title}" created successfully', 'success')
+            return redirect(url_for('tasks_dashboard'))
+        except Exception as e:
+            flash(f'Error creating task: {str(e)}', 'error')
+    
+    # Get candidates for dropdown
+    candidates = ResumeAnalysis.query.order_by(ResumeAnalysis.upload_date.desc()).all()
+    
+    return render_template('create_task.html', candidates=candidates)
+
+@app.route('/tasks/<int:task_id>')
+def view_task(task_id):
+    """View task details"""
+    task = RecruiterTask.query.get_or_404(task_id)
+    return render_template('view_task.html', task=task)
+
+@app.route('/tasks/<int:task_id>/update', methods=['POST'])
+def update_task(task_id):
+    """Update task status"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    
+    status = request.form.get('status')
+    outcome = request.form.get('outcome')
+    notes = request.form.get('notes')
+    time_spent = request.form.get('time_spent')
+    
+    if service.update_task_status(
+        task_id=task_id,
+        status=status,
+        outcome=outcome,
+        notes=notes,
+        time_spent=int(time_spent) if time_spent else None
+    ):
+        flash('Task updated successfully', 'success')
+    else:
+        flash('Error updating task', 'error')
+    
+    return redirect(url_for('view_task', task_id=task_id))
+
+@app.route('/tasks/<int:task_id>/complete', methods=['POST'])
+def complete_task(task_id):
+    """Mark task as complete"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    outcome = request.form.get('outcome')
+    
+    if service.complete_task(task_id, outcome):
+        flash('Task marked as completed', 'success')
+    else:
+        flash('Error completing task', 'error')
+    
+    return redirect(url_for('tasks_dashboard'))
+
+@app.route('/tasks/<int:task_id>/snooze', methods=['POST'])
+def snooze_task(task_id):
+    """Snooze task"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    days = int(request.form.get('days', 1))
+    
+    if service.snooze_task(task_id, days):
+        flash(f'Task snoozed for {days} day(s)', 'success')
+    else:
+        flash('Error snoozing task', 'error')
+    
+    return redirect(url_for('tasks_dashboard'))
+
+@app.route('/tasks/<int:task_id>/cancel', methods=['POST'])
+def cancel_task(task_id):
+    """Cancel task"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    reason = request.form.get('reason')
+    
+    if service.cancel_task(task_id, reason):
+        flash('Task cancelled', 'success')
+    else:
+        flash('Error cancelling task', 'error')
+    
+    return redirect(url_for('tasks_dashboard'))
+
+@app.route('/tasks/candidate/<int:candidate_id>')
+def candidate_tasks(candidate_id):
+    """View tasks for specific candidate"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    candidate = ResumeAnalysis.query.get_or_404(candidate_id)
+    tasks = service.get_candidate_tasks(candidate_id)
+    
+    return render_template('candidate_tasks.html', 
+                         candidate=candidate, 
+                         tasks=tasks)
+
+@app.route('/tasks/productivity')
+def task_productivity():
+    """View productivity analytics"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    
+    # Get productivity report
+    days = int(request.args.get('days', 30))
+    report = service.get_productivity_report(days)
+    
+    return render_template('task_productivity.html', report=report)
+
+@app.route('/tasks/quick-add/<int:candidate_id>', methods=['POST'])
+def quick_add_task(candidate_id):
+    """Quick add task for candidate"""
+    from services.task_management import TaskManagementService
+    
+    service = TaskManagementService()
+    task_type = request.form.get('task_type', 'follow_up')
+    
+    try:
+        task = service.create_candidate_task(candidate_id, task_type)
+        flash(f'Task created: {task.task_title}', 'success')
+    except Exception as e:
+        flash(f'Error creating task: {str(e)}', 'error')
+    
+    return redirect(url_for('candidate_detail', candidate_id=candidate_id))

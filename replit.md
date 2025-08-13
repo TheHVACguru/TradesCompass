@@ -1,6 +1,6 @@
 # Overview
 
-TalentCompass AI - A comprehensive Flask-based AI-powered recruitment platform that revolutionizes talent acquisition and management. The system provides multi-channel resume intake (manual upload + email automation), advanced smart search capabilities with fuzzy matching and AI semantic search, comprehensive analytics dashboards, task management, AI-powered candidate recommendations, and job matching through JSearch API (aggregating from 150,000+ sources). Features include candidate tagging, status tracking, referral management, talent pools, performance metrics, and a unified recruitment command center.
+TalentCompass AI - A comprehensive Flask-based AI-powered recruitment platform that revolutionizes talent acquisition and management. The system provides multi-channel resume intake (manual upload + email automation), advanced smart search capabilities with fuzzy matching and AI semantic search, comprehensive analytics dashboards, enhanced task management with productivity tracking, professional candidate sourcing tools, AI-powered candidate recommendations, and job matching through JSearch API (aggregating from 150,000+ sources). Features include candidate tagging, status tracking, referral management, talent pools, performance metrics, Boolean search builders, GitHub developer insights, job description bias analyzer, and a unified recruitment command center.
 
 # User Preferences
 
