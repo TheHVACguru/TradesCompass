@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Search - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-search-plus me-2"></i>Smart Search
+    </h2>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('smart_search') }}">
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               name="q" 
+                               value="{{ query }}"
+                               placeholder="Search for candidates using natural language, skills, or boolean operators..."
+                               autofocus>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select form-select-lg" name="type">
+                            <option value="fuzzy" {% if search_type == 'fuzzy' %}selected{% endif %}>Fuzzy Match</option>
+                            <option value="boolean" {% if search_type == 'boolean' %}selected{% endif %}>Boolean</option>
+                            <option value="semantic" {% if search_type == 'semantic' %}selected{% endif %}>AI Semantic</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Search Tips -->
+            <div class="mt-3">
+                <small class="text-muted">
+                    <strong>Tips:</strong> 
+                    <span class="badge bg-secondary">Fuzzy</span> finds similar matches | 
+                    <span class="badge bg-secondary">Boolean</span> use AND, OR, NOT operators | 
+                    <span class="badge bg-secondary">AI Semantic</span> understands context and meaning
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    {% if query %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    Search Results 
+                    {% if results %}
+                        <span class="badge bg-success">{{ results|length }} found</span>
+                    {% else %}
+                        <span class="badge bg-secondary">0 found</span>
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if results %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Email</th>
+                                    <th>Skills</th>
+                                    <th>Rating</th>
+                                    <th>Relevance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ result.first_name }} {{ result.last_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ result.location or 'Location unknown' }}</small>
+                                    </td>
+                                    <td>{{ result.email or 'N/A' }}</td>
+                                    <td>
+                                        {% if result.skills %}
+                                            {% for skill in result.skills[:3] %}
+                                                <span class="badge bg-dark">{{ skill.skill_name }}</span>
+                                            {% endfor %}
+                                            {% if result.skills|length > 3 %}
+                                                <span class="badge bg-secondary">+{{ result.skills|length - 3 }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">No skills listed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if result.overall_fit_rating %}
+                                            <div class="progress" style="width: 100px;">
+                                                <div class="progress-bar bg-{{ 'success' if result.overall_fit_rating >= 8 else 'warning' if result.overall_fit_rating >= 6 else 'danger' }}" 
+                                                     style="width: {{ result.overall_fit_rating * 10 }}%">
+                                                    {{ result.overall_fit_rating }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">Not rated</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if result.relevance_score is defined %}
+                                            <span class="badge bg-info">{{ (result.relevance_score * 100)|round }}%</span>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('view_result', id=result.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <a href="{{ url_for('ai_recommendations', candidate_id=result.id) }}" 
+                                           class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-robot"></i> AI
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">
+                            No candidates found matching your search criteria.
+                            <br>
+                            Try adjusting your search terms or using a different search type.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <!-- No search performed yet -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                <h4>Enter your search query above</h4>
+                <p class="text-muted">
+                    Use our powerful search capabilities to find the perfect candidates.
+                </p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-font fa-2x text-primary mb-2"></i>
+                            <h6>Fuzzy Search</h6>
+                            <small class="text-muted">Find candidates even with typos or partial matches</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-code fa-2x text-success mb-2"></i>
+                            <h6>Boolean Search</h6>
+                            <small class="text-muted">Use AND, OR, NOT for precise queries</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-brain fa-2x text-info mb-2"></i>
+                            <h6>AI Semantic</h6>
+                            <small class="text-muted">AI understands context and meaning</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

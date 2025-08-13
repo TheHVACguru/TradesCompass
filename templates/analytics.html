@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-chart-line me-2"></i>Analytics Dashboard
+    </h2>
+
+    <!-- Overview Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Candidates</h5>
+                    <h2>{{ metrics.overview.total_candidates }}</h2>
+                    <small>{{ metrics.overview.active_candidates }} active</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">New This Month</h5>
+                    <h2>{{ metrics.overview.new_candidates_30d }}</h2>
+                    <small>Average Rating: {{ metrics.overview.average_rating }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Task Completion</h5>
+                    <h2>{{ metrics.overview.task_completion_rate|round|int }}%</h2>
+                    <small>{{ metrics.overview.overdue_tasks }} overdue</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Referral Success</h5>
+                    <h2>{{ metrics.overview.referral_success_rate|round|int }}%</h2>
+                    <small>{{ metrics.overview.total_referrals }} total</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Source Effectiveness -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-funnel me-2"></i>Source Effectiveness</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Candidates</th>
+                                    <th>Avg Rating</th>
+                                    <th>Hire Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for source in metrics.sources.sources[:5] %}
+                                <tr>
+                                    <td>{{ source.source }}</td>
+                                    <td>{{ source.total_candidates }}</td>
+                                    <td>{{ source.average_rating }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if source.hire_rate > 10 else 'secondary' }}">
+                                            {{ source.hire_rate|round(1) }}%
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Skills -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-code me-2"></i>Top Skills in Demand</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Skill</th>
+                                    <th>Candidates</th>
+                                    <th>Avg Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for skill in metrics.skills.top_skills %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-dark">{{ skill.skill }}</span>
+                                    </td>
+                                    <td>{{ skill.candidate_count }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-info" style="width: {{ skill.average_rating * 10 }}%">
+                                                {{ skill.average_rating }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pipeline & Performance -->
+    <div class="row mb-4">
+        <!-- Pipeline Stages -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Candidate Pipeline</h5>
+                </div>
+                <div class="card-body">
+                    {% for stage, count in metrics.pipeline.stages.items() %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ stage|title }}</span>
+                            <span class="badge bg-secondary">{{ count }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar" style="width: {{ metrics.pipeline.conversion_rates[stage] }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Time to Fill -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Time to Fill Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4>{{ metrics.time_to_fill.average_time_to_fill|round|int }}</h4>
+                            <small class="text-muted">Average Days</small>
+                        </div>
+                        <div class="col-6">
+                            <h4>{{ metrics.time_to_fill.median_time_to_fill|round|int }}</h4>
+                            <small class="text-muted">Median Days</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <span class="text-success">{{ metrics.time_to_fill.fastest_hire }} days</span><br>
+                            <small>Fastest Hire</small>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-warning">{{ metrics.time_to_fill.slowest_hire }} days</span><br>
+                            <small>Slowest Hire</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diversity & Referrals -->
+    <div class="row">
+        <!-- Diversity Metrics -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-globe me-2"></i>Diversity Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Location Diversity</strong>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" style="width: {{ metrics.diversity.location_diversity.geographic_spread * 100 }}%">
+                                {{ metrics.diversity.location_diversity.unique_locations }} locations
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Skill Diversity</strong>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-info" style="width: {{ metrics.diversity.skill_diversity.skill_variety_index * 100 }}%">
+                                {{ metrics.diversity.skill_diversity.unique_skills }} unique skills
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referral Analytics -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i>Top Referrers</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Referrer</th>
+                                    <th>Referrals</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for referrer in metrics.referrals.top_referrers[:5] %}
+                                <tr>
+                                    <td>{{ referrer.name }}</td>
+                                    <td><span class="badge bg-primary">{{ referrer.referral_count }}</span></td>
+                                    <td><span class="badge bg-success">{{ referrer.reward_points }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

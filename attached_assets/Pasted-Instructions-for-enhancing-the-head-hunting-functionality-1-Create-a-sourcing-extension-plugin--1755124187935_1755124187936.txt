@@ -1,0 +1,34 @@
+Instructions for enhancing the head‑hunting functionality
+	1.	Create a sourcing extension/plugin
+	•	Build a lightweight browser extension that allows recruiters to pull candidate data from LinkedIn, GitHub and other professional sites with a single click.  The extension should send the scraped information (name, skills, experience, contact info) to the app’s backend and automatically create or update candidate profiles.
+	2.	Add referral‑management features
+	•	Implement a module that lets employees and executives refer candidates.  Each referral should be tracked (date, referrer, candidate status), and the system should provide notifications and rewards (e.g., internal points or acknowledgement) when referrals turn into hires.
+	3.	Improve the search and filtering capabilities
+	•	Expand the search engine to support fuzzy, proximity, Boolean and semantic search.  This means recruiters can find candidates even if the exact keyword doesn’t match (e.g., “ML” also finds “machine learning”).
+	•	Add a talent‑pool system so recruiters can group candidates by role, level or industry.  Allow switching between pools and bulk updating candidate statuses.
+	4.	Implement AI‑powered candidate recommendations
+	•	Develop a recommendation engine that takes a job description and suggests top candidates.  The engine should rank candidates based on skills, experience, location, and other metadata.
+	•	Include a “similar candidate” feature that, when viewing a profile, shows other candidates with comparable skills or backgrounds.
+	5.	Make the risk/reward scoring dynamic
+	•	Allow recruiters to adjust the weight of risk and reward factors for a job.  For example, if leadership experience is crucial, the algorithm should boost candidates with that trait.  Store weight preferences and let users create different scoring schemes.
+	6.	Integrate communication tools
+	•	Integrate email and SMS APIs so recruiters can contact candidates directly from the platform.  Provide templates for outreach and record all communications in a timeline on each candidate’s profile.
+	•	Synchronize communication with CRM systems (e.g., Salesforce) so email threads and call logs are shared across the team.
+	7.	Add task and follow‑up management
+	•	Introduce a task system where recruiters can schedule follow‑up calls, interviews or reminder emails.  Tasks should be linked to candidate profiles, with due dates, assignees and completion status.
+	8.	Incorporate candidate assessments
+	•	Integrate third‑party assessment tools (coding tests, psychometric evaluations, leadership questionnaires) into the candidate profile.  Store and display results to help recruiters make informed decisions.
+	9.	Develop analytics dashboards
+	•	Provide dashboards that show metrics such as number of candidates sourced per channel, time‑to‑fill, diversity statistics, conversion rates from contact to interview, and placement success.
+	•	Allow export of analytics data and generation of simple reports.
+	10.	Integrate with job boards
+	•	Add the ability to post open roles to multiple job boards with one action and to receive applicants directly into the system.  Use APIs of major job boards to automate posting and keep track of responses.
+	11.	Polish the UI/UX
+	•	Streamline the navigation, ensure filters are intuitive, and clearly indicate candidate status within pipelines.
+	•	Add tooltips or help text explaining the risk/reward metrics and how to interpret the AI recommendations.
+
+⸻
+
+Creative name suggestion: TalentCompass AI.  This name reflects a tool that helps recruiters navigate through talent pools, discover promising candidates and steer the hiring process in the right direction.
+
+Feel free to rename modules (e.g. “Talent Pools”, “Smart Search”, “Candidate Navigator”) according to the overall branding

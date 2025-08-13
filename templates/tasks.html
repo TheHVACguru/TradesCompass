@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Task Management - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-tasks me-2"></i>Task Management
+        </h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+            <i class="fas fa-plus me-2"></i>Create Task
+        </button>
+    </div>
+
+    <!-- Task Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6>Total Tasks</h6>
+                    <h3>{{ tasks.statistics.total }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h6>Pending</h6>
+                    <h3>{{ tasks.statistics.pending }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h6>Overdue</h6>
+                    <h3>{{ tasks.statistics.overdue }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6>Completed</h6>
+                    <h3>{{ tasks.statistics.completed }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Tasks -->
+    {% if tasks.overdue %}
+    <div class="card border-danger mb-4">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Tasks</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Candidate</th>
+                            <th>Type</th>
+                            <th>Due Date</th>
+                            <th>Priority</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks.overdue %}
+                        <tr>
+                            <td>{{ task.task_title }}</td>
+                            <td>
+                                <a href="{{ url_for('view_result', id=task.candidate_id) }}">
+                                    {{ task.candidate.first_name }} {{ task.candidate.last_name }}
+                                </a>
+                            </td>
+                            <td><span class="badge bg-secondary">{{ task.task_type }}</span></td>
+                            <td class="text-danger">{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'danger' if task.priority == 'urgent' else 'warning' if task.priority == 'high' else 'primary' }}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="markComplete({{ task.id }})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Tasks -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Upcoming Tasks</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Candidate</th>
+                            <th>Type</th>
+                            <th>Due Date</th>
+                            <th>Assigned To</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks.upcoming %}
+                        <tr>
+                            <td>{{ task.task_title }}</td>
+                            <td>
+                                <a href="{{ url_for('view_result', id=task.candidate_id) }}">
+                                    {{ task.candidate.first_name }} {{ task.candidate.last_name }}
+                                </a>
+                            </td>
+                            <td><span class="badge bg-secondary">{{ task.task_type }}</span></td>
+                            <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ task.assigned_to or 'Unassigned' }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'danger' if task.priority == 'urgent' else 'warning' if task.priority == 'high' else 'primary' }}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'info' if task.status == 'in_progress' else 'secondary' }}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Task Modal -->
+<div class="modal fade" id="createTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('create_task') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Candidate</label>
+                        <select class="form-select" name="candidate_id" required>
+                            <option value="">Select Candidate</option>
+                            <!-- This would be populated with actual candidates -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Task Type</label>
+                        <select class="form-select" name="task_type" required>
+                            <option value="follow_up">Follow Up</option>
+                            <option value="interview">Interview</option>
+                            <option value="call">Phone Call</option>
+                            <option value="email">Send Email</option>
+                            <option value="assessment">Assessment</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Due Date</label>
+                        <input type="date" class="form-control" name="due_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function markComplete(taskId) {
+    // Implementation for marking task complete
+    if(confirm('Mark this task as complete?')) {
+        // AJAX call to update task status
+        window.location.reload();
+    }
+}
+</script>
+{% endblock %}

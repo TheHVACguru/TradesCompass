@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Resume Scanner{% endblock %}</title>
+    <title>{% block title %}TalentCompass AI{% endblock %}</title>
     
     <!-- Bootstrap CSS with Replit dark theme -->
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
@@ -19,7 +19,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-search me-2"></i>Resume Scanner
+                <i class="fas fa-compass me-2"></i>TalentCompass AI
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -39,6 +39,21 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('candidate_database') }}">
                             <i class="fas fa-users me-1"></i>Candidates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('smart_search') }}">
+                            <i class="fas fa-search-plus me-1"></i>Smart Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tasks_dashboard') }}">
+                            <i class="fas fa-tasks me-1"></i>Tasks
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('analytics_dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i>Analytics
                         </a>
                     </li>
                     <li class="nav-item">

@@ -494,3 +494,115 @@ def check_salesforce_duplicate(candidate_id):
 def too_large(e):
     flash('File too large. Maximum size is 16MB.', 'error')
     return redirect(url_for('index'))
+
+# ============= TalentCompass AI Enhanced Features =============
+
+@app.route('/analytics')
+def analytics_dashboard():
+    """Analytics dashboard with comprehensive metrics"""
+    from services.analytics_dashboard import AnalyticsDashboardService
+    
+    analytics = AnalyticsDashboardService()
+    
+    metrics = {
+        'overview': analytics.get_overview_metrics(),
+        'pipeline': analytics.get_candidate_pipeline_metrics(),
+        'sources': analytics.get_source_effectiveness(),
+        'skills': analytics.get_skill_demand_analysis(),
+        'diversity': analytics.get_diversity_metrics(),
+        'time_to_fill': analytics.get_time_to_fill_metrics(),
+        'recruiter_performance': analytics.get_recruiter_performance(),
+        'referrals': analytics.get_referral_analytics()
+    }
+    
+    return render_template('analytics.html', metrics=metrics)
+
+@app.route('/tasks')
+def tasks_dashboard():
+    """Task management dashboard"""
+    from services.task_management import TaskManagementService
+    
+    task_service = TaskManagementService()
+    assigned_to = request.args.get('assigned_to')
+    
+    tasks = {
+        'upcoming': task_service.get_upcoming_tasks(assigned_to),
+        'overdue': task_service.get_overdue_tasks(assigned_to),
+        'statistics': task_service.get_task_statistics(assigned_to)
+    }
+    
+    return render_template('tasks.html', tasks=tasks)
+
+@app.route('/tasks/create', methods=['POST'])
+def create_task():
+    """Create a new task"""
+    from services.task_management import TaskManagementService
+    from datetime import datetime
+    
+    task_service = TaskManagementService()
+    
+    try:
+        due_date = datetime.strptime(request.form['due_date'], '%Y-%m-%d') if request.form.get('due_date') else None
+        
+        task = task_service.create_task(
+            candidate_id=int(request.form['candidate_id']),
+            task_type=request.form['task_type'],
+            title=request.form['title'],
+            description=request.form.get('description'),
+            due_date=due_date,
+            assigned_to=request.form.get('assigned_to'),
+            priority=request.form.get('priority', 'medium')
+        )
+        
+        flash('Task created successfully', 'success')
+        return redirect(url_for('tasks_dashboard'))
+        
+    except Exception as e:
+        logging.error(f"Error creating task: {e}")
+        flash('Error creating task', 'error')
+        return redirect(url_for('tasks_dashboard'))
+
+@app.route('/ai-recommendations/<int:candidate_id>')
+def ai_recommendations(candidate_id):
+    """Get AI recommendations for a candidate"""
+    from services.ai_recommendations import AIRecommendationService
+    
+    ai_service = AIRecommendationService()
+    
+    # Get similar candidates
+    similar = ai_service.find_similar_candidates(candidate_id, limit=5)
+    
+    # Generate insights
+    insights = ai_service.generate_candidate_insights(
+        candidate_id,
+        job_context=request.args.get('job_context')
+    )
+    
+    candidate = ResumeAnalysis.query.get_or_404(candidate_id)
+    
+    return render_template(
+        'ai_recommendations.html',
+        candidate=candidate,
+        similar_candidates=similar,
+        insights=insights
+    )
+
+@app.route('/smart-search')
+def smart_search():
+    """Enhanced search with fuzzy matching and AI"""
+    from services.fuzzy_search import FuzzySearchService
+    
+    search_service = FuzzySearchService()
+    query = request.args.get('q', '')
+    search_type = request.args.get('type', 'fuzzy')
+    
+    results = []
+    if query:
+        if search_type == 'fuzzy':
+            results = search_service.fuzzy_search(query, threshold=0.6)
+        elif search_type == 'boolean':
+            results = search_service.boolean_search(query)
+        elif search_type == 'semantic':
+            results = search_service.semantic_search(query, limit=20)
+    
+    return render_template('smart_search.html', results=results, query=query, search_type=search_type)

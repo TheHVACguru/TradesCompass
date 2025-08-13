@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}AI Recommendations - {{ candidate.first_name }} {{ candidate.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-robot me-2"></i>AI Recommendations
+        </h2>
+        <a href="{{ url_for('view_result', id=candidate.id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Candidate
+        </a>
+    </div>
+
+    <!-- Candidate Overview -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user me-2"></i>{{ candidate.first_name }} {{ candidate.last_name }}
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Email:</strong> {{ candidate.email or 'Not available' }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Phone:</strong> {{ candidate.phone or 'Not available' }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Location:</strong> {{ candidate.location or 'Not specified' }}
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <strong>Overall Rating:</strong>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-{{ 'success' if candidate.overall_fit_rating >= 8 else 'warning' if candidate.overall_fit_rating >= 6 else 'danger' }}" 
+                             style="width: {{ candidate.overall_fit_rating * 10 }}%">
+                            {{ candidate.overall_fit_rating }}/10
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <strong>Status:</strong>
+                    <span class="badge bg-{{ 'success' if candidate.status == 'active' else 'secondary' }}">
+                        {{ candidate.status|title }}
+                    </span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Source:</strong> {{ candidate.source or 'Direct Upload' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Insights -->
+    {% if insights %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-lightbulb me-2"></i>AI-Generated Insights
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if insights.strengths %}
+            <div class="mb-3">
+                <h6 class="text-success"><i class="fas fa-plus-circle me-2"></i>Key Strengths</h6>
+                <ul>
+                    {% for strength in insights.strengths %}
+                    <li>{{ strength }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if insights.areas_for_development %}
+            <div class="mb-3">
+                <h6 class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Areas for Development</h6>
+                <ul>
+                    {% for area in insights.areas_for_development %}
+                    <li>{{ area }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if insights.best_fit_roles %}
+            <div class="mb-3">
+                <h6 class="text-info"><i class="fas fa-briefcase me-2"></i>Best Fit Roles</h6>
+                <div>
+                    {% for role in insights.best_fit_roles %}
+                    <span class="badge bg-info me-2 mb-2">{{ role }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if insights.interview_suggestions %}
+            <div class="mb-3">
+                <h6 class="text-primary"><i class="fas fa-comments me-2"></i>Interview Focus Areas</h6>
+                <ul>
+                    {% for suggestion in insights.interview_suggestions %}
+                    <li>{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if insights.next_steps %}
+            <div class="alert alert-light border">
+                <h6 class="alert-heading"><i class="fas fa-arrow-right me-2"></i>Recommended Next Steps</h6>
+                <ol class="mb-0">
+                    {% for step in insights.next_steps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Similar Candidates -->
+    {% if similar_candidates %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-users me-2"></i>Similar Candidates
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Skills Match</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Similarity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for similar in similar_candidates %}
+                        <tr>
+                            <td>
+                                <strong>{{ similar.candidate.first_name }} {{ similar.candidate.last_name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ similar.candidate.email or 'No email' }}</small>
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar bg-info" style="width: {{ similar.skill_similarity * 100 }}%">
+                                        {{ (similar.skill_similarity * 100)|round }}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if similar.candidate.overall_fit_rating %}
+                                    <span class="badge bg-{{ 'success' if similar.candidate.overall_fit_rating >= 8 else 'warning' if similar.candidate.overall_fit_rating >= 6 else 'danger' }}">
+                                        {{ similar.candidate.overall_fit_rating }}/10
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Not rated</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if similar.candidate.status == 'active' else 'secondary' }}">
+                                    {{ similar.candidate.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong>{{ (similar.overall_similarity * 100)|round }}%</strong>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('view_result', id=similar.candidate.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Tip:</strong> These candidates have similar skills and qualifications. Consider them for similar roles or as alternatives if this candidate is unavailable.
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-4">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No similar candidates found in the database.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

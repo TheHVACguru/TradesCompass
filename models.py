@@ -112,3 +112,130 @@ class EmailProcessingLog(db.Model):
     
     def __repr__(self):
         return f'<EmailProcessingLog {self.email_id}>'
+
+class CandidateReferral(db.Model):
+    """Track employee and executive referrals"""
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=False)
+    referrer_name = db.Column(db.String(100), nullable=False)
+    referrer_email = db.Column(db.String(255), nullable=False)
+    referrer_department = db.Column(db.String(100))
+    referral_date = db.Column(db.DateTime, default=datetime.utcnow)
+    referral_notes = db.Column(Text)
+    referral_status = db.Column(db.String(50), default='pending')  # pending, contacted, interviewed, hired, rejected
+    reward_status = db.Column(db.String(50), default='pending')  # pending, eligible, awarded
+    reward_points = db.Column(db.Integer, default=0)
+    
+    # Relationship
+    candidate = db.relationship('ResumeAnalysis', backref='referrals')
+    
+    def __repr__(self):
+        return f'<CandidateReferral by {self.referrer_name}>'
+
+class TalentPool(db.Model):
+    """Group candidates by role, level or industry"""
+    id = db.Column(db.Integer, primary_key=True)
+    pool_name = db.Column(db.String(100), nullable=False, unique=True)
+    pool_type = db.Column(db.String(50))  # role, level, industry, custom
+    description = db.Column(Text)
+    created_by = db.Column(db.String(100))
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Many-to-many relationship with candidates
+    candidates = db.relationship('ResumeAnalysis', secondary='talent_pool_candidates', backref='talent_pools')
+    
+    def __repr__(self):
+        return f'<TalentPool {self.pool_name}>'
+
+# Association table for many-to-many relationship
+talent_pool_candidates = db.Table('talent_pool_candidates',
+    db.Column('pool_id', db.Integer, db.ForeignKey('talent_pool.id'), primary_key=True),
+    db.Column('candidate_id', db.Integer, db.ForeignKey('resume_analysis.id'), primary_key=True),
+    db.Column('added_date', db.DateTime, default=datetime.utcnow)
+)
+
+class RecruiterTask(db.Model):
+    """Task and follow-up management for recruiters"""
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=False)
+    task_type = db.Column(db.String(50), nullable=False)  # follow_up, interview, call, email, assessment
+    task_title = db.Column(db.String(200), nullable=False)
+    task_description = db.Column(Text)
+    due_date = db.Column(db.DateTime, nullable=False)
+    assigned_to = db.Column(db.String(100))
+    priority = db.Column(db.String(20), default='medium')  # low, medium, high, urgent
+    status = db.Column(db.String(50), default='pending')  # pending, in_progress, completed, cancelled
+    completed_date = db.Column(db.DateTime)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    candidate = db.relationship('ResumeAnalysis', backref='tasks')
+    
+    def __repr__(self):
+        return f'<RecruiterTask {self.task_title}>'
+
+class CommunicationLog(db.Model):
+    """Track all communications with candidates"""
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=False)
+    communication_type = db.Column(db.String(50), nullable=False)  # email, sms, call, meeting, linkedin
+    subject = db.Column(db.String(500))
+    content = db.Column(Text)
+    direction = db.Column(db.String(20))  # inbound, outbound
+    status = db.Column(db.String(50))  # sent, delivered, failed, replied
+    sent_by = db.Column(db.String(100))
+    sent_date = db.Column(db.DateTime, default=datetime.utcnow)
+    template_used = db.Column(db.String(100))  # If a template was used
+    
+    # Relationship
+    candidate = db.relationship('ResumeAnalysis', backref='communications')
+    
+    def __repr__(self):
+        return f'<CommunicationLog {self.communication_type} to {self.candidate_id}>'
+
+class ScoringScheme(db.Model):
+    """Dynamic risk/reward scoring schemes"""
+    id = db.Column(db.Integer, primary_key=True)
+    scheme_name = db.Column(db.String(100), nullable=False, unique=True)
+    description = db.Column(Text)
+    
+    # Weight factors (0-100 scale)
+    experience_weight = db.Column(db.Integer, default=25)
+    skills_weight = db.Column(db.Integer, default=25)
+    education_weight = db.Column(db.Integer, default=15)
+    leadership_weight = db.Column(db.Integer, default=10)
+    culture_fit_weight = db.Column(db.Integer, default=10)
+    location_weight = db.Column(db.Integer, default=5)
+    availability_weight = db.Column(db.Integer, default=10)
+    
+    # Risk factors weights
+    job_hopping_weight = db.Column(db.Integer, default=20)
+    employment_gap_weight = db.Column(db.Integer, default=15)
+    overqualification_weight = db.Column(db.Integer, default=10)
+    
+    is_default = db.Column(db.Boolean, default=False)
+    created_by = db.Column(db.String(100))
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<ScoringScheme {self.scheme_name}>'
+
+class CandidateAssessment(db.Model):
+    """Store results from third-party assessments"""
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('resume_analysis.id'), nullable=False)
+    assessment_type = db.Column(db.String(100), nullable=False)  # coding_test, psychometric, leadership, etc.
+    assessment_provider = db.Column(db.String(100))  # HackerRank, Codility, etc.
+    assessment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    score = db.Column(db.Float)
+    max_score = db.Column(db.Float)
+    percentile = db.Column(db.Float)  # Percentile rank if available
+    result_summary = db.Column(Text)
+    detailed_results = db.Column(Text)  # JSON string of detailed results
+    assessment_url = db.Column(db.String(500))  # Link to full assessment
+    
+    # Relationship
+    candidate = db.relationship('ResumeAnalysis', backref='assessments')
+    
+    def __repr__(self):
+        return f'<CandidateAssessment {self.assessment_type} for {self.candidate_id}>'
