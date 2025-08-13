@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Resume - Resume Scanner{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-brain text-primary me-3"></i>
+                AI Resume Scanner
+            </h1>
+            <p class="lead text-muted mb-4">
+                Upload a resume and job description to get detailed AI-powered analysis with candidate strengths, weaknesses, and job matching insights.
+            </p>
+        </div>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-upload me-2"></i>
+                        Upload Resume for Analysis
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <!-- File Upload -->
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Resume File</label>
+                            <input type="file" class="form-control" id="file" name="file" 
+                                   accept=".pdf,.docx,.txt" required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Supported formats: PDF, DOCX, TXT (Max size: 16MB)
+                            </div>
+                        </div>
+
+                        <!-- Job Description -->
+                        <div class="mb-4">
+                            <label for="job_description" class="form-label">Job Description</label>
+                            <textarea class="form-control" id="job_description" name="job_description" 
+                                      rows="8" required 
+                                      placeholder="Paste the job description here to analyze how well the candidate matches the requirements..."></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Provide detailed job requirements for accurate analysis
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-cogs me-2"></i>
+                                Analyze Resume
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Analysis Features</h2>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Strengths & Weaknesses</h5>
+                    <p class="card-text">Detailed analysis of candidate qualifications against job requirements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Risk/Reward Assessment</h5>
+                    <p class="card-text">Comprehensive evaluation of hiring risks and potential rewards</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-briefcase fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Job Matching</h5>
+                    <p class="card-text">Relevant job opportunities from ZipRecruiter based on candidate skills</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Analyses -->
+    {% if recent_analyses %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-clock me-2"></i>
+                Recent Analyses
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>File</th>
+                            <th>Upload Date</th>
+                            <th>Overall Fit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for analysis in recent_analyses %}
+                        <tr>
+                            <td>
+                                {% if analysis.first_name and analysis.last_name %}
+                                    {{ analysis.first_name }} {{ analysis.last_name }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
+                            <td>{{ analysis.filename }}</td>
+                            <td>{{ analysis.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if analysis.overall_fit_rating %}
+                                    <span class="badge bg-{{ 'success' if analysis.overall_fit_rating >= 7 else 'warning' if analysis.overall_fit_rating >= 5 else 'danger' }}">
+                                        {{ "%.1f"|format(analysis.overall_fit_rating) }}/10
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('view_results', analysis_id=analysis.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
