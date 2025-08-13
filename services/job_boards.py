@@ -15,6 +15,96 @@ class JobBoardAPI:
         """Search for jobs - to be implemented by subclasses"""
         raise NotImplementedError
 
+class JSearchAPI(JobBoardAPI):
+    """JSearch API - Comprehensive job aggregator from Google for Jobs and 150,000+ sources"""
+    
+    def __init__(self):
+        super().__init__(os.environ.get("RAPIDAPI_KEY"))
+        self.base_url = "https://jsearch.p.rapidapi.com/search"
+        self.headers = {
+            "X-RapidAPI-Key": self.api_key if self.api_key else "",
+            "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
+        }
+    
+    def search_jobs(self, query: str, location: str = "United States", max_results: int = 10) -> List[Dict[str, Any]]:
+        if not self.api_key:
+            logging.info("RapidAPI key not found, skipping JSearch")
+            return []
+        
+        try:
+            params = {
+                "query": f"{query} in {location}",
+                "page": "1",
+                "num_pages": "1",
+                "date_posted": "month",  # Jobs posted in last month
+                "remote_jobs_only": "false",
+                "employment_types": "FULLTIME,PARTTIME,CONTRACTOR",
+                "job_requirements": "no_degree,no_experience"  # Include all experience levels
+            }
+            
+            response = requests.get(
+                self.base_url,
+                params=params,
+                headers=self.headers,
+                timeout=10
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            jobs = []
+            
+            if data.get('status') == 'OK' and 'data' in data:
+                for job in data['data'][:max_results]:
+                    # Determine the source platform
+                    source = 'Multiple Sources'
+                    if job.get('job_publisher'):
+                        publisher = job['job_publisher'].lower()
+                        if 'linkedin' in publisher:
+                            source = 'LinkedIn'
+                        elif 'indeed' in publisher:
+                            source = 'Indeed'
+                        elif 'glassdoor' in publisher:
+                            source = 'Glassdoor'
+                        elif 'ziprecruiter' in publisher:
+                            source = 'ZipRecruiter'
+                        elif 'monster' in publisher:
+                            source = 'Monster'
+                        else:
+                            source = job['job_publisher']
+                    
+                    # Extract salary information
+                    salary_info = 'Not specified'
+                    if job.get('job_min_salary') and job.get('job_max_salary'):
+                        salary_info = f"${job['job_min_salary']:,.0f} - ${job['job_max_salary']:,.0f}"
+                        if job.get('job_salary_period'):
+                            salary_info += f" {job['job_salary_period']}"
+                    elif job.get('job_salary_currency'):
+                        salary_info = f"{job.get('job_salary_currency', '')} - Competitive"
+                    
+                    job_info = {
+                        'title': job.get('job_title', 'N/A'),
+                        'company': job.get('employer_name', 'N/A'),
+                        'location': f"{job.get('job_city', '')}, {job.get('job_state', '')} {job.get('job_country', '')}".strip(', '),
+                        'url': job.get('job_apply_link', job.get('job_google_link', '#')),
+                        'summary': job.get('job_description', 'No description available')[:200] + '...' if job.get('job_description') else 'No description available',
+                        'posted_date': job.get('job_posted_at_datetime_utc', 'Recently')[:10] if job.get('job_posted_at_datetime_utc') else 'Recently',
+                        'salary': salary_info,
+                        'source': source,
+                        'remote': job.get('job_is_remote', False),
+                        'employment_type': job.get('job_employment_type', 'Full-time')
+                    }
+                    jobs.append(job_info)
+            
+            logging.info(f"JSearch returned {len(jobs)} jobs")
+            return jobs
+            
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error fetching jobs from JSearch: {str(e)}")
+            return []
+        except Exception as e:
+            logging.error(f"Unexpected error in JSearch: {str(e)}")
+            return []
+
 class ZipRecruiterAPI(JobBoardAPI):
     """ZipRecruiter job search integration"""
     
@@ -241,10 +331,12 @@ class MultiJobBoardSearch:
     """Aggregates job searches across multiple job boards"""
     
     def __init__(self):
-        self.job_boards = [
+        # JSearch is primary as it aggregates from 150,000+ sources including LinkedIn, Indeed, Glassdoor, etc.
+        self.primary_search = JSearchAPI()
+        # Fallback individual APIs if JSearch is not available
+        self.fallback_boards = [
             ZipRecruiterAPI(),
             IndeedAPI(),
-            LinkedInAPI(),
             USAJobsAPI()
         ]
     
@@ -252,15 +344,26 @@ class MultiJobBoardSearch:
         """Search jobs across all available job boards"""
         all_jobs = []
         
-        for board in self.job_boards:
-            try:
-                jobs = board.search_jobs(query, location, max_per_board)
-                all_jobs.extend(jobs)
-                # Small delay to be respectful to APIs
-                time.sleep(0.5)
-            except Exception as e:
-                logging.error(f"Error searching {board.__class__.__name__}: {str(e)}")
-                continue
+        # Try JSearch first - it aggregates from 150,000+ sources
+        try:
+            jsearch_jobs = self.primary_search.search_jobs(query, location, 15)
+            if jsearch_jobs:
+                logging.info(f"JSearch returned {len(jsearch_jobs)} jobs")
+                all_jobs.extend(jsearch_jobs)
+        except Exception as e:
+            logging.error(f"Error with JSearch: {str(e)}")
+        
+        # If JSearch didn't return enough results or failed, use fallback APIs
+        if len(all_jobs) < 10:
+            for board in self.fallback_boards:
+                try:
+                    jobs = board.search_jobs(query, location, max_per_board)
+                    all_jobs.extend(jobs)
+                    # Small delay to be respectful to APIs
+                    time.sleep(0.5)
+                except Exception as e:
+                    logging.error(f"Error searching {board.__class__.__name__}: {str(e)}")
+                    continue
         
         # Remove duplicates based on title and company
         seen = set()
@@ -271,7 +374,7 @@ class MultiJobBoardSearch:
                 seen.add(key)
                 unique_jobs.append(job)
         
-        return unique_jobs[:15]  # Limit total results
+        return unique_jobs[:20]  # Increased limit since we have better aggregation
 
 # Convenience function for backward compatibility
 def search_relevant_jobs(search_query, location="United States", max_results=5):
