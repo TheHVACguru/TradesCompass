@@ -24,7 +24,8 @@ class CandidateSourcer:
         location: str = None,
         skills: List[str] = None,
         experience_level: str = None,
-        limit: int = 20
+        limit: int = 20,
+        include_x: bool = True
     ) -> Dict[str, Any]:
         """
         Search for candidates across multiple professional networks
@@ -35,6 +36,7 @@ class CandidateSourcer:
             skills: Required skills
             experience_level: junior, mid, senior, executive
             limit: Number of results to return
+            include_x: Whether to include X (Twitter) in search
             
         Returns:
             Dictionary with candidate results from multiple sources
@@ -43,24 +45,37 @@ class CandidateSourcer:
         all_candidates = []
         sources_used = []
         
+        # Search X (Twitter) for candidates - prioritize this for active job seekers
+        if include_x:
+            try:
+                from services.x_sourcing import search_x_for_candidates
+                x_results = search_x_for_candidates(query, skills, location, limit//3)
+                x_candidates = x_results.get('candidates', [])
+                if x_candidates:
+                    all_candidates.extend(x_candidates)
+                    sources_used.append('X')
+                    logging.info(f"Found {len(x_candidates)} candidates from X")
+            except Exception as e:
+                logging.error(f"X search error: {str(e)}")
+        
         # Search LinkedIn profiles via RapidAPI
-        linkedin_results = self._search_linkedin_profiles(query, location, skills, limit//2)
+        linkedin_results = self._search_linkedin_profiles(query, location, skills, limit//3)
         if linkedin_results:
             all_candidates.extend(linkedin_results)
             sources_used.append('LinkedIn')
         
         # Search GitHub profiles for technical roles
         if any(tech_skill in (skills or []) for tech_skill in ['Python', 'JavaScript', 'Java', 'React', 'Node.js']):
-            github_results = self._search_github_profiles(query, skills, limit//4)
+            github_results = self._search_github_profiles(query, skills, limit//3)
             if github_results:
                 all_candidates.extend(github_results)
                 sources_used.append('GitHub')
         
-        # Search AngelList for startup candidates
-        angellist_results = self._search_angellist_profiles(query, location, limit//4)
-        if angellist_results:
-            all_candidates.extend(angellist_results)
-            sources_used.append('AngelList')
+        # Search AngelList for startup candidates (disabled for now)
+        # angellist_results = self._search_angellist_profiles(query, location, limit//4)
+        # if angellist_results:
+        #     all_candidates.extend(angellist_results)
+        #     sources_used.append('AngelList')
             
         # Remove duplicates based on email/profile URL
         unique_candidates = self._deduplicate_candidates(all_candidates)
