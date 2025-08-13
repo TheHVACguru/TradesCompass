@@ -606,3 +606,184 @@ def smart_search():
             results = search_service.semantic_search(query, limit=20)
     
     return render_template('smart_search.html', results=results, query=query, search_type=search_type)
+
+# ============= Referral Management Routes =============
+
+@app.route('/referrals')
+def referrals_dashboard():
+    """Referral management dashboard"""
+    from services.referral_management import ReferralManagementService
+    
+    referral_service = ReferralManagementService()
+    
+    data = {
+        'statistics': referral_service.get_referral_statistics(),
+        'top_referrers': referral_service.get_top_referrers(limit=10),
+        'pending_referrals': referral_service.get_pending_referrals(),
+        'department_performance': referral_service.get_department_performance()
+    }
+    
+    return render_template('referrals.html', data=data)
+
+@app.route('/referrals/create', methods=['GET', 'POST'])
+def create_referral():
+    """Create a new referral"""
+    from services.referral_management import ReferralManagementService
+    
+    if request.method == 'POST':
+        referral_service = ReferralManagementService()
+        
+        try:
+            referral = referral_service.create_referral(
+                candidate_id=int(request.form['candidate_id']),
+                referrer_name=request.form['referrer_name'],
+                referrer_email=request.form['referrer_email'],
+                referrer_department=request.form.get('referrer_department'),
+                relationship=request.form.get('relationship'),
+                notes=request.form.get('notes')
+            )
+            
+            flash('Referral created successfully!', 'success')
+            return redirect(url_for('referrals_dashboard'))
+            
+        except Exception as e:
+            logging.error(f"Error creating referral: {e}")
+            flash('Error creating referral', 'error')
+            return redirect(url_for('referrals_dashboard'))
+    
+    # GET request - show form
+    candidates = ResumeAnalysis.query.filter(
+        ResumeAnalysis.status != 'hired'
+    ).order_by(ResumeAnalysis.upload_date.desc()).all()
+    
+    return render_template('create_referral.html', candidates=candidates)
+
+@app.route('/referrals/<int:referral_id>/update', methods=['POST'])
+def update_referral_status(referral_id):
+    """Update referral status"""
+    from services.referral_management import ReferralManagementService
+    
+    referral_service = ReferralManagementService()
+    new_status = request.form.get('status')
+    reward_points = request.form.get('reward_points', type=int)
+    
+    if referral_service.update_referral_status(referral_id, new_status, reward_points):
+        flash('Referral status updated successfully', 'success')
+    else:
+        flash('Error updating referral status', 'error')
+    
+    return redirect(url_for('referrals_dashboard'))
+
+@app.route('/referrals/<int:referral_id>/bonus')
+def calculate_referral_bonus(referral_id):
+    """Calculate referral bonus"""
+    from services.referral_management import ReferralManagementService
+    
+    referral_service = ReferralManagementService()
+    bonus_info = referral_service.calculate_referral_bonus(referral_id)
+    
+    return jsonify(bonus_info)
+
+# ============= Talent Pool Management Routes =============
+
+@app.route('/talent-pools')
+def talent_pools():
+    """Talent pool management dashboard"""
+    from services.talent_pools import TalentPoolService
+    
+    pool_service = TalentPoolService()
+    pools = pool_service.get_active_pools()
+    
+    # Get statistics for each pool
+    pool_data = []
+    for pool in pools:
+        stats = pool_service.get_pool_statistics(pool.id)
+        pool_data.append({
+            'pool': pool,
+            'stats': stats
+        })
+    
+    return render_template('talent_pools.html', pool_data=pool_data)
+
+@app.route('/talent-pools/create', methods=['POST'])
+def create_talent_pool():
+    """Create a new talent pool"""
+    from services.talent_pools import TalentPoolService
+    
+    pool_service = TalentPoolService()
+    
+    try:
+        # Parse criteria if provided
+        criteria = {}
+        if request.form.get('min_rating'):
+            criteria['min_rating'] = float(request.form['min_rating'])
+        if request.form.get('skills'):
+            criteria['skills'] = [s.strip() for s in request.form['skills'].split(',')]
+        if request.form.get('location'):
+            criteria['location'] = request.form['location']
+        if request.form.get('status'):
+            criteria['status'] = request.form['status']
+        
+        pool = pool_service.create_pool(
+            pool_name=request.form['pool_name'],
+            pool_type=request.form['pool_type'],
+            description=request.form.get('description'),
+            criteria=criteria if criteria else None,
+            created_by=request.form.get('created_by', 'System')
+        )
+        
+        # Auto-populate if requested
+        if request.form.get('auto_populate') == 'true' and criteria:
+            added = pool_service.auto_populate_pool(pool.id)
+            flash(f'Talent pool created and populated with {added} candidates', 'success')
+        else:
+            flash('Talent pool created successfully', 'success')
+        
+        return redirect(url_for('talent_pools'))
+        
+    except Exception as e:
+        logging.error(f"Error creating talent pool: {e}")
+        flash('Error creating talent pool', 'error')
+        return redirect(url_for('talent_pools'))
+
+@app.route('/talent-pools/<int:pool_id>/add-candidate', methods=['POST'])
+def add_to_talent_pool(pool_id):
+    """Add a candidate to a talent pool"""
+    from services.talent_pools import TalentPoolService
+    
+    pool_service = TalentPoolService()
+    candidate_id = request.form.get('candidate_id', type=int)
+    
+    if pool_service.add_candidate_to_pool(pool_id, candidate_id):
+        flash('Candidate added to talent pool', 'success')
+    else:
+        flash('Candidate already in pool or error occurred', 'warning')
+    
+    return redirect(request.referrer or url_for('talent_pools'))
+
+@app.route('/talent-pools/<int:pool_id>/remove-candidate/<int:candidate_id>', methods=['POST'])
+def remove_from_talent_pool(pool_id, candidate_id):
+    """Remove a candidate from a talent pool"""
+    from services.talent_pools import TalentPoolService
+    
+    pool_service = TalentPoolService()
+    
+    if pool_service.remove_candidate_from_pool(pool_id, candidate_id):
+        flash('Candidate removed from talent pool', 'success')
+    else:
+        flash('Error removing candidate', 'error')
+    
+    return redirect(request.referrer or url_for('talent_pools'))
+
+@app.route('/talent-pools/<int:pool_id>/view')
+def view_talent_pool(pool_id):
+    """View detailed talent pool information"""
+    from services.talent_pools import TalentPoolService
+    from models import TalentPool
+    
+    pool_service = TalentPoolService()
+    pool = TalentPool.query.get_or_404(pool_id)
+    stats = pool_service.get_pool_statistics(pool_id)
+    members = pool_service.get_pool_members(pool_id)
+    
+    return render_template('view_talent_pool.html', pool=pool, stats=stats, members=members)

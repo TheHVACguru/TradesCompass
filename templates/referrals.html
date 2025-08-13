@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Referral Management - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-user-friends me-2"></i>Referral Management
+        </h2>
+        <a href="{{ url_for('create_referral') }}" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>Create Referral
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6>Total Referrals</h6>
+                    <h3>{{ data.statistics.total_referrals }}</h3>
+                    <small>Success Rate: {{ data.statistics.success_rate|round(1) }}%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h6>Pending Review</h6>
+                    <h3>{{ data.statistics.pending }}</h3>
+                    <small>Awaiting action</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6>Hired</h6>
+                    <h3>{{ data.statistics.hired }}</h3>
+                    <small>Avg. {{ data.statistics.average_time_to_hire }} days</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6>Points Awarded</h6>
+                    <h3>{{ data.statistics.total_points_awarded }}</h3>
+                    <small>Total rewards</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Referrals -->
+    {% if data.pending_referrals %}
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Pending Referrals</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Referred By</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Relationship</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for referral in data.pending_referrals %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('view_result', id=referral.candidate_id) }}">
+                                    {{ referral.candidate.first_name }} {{ referral.candidate.last_name }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ referral.referrer_name }}
+                                <br><small class="text-muted">{{ referral.referrer_email }}</small>
+                            </td>
+                            <td>{{ referral.referrer_department or 'N/A' }}</td>
+                            <td>{{ referral.referral_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ referral.relationship_to_candidate or 'Not specified' }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-success" onclick="updateStatus({{ referral.id }}, 'interviewed')">
+                                        <i class="fas fa-comments"></i> Interview
+                                    </button>
+                                    <button class="btn btn-primary" onclick="updateStatus({{ referral.id }}, 'hired')">
+                                        <i class="fas fa-check"></i> Hired
+                                    </button>
+                                    <button class="btn btn-danger" onclick="updateStatus({{ referral.id }}, 'rejected')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Top Referrers -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Referrers</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Referrals</th>
+                                    <th>Hired</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i, referrer in enumerate(data.top_referrers, 1) %}
+                                <tr>
+                                    <td>
+                                        {% if i == 1 %}
+                                            <i class="fas fa-medal text-warning"></i>
+                                        {% elif i == 2 %}
+                                            <i class="fas fa-medal text-secondary"></i>
+                                        {% elif i == 3 %}
+                                            <i class="fas fa-medal" style="color: #CD7F32;"></i>
+                                        {% else %}
+                                            {{ i }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ referrer.name }}</strong>
+                                        <br><small>{{ referrer.email }}</small>
+                                    </td>
+                                    <td>{{ referrer.department or 'N/A' }}</td>
+                                    <td><span class="badge bg-primary">{{ referrer.total_referrals }}</span></td>
+                                    <td><span class="badge bg-success">{{ referrer.successful_hires }}</span></td>
+                                    <td><span class="badge bg-info">{{ referrer.total_points }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Department Performance -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-building me-2"></i>Department Performance</h5>
+                </div>
+                <div class="card-body">
+                    {% if data.department_performance %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Total</th>
+                                    <th>Hired</th>
+                                    <th>Success Rate</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dept in data.department_performance %}
+                                <tr>
+                                    <td><strong>{{ dept.department }}</strong></td>
+                                    <td>{{ dept.total_referrals }}</td>
+                                    <td><span class="badge bg-success">{{ dept.successful_hires }}</span></td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-{{ 'success' if dept.success_rate > 30 else 'warning' if dept.success_rate > 15 else 'danger' }}" 
+                                                 style="width: {{ dept.success_rate }}%">
+                                                {{ dept.success_rate|round(1) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-info">{{ dept.total_points }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No department data available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Trends Chart Placeholder -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Referral Trends</h5>
+        </div>
+        <div class="card-body">
+            <div class="text-center py-4">
+                <canvas id="referralTrendsChart" width="400" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Status Form (Hidden) -->
+<form id="updateStatusForm" method="POST" style="display: none;">
+    <input type="hidden" name="status" id="statusInput">
+</form>
+
+<script>
+// Function to update referral status
+function updateStatus(referralId, newStatus) {
+    if (confirm(`Update referral status to ${newStatus}?`)) {
+        const form = document.getElementById('updateStatusForm');
+        form.action = `/referrals/${referralId}/update`;
+        document.getElementById('statusInput').value = newStatus;
+        form.submit();
+    }
+}
+
+// Simple chart placeholder
+const ctx = document.getElementById('referralTrendsChart').getContext('2d');
+ctx.fillStyle = '#6c757d';
+ctx.font = '16px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('Referral trends visualization coming soon', ctx.canvas.width / 2, ctx.canvas.height / 2);
+</script>
+
+<style>
+/* Custom enumerate filter workaround */
+{% set ns = namespace(counter=0) %}
+</style>
+{% endblock %}

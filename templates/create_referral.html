@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Create Referral - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create Employee Referral
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('create_referral') }}">
+                        <!-- Candidate Selection -->
+                        <div class="mb-4">
+                            <h5 class="text-muted">Candidate Information</h5>
+                            <hr>
+                            <div class="mb-3">
+                                <label for="candidate_id" class="form-label">Select Candidate <span class="text-danger">*</span></label>
+                                <select class="form-select" id="candidate_id" name="candidate_id" required>
+                                    <option value="">Choose a candidate...</option>
+                                    {% for candidate in candidates %}
+                                    <option value="{{ candidate.id }}">
+                                        {{ candidate.first_name }} {{ candidate.last_name }}
+                                        {% if candidate.email %} - {{ candidate.email }}{% endif %}
+                                        (Uploaded: {{ candidate.upload_date.strftime('%Y-%m-%d') }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="form-text text-muted">
+                                    Select the candidate being referred. Only non-hired candidates are shown.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Referrer Information -->
+                        <div class="mb-4">
+                            <h5 class="text-muted">Referrer Information</h5>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="referrer_name" class="form-label">Referrer Name <span class="text-danger">*</span></label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="referrer_name" 
+                                           name="referrer_name" 
+                                           required 
+                                           placeholder="John Doe">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="referrer_email" class="form-label">Referrer Email <span class="text-danger">*</span></label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="referrer_email" 
+                                           name="referrer_email" 
+                                           required 
+                                           placeholder="john.doe@company.com">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="referrer_department" class="form-label">Department</label>
+                                <select class="form-select" id="referrer_department" name="referrer_department">
+                                    <option value="">Select Department...</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="HR">Human Resources</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Operations">Operations</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Customer Success">Customer Success</option>
+                                    <option value="Legal">Legal</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Referral Details -->
+                        <div class="mb-4">
+                            <h5 class="text-muted">Referral Details</h5>
+                            <hr>
+                            <div class="mb-3">
+                                <label for="relationship" class="form-label">Relationship to Candidate</label>
+                                <select class="form-select" id="relationship" name="relationship">
+                                    <option value="">Select relationship...</option>
+                                    <option value="Former Colleague">Former Colleague</option>
+                                    <option value="Friend">Friend</option>
+                                    <option value="Professional Contact">Professional Contact</option>
+                                    <option value="University/School Contact">University/School Contact</option>
+                                    <option value="Industry Contact">Industry Contact</option>
+                                    <option value="Family Member">Family Member</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Additional Notes</label>
+                                <textarea class="form-control" 
+                                          id="notes" 
+                                          name="notes" 
+                                          rows="4"
+                                          placeholder="Any additional information about the candidate or referral..."></textarea>
+                                <small class="form-text text-muted">
+                                    Share any relevant details about the candidate's strengths, experience, or why they would be a good fit.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Referral Program Information -->
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Referral Program Benefits</h6>
+                            <ul class="mb-0">
+                                <li><strong>50 points</strong> - Candidate reaches interview stage</li>
+                                <li><strong>500 points</strong> - Candidate is hired</li>
+                                <li>Potential cash bonuses for successful hires</li>
+                                <li>Recognition in our Top Referrers leaderboard</li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('referrals_dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Submit Referral
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
