@@ -10,6 +10,7 @@ from services.ai_analysis import analyze_resume, extract_candidate_info
 from services.job_boards import search_relevant_jobs
 from services.candidate_database import search_candidates, get_candidate_statistics, get_similar_candidates
 from services.email_integration import EmailResumeProcessor
+from services.salesforce_integration import SalesforceIntegration
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
 
@@ -340,6 +341,91 @@ def search_jobs():
         'total_jobs': len(jobs),
         'jobs': jobs
     })
+
+@app.route('/salesforce')
+def salesforce_dashboard():
+    """Salesforce integration dashboard"""
+    sf_integration = SalesforceIntegration()
+    
+    # Check if Salesforce is configured
+    is_configured = all([
+        os.environ.get("SALESFORCE_USERNAME"),
+        os.environ.get("SALESFORCE_PASSWORD"),
+        os.environ.get("SALESFORCE_SECURITY_TOKEN")
+    ])
+    
+    # Get pipeline stats if connected
+    pipeline_stats = {}
+    if is_configured and sf_integration.sf:
+        pipeline_stats = sf_integration.get_recruitment_pipeline_stats()
+    
+    # Get recent candidates for sync
+    recent_candidates = ResumeAnalysis.query.order_by(
+        ResumeAnalysis.upload_date.desc()
+    ).limit(20).all()
+    
+    return render_template('salesforce.html',
+                         is_configured=is_configured,
+                         pipeline_stats=pipeline_stats,
+                         recent_candidates=recent_candidates)
+
+@app.route('/salesforce/sync/<int:candidate_id>', methods=['POST'])
+def sync_to_salesforce(candidate_id):
+    """Sync a single candidate to Salesforce"""
+    create_as = request.form.get('create_as', 'lead')
+    
+    sf_integration = SalesforceIntegration()
+    result = sf_integration.sync_candidate_to_salesforce(candidate_id, create_as)
+    
+    if result['success']:
+        flash(f'Successfully synced candidate to Salesforce as {create_as.title()}!', 'success')
+    else:
+        flash(f'Error syncing to Salesforce: {result["error"]}', 'error')
+    
+    return redirect(request.referrer or url_for('salesforce_dashboard'))
+
+@app.route('/salesforce/batch_sync', methods=['POST'])
+def batch_sync_to_salesforce():
+    """Sync multiple candidates to Salesforce"""
+    candidate_ids = request.form.getlist('candidate_ids', type=int)
+    create_as = request.form.get('create_as', 'lead')
+    
+    if not candidate_ids:
+        flash('No candidates selected for sync', 'warning')
+        return redirect(url_for('salesforce_dashboard'))
+    
+    sf_integration = SalesforceIntegration()
+    results = sf_integration.batch_sync_candidates(candidate_ids, create_as)
+    
+    # Show results
+    if results['successful']:
+        flash(f'Successfully synced {len(results["successful"])} candidates to Salesforce', 'success')
+    if results['duplicates']:
+        flash(f'{len(results["duplicates"])} candidates already exist in Salesforce', 'warning')
+    if results['failed']:
+        flash(f'Failed to sync {len(results["failed"])} candidates', 'error')
+    
+    return redirect(url_for('salesforce_dashboard'))
+
+@app.route('/salesforce/check_duplicate/<int:candidate_id>')
+def check_salesforce_duplicate(candidate_id):
+    """Check if a candidate exists in Salesforce"""
+    candidate = ResumeAnalysis.query.get_or_404(candidate_id)
+    
+    if not candidate.email:
+        return jsonify({"exists": False, "message": "No email address for candidate"})
+    
+    sf_integration = SalesforceIntegration()
+    duplicate = sf_integration.check_duplicate_candidate(candidate.email)
+    
+    if duplicate:
+        return jsonify({
+            "exists": True,
+            "type": duplicate['type'],
+            "records": duplicate['records']
+        })
+    else:
+        return jsonify({"exists": False})
 
 @app.errorhandler(413)
 def too_large(e):
