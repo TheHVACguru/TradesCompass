@@ -1,0 +1,50 @@
+John Smith
+Senior Software Engineer
+Email: john.smith@email.com
+Phone: (555) 123-4567
+Location: San Francisco, CA
+
+PROFESSIONAL SUMMARY
+Experienced software engineer with 8+ years developing scalable web applications using Python, React, and cloud technologies. Strong background in machine learning, API development, and agile methodologies. Proven track record of leading teams and delivering high-quality software solutions.
+
+TECHNICAL SKILLS
+Programming Languages: Python, JavaScript, TypeScript, Java, SQL
+Frameworks: React, Django, Flask, Node.js, Express
+Cloud & DevOps: AWS, Google Cloud, Docker, Kubernetes, CI/CD
+Databases: PostgreSQL, MongoDB, Redis, MySQL
+Machine Learning: TensorFlow, PyTorch, scikit-learn, pandas, numpy
+
+PROFESSIONAL EXPERIENCE
+
+Senior Software Engineer | TechCorp Inc. | San Francisco, CA | 2020 - Present
+• Led development of microservices architecture serving 10M+ users
+• Implemented machine learning models for recommendation system increasing engagement by 35%
+• Mentored team of 5 junior developers and conducted code reviews
+• Designed and developed RESTful APIs handling 100K+ requests per minute
+• Reduced infrastructure costs by 40% through optimization and automation
+
+Software Engineer | StartupXYZ | Palo Alto, CA | 2018 - 2020
+• Built full-stack web applications using React and Django
+• Developed real-time data processing pipelines using Apache Kafka
+• Implemented automated testing reducing bugs by 60%
+• Collaborated with product team to define technical requirements
+
+Junior Developer | WebSolutions LLC | San Jose, CA | 2016 - 2018
+• Developed responsive web interfaces using HTML, CSS, and JavaScript
+• Maintained and enhanced existing PHP applications
+• Participated in agile sprint planning and daily standups
+• Created technical documentation for internal tools
+
+EDUCATION
+Master of Science in Computer Science | Stanford University | 2016
+Bachelor of Science in Computer Engineering | UC Berkeley | 2014
+
+CERTIFICATIONS
+• AWS Certified Solutions Architect - Professional
+• Google Cloud Professional Data Engineer
+• Certified Kubernetes Administrator (CKA)
+
+PROJECTS
+• Open-source contributor to popular Python libraries
+• Built AI-powered chatbot handling customer support queries
+• Developed mobile app with React Native reaching 50K+ downloads

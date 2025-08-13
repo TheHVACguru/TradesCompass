@@ -98,13 +98,13 @@ def search_candidates(
     # Process candidates for response
     candidates = []
     for analysis in pagination.items:
-        # Get skills for this candidate
-        skills = CandidateSkill.query.filter_by(resume_analysis_id=analysis.id).all()
-        skill_data = [{'skill': s.skill, 'proficiency': s.proficiency_level, 'years': s.years_experience} for s in skills]
+        # Get skills for this candidate - using correct field names
+        skills = CandidateSkill.query.filter_by(candidate_id=analysis.id).all()
+        skill_data = [{'skill': s.skill_name, 'proficiency': s.skill_level, 'years': s.years_experience} for s in skills]
         
-        # Get tags for this candidate
-        tags = CandidateTag.query.filter_by(resume_analysis_id=analysis.id).all()
-        tag_data = [{'tag': t.tag, 'color': t.color} for t in tags]
+        # Get tags for this candidate - using correct field names
+        tags = CandidateTag.query.filter_by(candidate_id=analysis.id).all()
+        tag_data = [{'tag': t.tag_name, 'color': t.tag_color} for t in tags]
         
         candidate_data = {
             'id': analysis.id,
