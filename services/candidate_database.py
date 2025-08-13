@@ -11,6 +11,8 @@ def search_candidates(
     max_risk_score: float = None,
     min_reward_score: float = None,
     location: str = None,
+    status: str = None,
+    sort_by: str = 'date_desc',
     experience_keywords: List[str] = None,
     page: int = 1,
     per_page: int = 20
@@ -24,6 +26,8 @@ def search_candidates(
         max_risk_score: Maximum acceptable risk score
         min_reward_score: Minimum reward score
         location: Location filter
+        status: Filter by candidate status (active, contacted, archived)
+        sort_by: Sort order (date_desc, date_asc, fit_desc, risk_asc)
         experience_keywords: Keywords to search in resume text
         page: Page number for pagination
         per_page: Results per page
@@ -64,11 +68,25 @@ def search_candidates(
     if location:
         query = query.filter(ResumeAnalysis.resume_text.ilike(f'%{location}%'))
     
-    # Order by overall fit rating (descending) and upload date (descending)
-    query = query.order_by(
-        ResumeAnalysis.overall_fit_rating.desc().nulls_last(),
-        ResumeAnalysis.upload_date.desc()
-    )
+    # Filter by status
+    if status and status in ['active', 'contacted', 'archived']:
+        query = query.filter(ResumeAnalysis.status == status)
+    
+    # Apply sorting based on sort_by parameter
+    if sort_by == 'date_asc':
+        query = query.order_by(ResumeAnalysis.upload_date.asc())
+    elif sort_by == 'fit_desc':
+        query = query.order_by(
+            ResumeAnalysis.overall_fit_rating.desc().nulls_last(),
+            ResumeAnalysis.upload_date.desc()
+        )
+    elif sort_by == 'risk_asc':
+        query = query.order_by(
+            ResumeAnalysis.risk_factor_score.asc().nulls_last(),
+            ResumeAnalysis.upload_date.desc()
+        )
+    else:  # date_desc (default)
+        query = query.order_by(ResumeAnalysis.upload_date.desc())
     
     # Paginate results
     pagination = query.paginate(
@@ -80,10 +98,20 @@ def search_candidates(
     # Process candidates for response
     candidates = []
     for analysis in pagination.items:
+        # Get skills for this candidate
+        skills = CandidateSkill.query.filter_by(resume_analysis_id=analysis.id).all()
+        skill_data = [{'skill': s.skill, 'proficiency': s.proficiency_level, 'years': s.years_experience} for s in skills]
+        
+        # Get tags for this candidate
+        tags = CandidateTag.query.filter_by(resume_analysis_id=analysis.id).all()
+        tag_data = [{'tag': t.tag, 'color': t.color} for t in tags]
+        
         candidate_data = {
             'id': analysis.id,
             'name': f"{analysis.first_name or 'Unknown'} {analysis.last_name or ''}".strip(),
             'email': analysis.email,
+            'phone': analysis.phone,
+            'location': analysis.location,
             'filename': analysis.filename,
             'upload_date': analysis.upload_date.isoformat() if analysis.upload_date else None,
             'overall_fit_rating': analysis.overall_fit_rating,
@@ -91,7 +119,11 @@ def search_candidates(
             'reward_factor_score': analysis.reward_factor_score,
             'strengths': json.loads(analysis.candidate_strengths) if analysis.candidate_strengths else [],
             'weaknesses': json.loads(analysis.candidate_weaknesses) if analysis.candidate_weaknesses else [],
-            'resume_snippet': analysis.resume_text[:200] + '...' if analysis.resume_text and len(analysis.resume_text) > 200 else analysis.resume_text
+            'resume_snippet': analysis.resume_text[:200] + '...' if analysis.resume_text and len(analysis.resume_text) > 200 else analysis.resume_text,
+            'status': analysis.status or 'active',
+            'source': analysis.source or 'manual_upload',
+            'skills': skill_data,
+            'tags': tag_data
         }
         candidates.append(candidate_data)
     

@@ -7,11 +7,50 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <h1>
-                <i class="fas fa-users me-2"></i>
-                Candidate Database
-            </h1>
-            <p class="lead text-muted">Search and manage your candidate pool</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>
+                        <i class="fas fa-users me-2"></i>
+                        Candidate Database
+                    </h1>
+                    <p class="lead text-muted">Search and manage your candidate pool</p>
+                </div>
+                <div>
+                    <!-- Quick Actions -->
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('index') }}" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Add Candidate
+                        </a>
+                        <a href="{{ url_for('email_processing') }}" class="btn btn-primary">
+                            <i class="fas fa-envelope me-2"></i>Process Emails
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Filters -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('candidate_database', min_fit_rating=8.0) }}" 
+                   class="btn btn-sm {{ 'btn-success' if current_filters.min_fit_rating == 8.0 else 'btn-outline-success' }}">
+                    <i class="fas fa-star me-1"></i>Top Rated (8+)
+                </a>
+                <a href="{{ url_for('candidate_database', max_risk_score=3.0) }}" 
+                   class="btn btn-sm {{ 'btn-info' if current_filters.max_risk_score == 3.0 else 'btn-outline-info' }}">
+                    <i class="fas fa-shield-alt me-1"></i>Low Risk (≤3)
+                </a>
+                <a href="{{ url_for('candidate_database', min_reward_score=7.0) }}" 
+                   class="btn btn-sm {{ 'btn-warning' if current_filters.min_reward_score == 7.0 else 'btn-outline-warning' }}">
+                    <i class="fas fa-trophy me-1"></i>High Reward (7+)
+                </a>
+                <a href="{{ url_for('candidate_database') }}" 
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>Clear All
+                </a>
+            </div>
         </div>
     </div>
 
@@ -27,51 +66,79 @@
                 <div class="card-body">
                     <form method="GET" action="{{ url_for('candidate_database') }}">
                         <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Skills (comma-separated)</label>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label"><i class="fas fa-code me-1"></i>Skills (comma-separated)</label>
                                 <input type="text" class="form-control" name="skills" 
                                        value="{{ ', '.join(current_filters.skills) if current_filters.skills else '' }}"
-                                       placeholder="Python, React, AWS">
+                                       placeholder="Python, React, AWS, Machine Learning">
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Min Fit Rating</label>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-star me-1"></i>Min Fit Rating</label>
                                 <select class="form-select" name="min_fit_rating">
                                     <option value="">Any</option>
-                                    <option value="8.0" {{ 'selected' if current_filters.min_fit_rating == 8.0 }}>8.0+</option>
-                                    <option value="7.0" {{ 'selected' if current_filters.min_fit_rating == 7.0 }}>7.0+</option>
-                                    <option value="6.0" {{ 'selected' if current_filters.min_fit_rating == 6.0 }}>6.0+</option>
-                                    <option value="5.0" {{ 'selected' if current_filters.min_fit_rating == 5.0 }}>5.0+</option>
+                                    <option value="9.0" {{ 'selected' if current_filters.min_fit_rating == 9.0 }}>9.0+ (Excellent)</option>
+                                    <option value="8.0" {{ 'selected' if current_filters.min_fit_rating == 8.0 }}>8.0+ (Very Good)</option>
+                                    <option value="7.0" {{ 'selected' if current_filters.min_fit_rating == 7.0 }}>7.0+ (Good)</option>
+                                    <option value="6.0" {{ 'selected' if current_filters.min_fit_rating == 6.0 }}>6.0+ (Above Average)</option>
+                                    <option value="5.0" {{ 'selected' if current_filters.min_fit_rating == 5.0 }}>5.0+ (Average)</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Max Risk Score</label>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-shield-alt me-1"></i>Max Risk Score</label>
                                 <select class="form-select" name="max_risk_score">
                                     <option value="">Any</option>
-                                    <option value="3.0" {{ 'selected' if current_filters.max_risk_score == 3.0 }}>≤3.0</option>
-                                    <option value="5.0" {{ 'selected' if current_filters.max_risk_score == 5.0 }}>≤5.0</option>
-                                    <option value="7.0" {{ 'selected' if current_filters.max_risk_score == 7.0 }}>≤7.0</option>
+                                    <option value="3.0" {{ 'selected' if current_filters.max_risk_score == 3.0 }}>≤3.0 (Low Risk)</option>
+                                    <option value="5.0" {{ 'selected' if current_filters.max_risk_score == 5.0 }}>≤5.0 (Medium Risk)</option>
+                                    <option value="7.0" {{ 'selected' if current_filters.max_risk_score == 7.0 }}>≤7.0 (Acceptable)</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Location</label>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-trophy me-1"></i>Min Reward</label>
+                                <select class="form-select" name="min_reward_score">
+                                    <option value="">Any</option>
+                                    <option value="7.0" {{ 'selected' if current_filters.min_reward_score == 7.0 }}>7.0+ (High)</option>
+                                    <option value="5.0" {{ 'selected' if current_filters.min_reward_score == 5.0 }}>5.0+ (Medium)</option>
+                                    <option value="3.0" {{ 'selected' if current_filters.min_reward_score == 3.0 }}>3.0+ (Low)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i>Location</label>
                                 <input type="text" class="form-control" name="location" 
                                        value="{{ current_filters.location or '' }}"
-                                       placeholder="San Francisco, CA">
+                                       placeholder="City, State">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-9 mb-3">
-                                <label class="form-label">Keywords (experience, education, etc.)</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-key me-1"></i>Keywords (experience, education, etc.)</label>
                                 <input type="text" class="form-control" name="keywords" 
                                        value="{{ ', '.join(current_filters.keywords) if current_filters.keywords else '' }}"
-                                       placeholder="machine learning, startup, MBA">
+                                       placeholder="machine learning, startup, MBA, senior developer">
                             </div>
-                            <div class="col-md-3 mb-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary me-2">
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-flag me-1"></i>Status</label>
+                                <select class="form-select" name="status">
+                                    <option value="">All</option>
+                                    <option value="active" {{ 'selected' if current_filters.get('status') == 'active' }}>Active</option>
+                                    <option value="contacted" {{ 'selected' if current_filters.get('status') == 'contacted' }}>Contacted</option>
+                                    <option value="archived" {{ 'selected' if current_filters.get('status') == 'archived' }}>Archived</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label"><i class="fas fa-sort me-1"></i>Sort By</label>
+                                <select class="form-select" name="sort_by">
+                                    <option value="date_desc" {{ 'selected' if current_filters.get('sort_by') == 'date_desc' }}>Newest First</option>
+                                    <option value="date_asc" {{ 'selected' if current_filters.get('sort_by') == 'date_asc' }}>Oldest First</option>
+                                    <option value="fit_desc" {{ 'selected' if current_filters.get('sort_by') == 'fit_desc' }}>Highest Fit</option>
+                                    <option value="risk_asc" {{ 'selected' if current_filters.get('sort_by') == 'risk_asc' }}>Lowest Risk</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2 w-100">
                                     <i class="fas fa-search me-1"></i>Search
                                 </button>
                                 <a href="{{ url_for('candidate_database') }}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-1"></i>Clear
+                                    <i class="fas fa-times"></i>
                                 </a>
                             </div>
                         </div>
@@ -164,13 +231,28 @@
                             </div>
                         </div>
 
+                        <!-- Skills Display -->
+                        {% if candidate.skills %}
+                            <div class="mb-3">
+                                <small class="text-muted"><strong><i class="fas fa-code me-1"></i>Skills:</strong></small>
+                                <div class="mt-1">
+                                    {% for skill in candidate.skills[:5] %}
+                                        <span class="badge bg-primary me-1 mb-1">{{ skill.skill }}</span>
+                                    {% endfor %}
+                                    {% if candidate.skills|length > 5 %}
+                                        <span class="badge bg-secondary mb-1">+{{ candidate.skills|length - 5 }} more</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
                         <!-- Key Strengths Preview -->
                         {% if candidate.strengths %}
                             <div class="mb-3">
-                                <small class="text-muted"><strong>Key Strengths:</strong></small>
+                                <small class="text-muted"><strong><i class="fas fa-check-circle me-1"></i>Key Strengths:</strong></small>
                                 <div class="mt-1">
                                     {% for strength in candidate.strengths[:2] %}
-                                        <small class="d-block">• {{ strength[:80] }}{% if strength|length > 80 %}...{% endif %}</small>
+                                        <small class="d-block text-success">• {{ strength[:80] }}{% if strength|length > 80 %}...{% endif %}</small>
                                     {% endfor %}
                                 </div>
                             </div>

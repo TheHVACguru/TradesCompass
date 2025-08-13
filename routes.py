@@ -157,12 +157,18 @@ def candidate_database():
     per_page = 20
     
     # Get search filters from query parameters
-    skills = request.args.getlist('skills')
+    skills_str = request.args.get('skills', '').strip()
+    skills = [s.strip() for s in skills_str.split(',') if s.strip()] if skills_str else []
+    
     min_fit_rating = request.args.get('min_fit_rating', type=float)
     max_risk_score = request.args.get('max_risk_score', type=float)
     min_reward_score = request.args.get('min_reward_score', type=float)
-    location = request.args.get('location')
-    experience_keywords = request.args.getlist('keywords')
+    location = request.args.get('location', '').strip() or None
+    status = request.args.get('status', '').strip() or None
+    sort_by = request.args.get('sort_by', 'date_desc')
+    
+    keywords_str = request.args.get('keywords', '').strip()
+    experience_keywords = [k.strip() for k in keywords_str.split(',') if k.strip()] if keywords_str else []
     
     # Search candidates
     search_results = search_candidates(
@@ -171,6 +177,8 @@ def candidate_database():
         max_risk_score=max_risk_score,
         min_reward_score=min_reward_score,
         location=location,
+        status=status,
+        sort_by=sort_by,
         experience_keywords=experience_keywords if experience_keywords else None,
         page=page,
         per_page=per_page
@@ -188,7 +196,9 @@ def candidate_database():
                              'max_risk_score': max_risk_score,
                              'min_reward_score': min_reward_score,
                              'location': location,
-                             'keywords': experience_keywords
+                             'keywords': experience_keywords,
+                             'status': status,
+                             'sort_by': sort_by
                          })
 
 @app.route('/candidates/<int:candidate_id>')
