@@ -1,0 +1,16 @@
+I just tried the new Smart Search feature in TalentCompass AI and confirmed that searches like “Python developer Tampa” return “0 found” across all match types (fuzzy, boolean and semantic).  That suggests the front‑end is working (it updates the query string and renders the results section), but the server isn’t returning any candidate data.  Here are some steps you can take to diagnose and resolve the issue:
+	1.	Verify your external API integration
+	•	If Smart Search relies on a third‑party API (e.g., LinkedIn, GitHub, People Data Labs, etc.), double‑check that your API key and base URL are correctly configured in your environment variables.
+	•	Use print statements or logging on the server side to confirm that your API call is being made and what response you receive.  In development, you can temporarily log the raw response to the console.
+	2.	Check for CORS or network errors
+	•	Replit’s hosting environment may block direct client‑side calls to external APIs.  If the search is performed from the browser, open the developer console (in Chrome: Ctrl+Shift+I → “Network”) and look for failed requests or CORS errors.  If you see a CORS error, move the API call to your Flask/Node backend and forward results to the client.
+	3.	Seed your external search index
+	•	If you’re using a search index (e.g., ElasticSearch, Pinecone, etc.), make sure you’ve actually indexed candidate data.  An empty index will always return zero results.  Populate it with a few example profiles and rerun the search to confirm that results appear.
+	4.	Normalize and parse search queries
+	•	The search field currently accepts free‑text.  Ensure your backend properly parses the query (e.g., splits skills, location, etc.) before passing it to the API.  You can test a very simple query like “engineer” to see if it behaves differently.
+	5.	Handle API errors gracefully
+	•	Add error handling for cases where the API rate‑limits, returns an error code or times out.  Display a message to the user (instead of just “0 found”) if the external service is unreachable.
+	6.	Check route and parameter handling
+	•	Your smart-search route should capture the q and type parameters and use them to build the correct API request.  Verify that the parameter names in your form (name="q" and name="type") match what the backend expects.
+
+By checking the API call and ensuring that your backend is receiving data, you should be able to identify why no candidates are being returned.  Once you’re getting a proper response from the external service, the Smart Search results should populate as intended.

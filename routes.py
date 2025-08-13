@@ -598,14 +598,28 @@ def smart_search():
     
     results = []
     if query:
-        if search_type == 'fuzzy':
-            results = search_service.fuzzy_search(query, threshold=0.6)
-        elif search_type == 'boolean':
-            results = search_service.boolean_search(query)
-        elif search_type == 'semantic':
-            results = search_service.semantic_search(query, limit=20)
+        try:
+            if search_type == 'fuzzy':
+                results = search_service.fuzzy_search(query, threshold=0.3)  # Lower threshold for better matches
+            elif search_type == 'boolean':
+                results = search_service.boolean_search(query)
+            elif search_type == 'semantic':
+                results = search_service.semantic_search(query, limit=20)
+            
+            # Log search for debugging
+            logging.info(f"Smart search: query='{query}', type={search_type}, found={len(results)} results")
+        except Exception as e:
+            logging.error(f"Smart search error: {e}")
+            flash(f'Search error: {str(e)}', 'error')
     
-    return render_template('smart_search.html', results=results, query=query, search_type=search_type)
+    # Also get total candidate count for display
+    total_candidates = ResumeAnalysis.query.count()
+    
+    return render_template('smart_search.html', 
+                         results=results, 
+                         query=query, 
+                         search_type=search_type,
+                         total_candidates=total_candidates)
 
 # ============= Referral Management Routes =============
 
@@ -787,3 +801,111 @@ def view_talent_pool(pool_id):
     members = pool_service.get_pool_members(pool_id)
     
     return render_template('view_talent_pool.html', pool=pool, stats=stats, members=members)
+
+# ============= Test Data Route =============
+
+@app.route('/add-test-candidates')
+def add_test_candidates():
+    """Add sample candidates for testing Smart Search"""
+    from datetime import datetime
+    import json
+    
+    try:
+        # Check if test candidates already exist
+        test_email = "john.smith@example.com"
+        existing = ResumeAnalysis.query.filter_by(email=test_email).first()
+        if existing:
+            flash('Test candidates already exist in database', 'info')
+            return redirect(url_for('smart_search'))
+        
+        # Create sample candidates
+        test_candidates = [
+            {
+                'first_name': 'John',
+                'last_name': 'Smith',
+                'email': 'john.smith@example.com',
+                'phone': '555-0101',
+                'location': 'Tampa, FL',
+                'resume_text': 'Senior Python Developer with 8 years experience in machine learning and data science.',
+                'candidate_strengths': json.dumps(['Python', 'Machine Learning', 'Data Science', 'AWS']),
+                'overall_fit_rating': 8.5,
+                'skills': ['Python', 'Machine Learning', 'TensorFlow', 'AWS', 'Docker']
+            },
+            {
+                'first_name': 'Sarah',
+                'last_name': 'Johnson',
+                'email': 'sarah.johnson@example.com',
+                'phone': '555-0102',
+                'location': 'San Francisco, CA',
+                'resume_text': 'Full-stack JavaScript developer specializing in React and Node.js.',
+                'candidate_strengths': json.dumps(['JavaScript', 'React', 'Node.js', 'MongoDB']),
+                'overall_fit_rating': 7.8,
+                'skills': ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Express']
+            },
+            {
+                'first_name': 'Michael',
+                'last_name': 'Chen',
+                'email': 'michael.chen@example.com',
+                'phone': '555-0103',
+                'location': 'Austin, TX',
+                'resume_text': 'DevOps Engineer with expertise in Kubernetes and cloud infrastructure.',
+                'candidate_strengths': json.dumps(['Kubernetes', 'AWS', 'Terraform', 'CI/CD']),
+                'overall_fit_rating': 8.2,
+                'skills': ['Kubernetes', 'AWS', 'Docker', 'Terraform', 'Jenkins']
+            },
+            {
+                'first_name': 'Emily',
+                'last_name': 'Davis',
+                'email': 'emily.davis@example.com',
+                'phone': '555-0104',
+                'location': 'Tampa, FL',
+                'resume_text': 'Data Analyst with strong Python and SQL skills, experienced in business intelligence.',
+                'candidate_strengths': json.dumps(['Python', 'SQL', 'Tableau', 'Data Analysis']),
+                'overall_fit_rating': 7.5,
+                'skills': ['Python', 'SQL', 'Tableau', 'Excel', 'Power BI']
+            },
+            {
+                'first_name': 'Robert',
+                'last_name': 'Wilson',
+                'email': 'robert.wilson@example.com',
+                'phone': '555-0105',
+                'location': 'New York, NY',
+                'resume_text': 'Java Backend Developer with microservices and Spring Boot experience.',
+                'candidate_strengths': json.dumps(['Java', 'Spring Boot', 'Microservices', 'SQL']),
+                'overall_fit_rating': 7.9,
+                'skills': ['Java', 'Spring Boot', 'MySQL', 'Redis', 'Kafka']
+            }
+        ]
+        
+        # Add candidates to database
+        for candidate_data in test_candidates:
+            # Create candidate
+            skills = candidate_data.pop('skills', [])
+            candidate = ResumeAnalysis(
+                filename=f"test_resume_{candidate_data['email']}.pdf",
+                upload_date=datetime.utcnow(),
+                source='test_data',
+                status='active',
+                **candidate_data
+            )
+            db.session.add(candidate)
+            db.session.flush()  # Get the ID
+            
+            # Add skills
+            for skill_name in skills:
+                skill = CandidateSkill(
+                    candidate_id=candidate.id,
+                    skill_name=skill_name,
+                    skill_level='intermediate'
+                )
+                db.session.add(skill)
+        
+        db.session.commit()
+        flash(f'Successfully added {len(test_candidates)} test candidates to the database', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error adding test candidates: {e}")
+        flash(f'Error adding test candidates: {str(e)}', 'error')
+    
+    return redirect(url_for('smart_search'))

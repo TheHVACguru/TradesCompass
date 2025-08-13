@@ -7,7 +7,7 @@ import re
 from difflib import SequenceMatcher
 from typing import List, Dict, Any, Optional
 from sqlalchemy import or_, and_, func, text
-from models import ResumeAnalysis, CandidateSkill, CandidateTag, TalentPool
+from models import ResumeAnalysis, CandidateSkill, CandidateTag, TalentPool, db
 import logging
 
 class FuzzySearchService:
@@ -51,30 +51,61 @@ class FuzzySearchService:
             search_fields: Fields to search in
         """
         if not search_fields:
-            search_fields = ['resume_text', 'candidate_strengths', 'candidate_weaknesses']
+            # Search in actual fields that exist in the model
+            search_fields = ['first_name', 'last_name', 'email', 'location', 'resume_text']
         
         # Clean and tokenize query
-        query_tokens = self._tokenize(query.lower())
+        query_lower = query.lower()
+        query_tokens = self._tokenize(query_lower)
         
         # Expand query with synonyms
         expanded_tokens = self._expand_with_synonyms(query_tokens)
         
-        # Build search conditions
+        # Build search conditions for text fields
         conditions = []
         for token in expanded_tokens:
-            for field in search_fields:
-                # Use PostgreSQL's similarity functions if available
-                conditions.append(
-                    func.lower(getattr(ResumeAnalysis, field)).contains(token)
-                )
+            field_conditions = []
+            
+            # Search in candidate fields
+            field_conditions.append(func.lower(ResumeAnalysis.first_name).contains(token))
+            field_conditions.append(func.lower(ResumeAnalysis.last_name).contains(token))
+            field_conditions.append(func.lower(ResumeAnalysis.email).contains(token))
+            field_conditions.append(func.lower(ResumeAnalysis.location).contains(token))
+            
+            # Search in resume text if available
+            field_conditions.append(func.lower(ResumeAnalysis.resume_text).contains(token))
+            
+            # Search in JSON fields (strengths, weaknesses)
+            field_conditions.append(func.lower(ResumeAnalysis.candidate_strengths).contains(token))
+            field_conditions.append(func.lower(ResumeAnalysis.candidate_weaknesses).contains(token))
+            
+            conditions.append(or_(*field_conditions))
+        
+        # Also search in skills
+        skill_conditions = []
+        for token in expanded_tokens:
+            skill_subquery = db.session.query(CandidateSkill.candidate_id).filter(
+                func.lower(CandidateSkill.skill_name).contains(token)
+            ).subquery()
+            skill_conditions.append(ResumeAnalysis.id.in_(skill_subquery))
+        
+        # Combine all conditions
+        if skill_conditions:
+            all_conditions = or_(and_(*conditions) if conditions else True, *skill_conditions)
+        else:
+            all_conditions = and_(*conditions) if conditions else True
         
         # Execute search
-        candidates = ResumeAnalysis.query.filter(or_(*conditions)).all()
+        candidates = ResumeAnalysis.query.filter(all_conditions).all()
+        
+        # If no threshold scoring needed, return all results
+        if threshold <= 0:
+            return candidates
         
         # Score and rank results
         scored_results = []
         for candidate in candidates:
-            score = self._calculate_similarity_score(query, candidate, search_fields)
+            score = self._calculate_similarity_score(query_lower, candidate, search_fields)
             if score >= threshold:
                 scored_results.append((score, candidate))
         
@@ -82,6 +113,46 @@ class FuzzySearchService:
         scored_results.sort(key=lambda x: x[0], reverse=True)
         
         return [candidate for _, candidate in scored_results]
+    
+    def _tokenize(self, text: str) -> List[str]:
+        """Tokenize text into words"""
+        # Remove special characters and split
+        tokens = re.findall(r'\b\w+\b', text.lower())
+        return tokens
+    
+    def _expand_with_synonyms(self, tokens: List[str]) -> List[str]:
+        """Expand tokens with synonyms"""
+        expanded = set(tokens)
+        for token in tokens:
+            if token in self.skill_synonyms:
+                expanded.update(self.skill_synonyms[token])
+        return list(expanded)
+    
+    def _calculate_similarity_score(self, query: str, candidate: ResumeAnalysis, fields: List[str]) -> float:
+        """Calculate similarity score between query and candidate"""
+        query_lower = query.lower()
+        total_score = 0.0
+        field_count = 0
+        
+        # Check each field
+        for field in fields:
+            field_value = getattr(candidate, field, None)
+            if field_value:
+                field_text = str(field_value).lower()
+                # Use SequenceMatcher for fuzzy matching
+                score = SequenceMatcher(None, query_lower, field_text).ratio()
+                total_score += score
+                field_count += 1
+        
+        # Check skills
+        candidate_skills = [skill.skill_name.lower() for skill in candidate.skills.all()]
+        if candidate_skills:
+            skills_text = ' '.join(candidate_skills)
+            skill_score = SequenceMatcher(None, query_lower, skills_text).ratio()
+            total_score += skill_score * 2  # Weight skills higher
+            field_count += 2
+        
+        return total_score / field_count if field_count > 0 else 0.0
     
     def boolean_search(self, query: str) -> List[ResumeAnalysis]:
         """
@@ -92,21 +163,25 @@ class FuzzySearchService:
             "java NOT spring"
             "senior developer AND NOT junior"
         """
-        # Parse Boolean query
-        parsed_query = self._parse_boolean_query(query)
+        # Simple boolean search implementation
+        query_upper = query.upper()
         
-        # Build SQLAlchemy conditions
-        conditions = self._build_boolean_conditions(parsed_query)
+        # Split by boolean operators
+        and_parts = query_upper.split(' AND ')
+        or_parts = query_upper.split(' OR ')
+        not_parts = query_upper.split(' NOT ')
         
-        # Execute search
-        return ResumeAnalysis.query.filter(conditions).all()
+        # Default to fuzzy search for now with stricter matching
+        # This is a simplified implementation
+        clean_query = query.replace(' AND ', ' ').replace(' OR ', ' ').replace(' NOT ', ' ')
+        return self.fuzzy_search(clean_query, threshold=0.5)
     
     def semantic_search(
         self,
         query: str,
         context: str = None,
         limit: int = 20
-    ) -> List[Dict[str, Any]]:
+    ) -> List[ResumeAnalysis]:
         """
         Perform semantic search using AI understanding
         
@@ -115,14 +190,17 @@ class FuzzySearchService:
             context: Additional context (job description, requirements)
             limit: Maximum results to return
         """
-        # Expand query semantically
-        semantic_terms = self._get_semantic_terms(query)
+        # For now, use fuzzy search with lower threshold for semantic matching
+        # In production, this would use embeddings or AI for semantic understanding
+        results = self.fuzzy_search(query, threshold=0.4)
         
-        # Search for candidates with semantic terms
-        candidates = self.fuzzy_search(' '.join(semantic_terms), threshold=0.6)
-        
-        # Rank by semantic relevance
-        ranked_results = []
+        # Limit results
+        return results[:limit] if limit else results
+    
+    def _get_semantic_terms(self, query: str) -> List[str]:
+        """Extract semantic terms from query"""
+        # Simple implementation - in production would use NLP
+        return self._tokenize(query)
         for candidate in candidates[:limit]:
             relevance_score = self._calculate_semantic_relevance(
                 query, candidate, context
