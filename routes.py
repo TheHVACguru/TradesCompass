@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from urllib.parse import urlparse
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.utils import secure_filename
 from app import app, db
@@ -17,6 +18,23 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def safe_redirect(referrer_url, fallback_endpoint):
+    """Safely redirect to referrer only if it's from the same origin"""
+    if not referrer_url:
+        return redirect(url_for(fallback_endpoint))
+    
+    try:
+        parsed_referrer = urlparse(referrer_url)
+        # Only allow redirects with no netloc (relative URLs) or empty scheme
+        # This prevents redirects to external sites
+        if not parsed_referrer.netloc or not parsed_referrer.scheme:
+            return redirect(referrer_url)
+    except Exception:
+        pass
+    
+    # Fallback to safe internal route
+    return redirect(url_for(fallback_endpoint))
 
 @app.route('/')
 def index():
@@ -382,7 +400,7 @@ def sync_to_salesforce(candidate_id):
     else:
         flash(f'Error syncing to Salesforce: {result["error"]}', 'error')
     
-    return redirect(request.referrer or url_for('salesforce_dashboard'))
+    return safe_redirect(request.referrer, 'salesforce_dashboard')
 
 @app.route('/salesforce/batch_sync', methods=['POST'])
 def batch_sync_to_salesforce():
