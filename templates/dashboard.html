@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Resume Scanner{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Recruitment Dashboard
+            </h1>
+            <p class="lead text-muted">Overview of your candidate database and recruiting activity</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3>{{ stats.total_candidates }}</h3>
+                    <p class="text-muted">Total Candidates</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-star fa-3x text-success mb-3"></i>
+                    <h3>{{ stats.fit_distribution.high_fit }}</h3>
+                    <p class="text-muted">High Fit (8.0+)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-shield-alt fa-3x text-info mb-3"></i>
+                    <h3>{{ stats.risk_distribution.low_risk }}</h3>
+                    <p class="text-muted">Low Risk (≤3.0)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <i class="fas fa-calendar-plus fa-3x text-warning mb-3"></i>
+                    <h3>{{ stats.recent_uploads }}</h3>
+                    <p class="text-muted">Recent (30 days)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Fit Rating Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>High Fit (8.0+)</span>
+                            <span>{{ stats.fit_distribution.high_fit }}</span>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: {{ (stats.fit_distribution.high_fit / (stats.total_candidates or 1) * 100) }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Medium Fit (6.0-8.0)</span>
+                            <span>{{ stats.fit_distribution.medium_fit }}</span>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-warning" style="width: {{ (stats.fit_distribution.medium_fit / (stats.total_candidates or 1) * 100) }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Low Fit (<6.0)</span>
+                            <span>{{ stats.fit_distribution.low_fit }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" style="width: {{ (stats.fit_distribution.low_fit / (stats.total_candidates or 1) * 100) }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-code me-2"></i>Top Skills
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.common_skills %}
+                        {% for skill in stats.common_skills[:8] %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ skill.skill }}</span>
+                                <span>{{ skill.count }}</span>
+                            </div>
+                            <div class="progress" style="height: 4px;">
+                                <div class="progress-bar" style="width: {{ (skill.count / stats.common_skills[0].count * 100) }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No skill data available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Candidates and Recent Activity -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-trophy me-2"></i>Top Candidates
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if top_candidates %}
+                        {% for candidate in top_candidates %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>
+                                    {% if candidate.first_name and candidate.last_name %}
+                                        {{ candidate.first_name }} {{ candidate.last_name }}
+                                    {% else %}
+                                        Unknown Candidate
+                                    {% endif %}
+                                </strong>
+                                <br>
+                                <small class="text-muted">{{ candidate.filename }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{{ 'success' if candidate.overall_fit_rating >= 8 else 'warning' if candidate.overall_fit_rating >= 6 else 'danger' }}">
+                                    {{ "%.1f"|format(candidate.overall_fit_rating) }}/10
+                                </span>
+                                <br>
+                                <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}" class="btn btn-sm btn-outline-primary mt-1">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No candidates with ratings available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_analyses %}
+                        {% for analysis in recent_analyses %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>
+                                    {% if analysis.first_name and analysis.last_name %}
+                                        {{ analysis.first_name }} {{ analysis.last_name }}
+                                    {% else %}
+                                        Unknown Candidate
+                                    {% endif %}
+                                </strong>
+                                <br>
+                                <small class="text-muted">
+                                    {{ analysis.upload_date.strftime('%Y-%m-%d %H:%M') }} • 
+                                    <i class="fas fa-{{ 'envelope' if analysis.source == 'email' else 'upload' }} me-1"></i>
+                                    {{ analysis.source.replace('_', ' ').title() }}
+                                </small>
+                            </div>
+                            <div>
+                                {% if analysis.overall_fit_rating %}
+                                    <span class="badge bg-{{ 'success' if analysis.overall_fit_rating >= 7 else 'warning' if analysis.overall_fit_rating >= 5 else 'danger' }}">
+                                        {{ "%.1f"|format(analysis.overall_fit_rating) }}/10
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No recent activity</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-upload me-2"></i>Upload Resume
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('candidate_database') }}?min_fit_rating=8.0" class="btn btn-success w-100">
+                                <i class="fas fa-star me-2"></i>High Fit Candidates
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('email_processing') }}" class="btn btn-info w-100">
+                                <i class="fas fa-envelope me-2"></i>Process Emails
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('candidate_database') }}?max_risk_score=3.0" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-shield-alt me-2"></i>Low Risk Candidates
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

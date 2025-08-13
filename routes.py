@@ -4,10 +4,12 @@ import logging
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.utils import secure_filename
 from app import app, db
-from models import ResumeAnalysis
+from models import ResumeAnalysis, CandidateSkill, CandidateTag
 from services.text_extraction import extract_text_from_file
 from services.ai_analysis import analyze_resume, extract_candidate_info
-from services.ziprecruiter_api import search_relevant_jobs
+from services.job_boards import search_relevant_jobs
+from services.candidate_database import search_candidates, get_candidate_statistics, get_similar_candidates
+from services.email_integration import EmailResumeProcessor
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
 
@@ -72,6 +74,8 @@ def upload_file():
                 first_name=candidate_info.get('first_name'),
                 last_name=candidate_info.get('last_name'),
                 email=candidate_info.get('email'),
+                phone=candidate_info.get('phone'),
+                location=candidate_info.get('location'),
                 resume_text=resume_text,
                 candidate_strengths=json.dumps(analysis_result.get('candidate_strengths', [])),
                 candidate_weaknesses=json.dumps(analysis_result.get('candidate_weaknesses', [])),
@@ -81,7 +85,8 @@ def upload_file():
                 reward_factor_explanation=analysis_result.get('reward_factor', {}).get('explanation'),
                 overall_fit_rating=analysis_result.get('overall_fit_rating'),
                 justification=analysis_result.get('justification_for_rating'),
-                relevant_jobs=json.dumps(relevant_jobs)
+                relevant_jobs=json.dumps(relevant_jobs),
+                source='manual_upload'
             )
             
             db.session.add(resume_analysis)
@@ -125,6 +130,216 @@ def view_history():
     """View all past analyses"""
     analyses = ResumeAnalysis.query.order_by(ResumeAnalysis.upload_date.desc()).all()
     return render_template('history.html', analyses=analyses)
+
+@app.route('/candidates')
+def candidate_database():
+    """Advanced candidate search and database view"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    
+    # Get search filters from query parameters
+    skills = request.args.getlist('skills')
+    min_fit_rating = request.args.get('min_fit_rating', type=float)
+    max_risk_score = request.args.get('max_risk_score', type=float)
+    min_reward_score = request.args.get('min_reward_score', type=float)
+    location = request.args.get('location')
+    experience_keywords = request.args.getlist('keywords')
+    
+    # Search candidates
+    search_results = search_candidates(
+        skills=skills if skills else None,
+        min_fit_rating=min_fit_rating,
+        max_risk_score=max_risk_score,
+        min_reward_score=min_reward_score,
+        location=location,
+        experience_keywords=experience_keywords if experience_keywords else None,
+        page=page,
+        per_page=per_page
+    )
+    
+    # Get statistics
+    stats = get_candidate_statistics()
+    
+    return render_template('candidates.html', 
+                         search_results=search_results,
+                         stats=stats,
+                         current_filters={
+                             'skills': skills,
+                             'min_fit_rating': min_fit_rating,
+                             'max_risk_score': max_risk_score,
+                             'min_reward_score': min_reward_score,
+                             'location': location,
+                             'keywords': experience_keywords
+                         })
+
+@app.route('/candidates/<int:candidate_id>')
+def candidate_detail(candidate_id):
+    """Detailed view of a specific candidate"""
+    analysis = ResumeAnalysis.query.get_or_404(candidate_id)
+    
+    # Parse JSON fields
+    strengths = json.loads(analysis.candidate_strengths) if analysis.candidate_strengths else []
+    weaknesses = json.loads(analysis.candidate_weaknesses) if analysis.candidate_weaknesses else []
+    relevant_jobs = json.loads(analysis.relevant_jobs) if analysis.relevant_jobs else []
+    
+    # Get similar candidates
+    similar_candidates = get_similar_candidates(candidate_id, limit=5)
+    
+    return render_template('candidate_detail.html',
+                         analysis=analysis,
+                         strengths=strengths,
+                         weaknesses=weaknesses,
+                         relevant_jobs=relevant_jobs,
+                         similar_candidates=similar_candidates)
+
+@app.route('/candidates/<int:candidate_id>/update', methods=['POST'])
+def update_candidate(candidate_id):
+    """Update candidate status and notes"""
+    analysis = ResumeAnalysis.query.get_or_404(candidate_id)
+    
+    status = request.form.get('status')
+    notes = request.form.get('notes')
+    
+    if status and status in ['active', 'contacted', 'archived']:
+        analysis.status = status
+    
+    if notes is not None:
+        analysis.notes = notes
+    
+    db.session.commit()
+    flash('Candidate updated successfully!', 'success')
+    return redirect(url_for('candidate_detail', candidate_id=candidate_id))
+
+@app.route('/candidates/<int:candidate_id>/add_tag', methods=['POST'])
+def add_candidate_tag(candidate_id):
+    """Add a tag to a candidate"""
+    analysis = ResumeAnalysis.query.get_or_404(candidate_id)
+    
+    tag_name = request.form.get('tag_name', '').strip()
+    tag_color = request.form.get('tag_color', '#6c757d')
+    
+    if tag_name:
+        # Check if tag already exists
+        existing_tag = CandidateTag.query.filter_by(
+            candidate_id=candidate_id,
+            tag_name=tag_name
+        ).first()
+        
+        if not existing_tag:
+            new_tag = CandidateTag(
+                candidate_id=candidate_id,
+                tag_name=tag_name,
+                tag_color=tag_color
+            )
+            db.session.add(new_tag)
+            db.session.commit()
+            flash(f'Tag "{tag_name}" added successfully!', 'success')
+        else:
+            flash(f'Tag "{tag_name}" already exists for this candidate.', 'warning')
+    
+    return redirect(url_for('candidate_detail', candidate_id=candidate_id))
+
+@app.route('/email_processing')
+def email_processing():
+    """Email processing dashboard"""
+    from models import EmailProcessingLog
+    
+    recent_logs = EmailProcessingLog.query.order_by(
+        EmailProcessingLog.processed_date.desc()
+    ).limit(20).all()
+    
+    # Get processing statistics
+    total_processed = EmailProcessingLog.query.filter_by(status='processed').count()
+    total_failed = EmailProcessingLog.query.filter_by(status='failed').count()
+    total_skipped = EmailProcessingLog.query.filter_by(status='skipped').count()
+    
+    stats = {
+        'total_processed': total_processed,
+        'total_failed': total_failed,
+        'total_skipped': total_skipped,
+        'total_emails': total_processed + total_failed + total_skipped
+    }
+    
+    return render_template('email_processing.html', 
+                         recent_logs=recent_logs,
+                         stats=stats)
+
+@app.route('/process_emails', methods=['POST'])
+def process_emails():
+    """Process new emails manually"""
+    job_description = request.form.get('job_description', '').strip()
+    
+    processor = EmailResumeProcessor()
+    results = processor.process_new_emails(job_description=job_description if job_description else None)
+    
+    if 'error' in results:
+        flash(f'Error processing emails: {results["error"]}', 'error')
+    else:
+        message = f'Processing complete! Processed: {results["processed"]}, Failed: {results["failed"]}, Skipped: {results["skipped"]}'
+        flash(message, 'success')
+        
+        # Show details about new candidates
+        if results["candidates"]:
+            candidate_names = [f"{c.get('first_name', 'Unknown')} {c.get('last_name', '')}" for c in results["candidates"]]
+            flash(f'New candidates: {", ".join(candidate_names)}', 'info')
+    
+    return redirect(url_for('email_processing'))
+
+@app.route('/dashboard')
+def dashboard():
+    """Enhanced dashboard with statistics"""
+    stats = get_candidate_statistics()
+    
+    # Recent activity
+    recent_analyses = ResumeAnalysis.query.order_by(
+        ResumeAnalysis.upload_date.desc()
+    ).limit(10).all()
+    
+    # Top candidates by fit rating
+    top_candidates = ResumeAnalysis.query.filter(
+        ResumeAnalysis.overall_fit_rating.isnot(None)
+    ).order_by(ResumeAnalysis.overall_fit_rating.desc()).limit(5).all()
+    
+    return render_template('dashboard.html',
+                         stats=stats,
+                         recent_analyses=recent_analyses,
+                         top_candidates=top_candidates)
+
+@app.route('/api/candidates/search')
+def api_search_candidates():
+    """API endpoint for candidate search"""
+    skills = request.args.getlist('skills')
+    min_fit_rating = request.args.get('min_fit_rating', type=float)
+    max_risk_score = request.args.get('max_risk_score', type=float)
+    page = request.args.get('page', 1, type=int)
+    
+    results = search_candidates(
+        skills=skills if skills else None,
+        min_fit_rating=min_fit_rating,
+        max_risk_score=max_risk_score,
+        page=page,
+        per_page=10
+    )
+    
+    return jsonify(results)
+
+@app.route('/jobs/search')
+def search_jobs():
+    """Search jobs across multiple job boards"""
+    query = request.args.get('query', '')
+    location = request.args.get('location', 'United States')
+    
+    if not query:
+        return jsonify({'error': 'Query parameter is required'}), 400
+    
+    jobs = search_relevant_jobs(query, location, max_results=15)
+    
+    return jsonify({
+        'query': query,
+        'location': location,
+        'total_jobs': len(jobs),
+        'jobs': jobs
+    })
 
 @app.errorhandler(413)
 def too_large(e):

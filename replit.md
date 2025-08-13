@@ -1,6 +1,6 @@
 # Overview
 
-A Flask-based AI-powered resume screening application that analyzes candidate resumes against job descriptions. The system extracts text from uploaded resume files, uses OpenAI's GPT-4 to provide detailed candidate analysis including strengths, weaknesses, risk/reward assessments, and integrates with ZipRecruiter API to find relevant job matches.
+A comprehensive Flask-based AI-powered recruitment platform that revolutionizes candidate screening and management. The system provides multi-channel resume intake (manual upload + email automation), advanced candidate database search, AI-powered analysis using OpenAI GPT-4o, and multi-source job matching across ZipRecruiter, Indeed, and USAJobs platforms. Features include candidate tagging, status tracking, email processing automation, and a comprehensive recruitment dashboard.
 
 # User Preferences
 
@@ -9,49 +9,63 @@ Preferred communication style: Simple, everyday language.
 # System Architecture
 
 ## Backend Architecture
-- **Framework**: Flask web application with SQLAlchemy ORM for database operations
-- **Database**: SQLite for local development with configurable PostgreSQL support via DATABASE_URL environment variable
-- **File Processing**: Supports PDF, DOCX, and TXT resume formats with dedicated text extraction services
-- **AI Integration**: OpenAI GPT-4o integration for resume analysis using structured prompts and JSON responses
-- **External API**: ZipRecruiter API integration for job matching and recommendations
+- **Framework**: Flask web application with SQLAlchemy ORM and PostgreSQL database
+- **Database**: PostgreSQL with advanced indexing for candidate search, email processing logs, and relationship management
+- **File Processing**: Multi-format support (PDF, DOCX, TXT) with enhanced text extraction and error handling
+- **AI Integration**: OpenAI GPT-4o with structured JSON responses for resume analysis and candidate information extraction
+- **Multi-Source Job Matching**: Integrated APIs for ZipRecruiter, Indeed Publisher, and USAJobs federal positions
+- **Email Automation**: IMAP-based email processing for automatic resume intake from email attachments
 
 ## Frontend Architecture
-- **Template Engine**: Jinja2 templates with Bootstrap dark theme for responsive UI
-- **Styling**: Bootstrap 5 with custom CSS for enhanced user experience
-- **JavaScript**: Vanilla JavaScript for form validation, file upload handling, and loading states
-- **File Uploads**: 16MB file size limit with client-side validation for supported formats
+- **Template Engine**: Jinja2 with Bootstrap dark theme and enhanced UI components
+- **Navigation**: Multi-page application with Dashboard, Candidate Database, Email Processing, and Analysis views
+- **Interactive Features**: Advanced search filters, candidate tagging system, status management, and pagination
+- **Responsive Design**: Mobile-friendly interface with progressive enhancement
 
-## Data Model
-- **ResumeAnalysis Model**: Central entity storing uploaded resume metadata, extracted candidate information (name, email), full resume text, AI analysis results (strengths, weaknesses, risk/reward scores), and relevant job matches
-- **Database Schema**: Uses SQLAlchemy with Text fields for JSON storage of complex analysis data
+## Enhanced Data Model
+- **ResumeAnalysis**: Extended model with phone, location, source tracking, status management, and recruiter notes
+- **CandidateSkill**: Dedicated skill tracking with proficiency levels and experience years
+- **CandidateTag**: Custom tagging system with color coding for candidate organization  
+- **EmailProcessingLog**: Comprehensive email automation tracking with error logging and processing statistics
+- **Database Optimization**: Strategic indexes on ratings, skills, dates, and search fields for performance
 
-## Service Layer Architecture
-- **Text Extraction Service**: Modular approach with format-specific extractors (PyPDF2 for PDFs, python-docx for Word documents, plain text handling with encoding fallbacks)
-- **AI Analysis Service**: Structured prompting system that analyzes resumes against job descriptions, returning standardized JSON responses with candidate assessment metrics
-- **Job Matching Service**: ZipRecruiter API integration with configurable search parameters and error handling
+## Advanced Service Layer
+- **Multi-Job Board Integration**: Aggregated search across ZipRecruiter, Indeed, and USAJobs with deduplication
+- **Candidate Database Services**: Advanced search, similarity matching, and statistical analysis
+- **Email Processing Engine**: IMAP integration with attachment extraction, job description parsing, and automated analysis
+- **Enhanced AI Services**: Improved candidate information extraction including phone, location, and skills with better error handling
 
-## Authentication & Security
-- **Session Management**: Flask sessions with configurable secret key
-- **File Security**: Werkzeug secure filename handling and restricted file type validation
-- **Proxy Support**: ProxyFix middleware for deployment behind reverse proxies
+## Security & Configuration
+- **Database Security**: PostgreSQL with connection pooling and environment-based configuration
+- **Email Security**: App-specific password support with secure IMAP connections
+- **API Management**: Multiple API key support with graceful degradation and error handling
+- **Session Security**: Enhanced session management with configurable secret keys
 
 # External Dependencies
 
 ## APIs & Services
-- **OpenAI API**: GPT-4o model for resume analysis and candidate assessment
-- **ZipRecruiter API**: Job search and matching functionality
+- **OpenAI API**: GPT-4o model for resume analysis and enhanced candidate information extraction
+- **ZipRecruiter API**: Job search with comprehensive job details and company information
+- **Indeed Publisher API**: Access to Indeed's job database with location-based search
+- **USAJobs API**: Federal job opportunities with government position details
+- **Email Services**: IMAP integration for Gmail, Outlook, Yahoo, and other providers
 
-## Third-Party Libraries
-- **Flask Ecosystem**: Flask, Flask-SQLAlchemy for web framework and ORM
-- **File Processing**: PyPDF2 for PDF text extraction, python-docx for Word document processing
-- **HTTP Client**: Requests library for external API communication
-- **Frontend**: Bootstrap 5 with dark theme, Font Awesome for icons
+## Enhanced Third-Party Libraries  
+- **Flask Ecosystem**: Flask, Flask-SQLAlchemy with PostgreSQL adapter (psycopg2-binary)
+- **File Processing**: PyPDF2 (PDFs), python-docx (Word), enhanced text encoding handling
+- **Email Processing**: Built-in Python email and imaplib libraries for attachment processing
+- **HTTP Client**: Requests with timeout handling and retry logic for API reliability
+- **Frontend**: Bootstrap 5 dark theme, Font Awesome icons, enhanced JavaScript interactions
 
-## Database
-- **Development**: SQLite with local file storage
-- **Production**: Configurable PostgreSQL via DATABASE_URL environment variable
-- **Connection Management**: SQLAlchemy with connection pooling and health checks
+## Database Infrastructure
+- **Production**: PostgreSQL with advanced indexing and relationship management
+- **Connection Management**: SQLAlchemy with connection pooling, health checks, and optimized queries
+- **Data Integrity**: Foreign key constraints, unique constraints, and comprehensive indexes
+- **Performance**: Strategic indexes on search fields, ratings, and temporal data
 
 ## Environment Configuration
-- **Required**: OPENAI_API_KEY for AI analysis functionality
-- **Optional**: ZIPRECRUITER_API_KEY for job matching, DATABASE_URL for PostgreSQL, SESSION_SECRET for production security
+- **Required**: OPENAI_API_KEY for AI-powered analysis
+- **Job Boards**: ZIPRECRUITER_API_KEY, INDEED_PUBLISHER_ID, USAJOBS_API_KEY, USAJOBS_USER_AGENT
+- **Email Processing**: EMAIL_USER, EMAIL_PASSWORD, IMAP_SERVER, IMAP_PORT for automated resume intake
+- **Database**: DATABASE_URL (automatically configured), SESSION_SECRET for secure sessions
+- **Optional**: Email folder configuration and processing parameters

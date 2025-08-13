@@ -71,7 +71,7 @@ Please analyze this candidate's resume against the job description and provide a
 def extract_candidate_info(resume_text):
     """Extract candidate contact information from resume"""
     try:
-        system_prompt = """You are an expert at extracting contact information from resumes. Extract the candidate's first name, last name, email address, and key skills from the resume text.
+        system_prompt = """You are an expert at extracting contact information from resumes. Extract the candidate's first name, last name, email address, phone number, location, and key skills from the resume text.
 
 Also identify the top 5 most relevant technical skills mentioned in the resume for job searching purposes.
 
@@ -80,6 +80,8 @@ Respond with JSON in this exact format:
   "first_name": "John",
   "last_name": "Doe", 
   "email": "john.doe@email.com",
+  "phone": "+1-555-123-4567",
+  "location": "San Francisco, CA",
   "extracted_skills": ["Python", "Machine Learning", "AWS", "React", "SQL"]
 }
 
@@ -108,5 +110,7 @@ If any information is not found, use null for that field."""
             "first_name": None,
             "last_name": None,
             "email": None,
+            "phone": None,
+            "location": None,
             "extracted_skills": []
         }

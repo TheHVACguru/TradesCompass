@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Candidate Database - Resume Scanner{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>
+                <i class="fas fa-users me-2"></i>
+                Candidate Database
+            </h1>
+            <p class="lead text-muted">Search and manage your candidate pool</p>
+        </div>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>Search Filters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('candidate_database') }}">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Skills (comma-separated)</label>
+                                <input type="text" class="form-control" name="skills" 
+                                       value="{{ ', '.join(current_filters.skills) if current_filters.skills else '' }}"
+                                       placeholder="Python, React, AWS">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Min Fit Rating</label>
+                                <select class="form-select" name="min_fit_rating">
+                                    <option value="">Any</option>
+                                    <option value="8.0" {{ 'selected' if current_filters.min_fit_rating == 8.0 }}>8.0+</option>
+                                    <option value="7.0" {{ 'selected' if current_filters.min_fit_rating == 7.0 }}>7.0+</option>
+                                    <option value="6.0" {{ 'selected' if current_filters.min_fit_rating == 6.0 }}>6.0+</option>
+                                    <option value="5.0" {{ 'selected' if current_filters.min_fit_rating == 5.0 }}>5.0+</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Max Risk Score</label>
+                                <select class="form-select" name="max_risk_score">
+                                    <option value="">Any</option>
+                                    <option value="3.0" {{ 'selected' if current_filters.max_risk_score == 3.0 }}>≤3.0</option>
+                                    <option value="5.0" {{ 'selected' if current_filters.max_risk_score == 5.0 }}>≤5.0</option>
+                                    <option value="7.0" {{ 'selected' if current_filters.max_risk_score == 7.0 }}>≤7.0</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control" name="location" 
+                                       value="{{ current_filters.location or '' }}"
+                                       placeholder="San Francisco, CA">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9 mb-3">
+                                <label class="form-label">Keywords (experience, education, etc.)</label>
+                                <input type="text" class="form-control" name="keywords" 
+                                       value="{{ ', '.join(current_filters.keywords) if current_filters.keywords else '' }}"
+                                       placeholder="machine learning, startup, MBA">
+                            </div>
+                            <div class="col-md-3 mb-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-search me-1"></i>Search
+                                </button>
+                                <a href="{{ url_for('candidate_database') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Clear
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>
+                    <i class="fas fa-list me-2"></i>
+                    {{ search_results.total }} candidates found
+                </h5>
+                <div>
+                    <span class="text-muted">
+                        Page {{ search_results.current_page }} of {{ search_results.pages }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Candidate Results -->
+    <div class="row">
+        {% if search_results.candidates %}
+            {% for candidate in search_results.candidates %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">
+                                <strong>{{ candidate.name if candidate.name.strip() != 'Unknown' else 'Unknown Candidate' }}</strong>
+                            </h6>
+                            <small class="text-muted">{{ candidate.filename }}</small>
+                        </div>
+                        <div class="text-end">
+                            {% if candidate.overall_fit_rating %}
+                                <span class="badge bg-{{ 'success' if candidate.overall_fit_rating >= 8 else 'warning' if candidate.overall_fit_rating >= 6 else 'danger' }}">
+                                    {{ "%.1f"|format(candidate.overall_fit_rating) }}/10
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                {% if candidate.email %}
+                                    <small class="text-muted">
+                                        <i class="fas fa-envelope me-1"></i>{{ candidate.email }}
+                                    </small><br>
+                                {% endif %}
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ candidate.upload_date[:10] if candidate.upload_date else 'Unknown' }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Rating Indicators -->
+                        <div class="row mb-3">
+                            <div class="col-4 text-center">
+                                <small class="text-muted">Risk</small><br>
+                                {% if candidate.risk_factor_score %}
+                                    <span class="badge bg-{{ 'success' if candidate.risk_factor_score <= 3 else 'warning' if candidate.risk_factor_score <= 6 else 'danger' }}">
+                                        {{ "%.1f"|format(candidate.risk_factor_score) }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">N/A</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-4 text-center">
+                                <small class="text-muted">Reward</small><br>
+                                {% if candidate.reward_factor_score %}
+                                    <span class="badge bg-{{ 'success' if candidate.reward_factor_score >= 7 else 'warning' if candidate.reward_factor_score >= 4 else 'danger' }}">
+                                        {{ "%.1f"|format(candidate.reward_factor_score) }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">N/A</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-4 text-center">
+                                <small class="text-muted">Source</small><br>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-{{ 'envelope' if candidate.source == 'email' else 'upload' }} me-1"></i>
+                                    {{ candidate.source.replace('_', ' ').title() if candidate.source else 'Manual' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Key Strengths Preview -->
+                        {% if candidate.strengths %}
+                            <div class="mb-3">
+                                <small class="text-muted"><strong>Key Strengths:</strong></small>
+                                <div class="mt-1">
+                                    {% for strength in candidate.strengths[:2] %}
+                                        <small class="d-block">• {{ strength[:80] }}{% if strength|length > 80 %}...{% endif %}</small>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Resume Preview -->
+                        {% if candidate.resume_snippet %}
+                            <div class="mb-3">
+                                <small class="text-muted"><strong>Resume Preview:</strong></small>
+                                <p class="small mt-1">{{ candidate.resume_snippet }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-{{ 'success' if candidate.status == 'active' else 'primary' if candidate.status == 'contacted' else 'secondary' }}">
+                                {{ candidate.status.title() if candidate.status else 'Active' }}
+                            </span>
+                            <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No candidates found</h4>
+                    <p class="text-muted">Try adjusting your search filters or <a href="{{ url_for('index') }}">upload a new resume</a>.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if search_results.pages > 1 %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if search_results.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('candidate_database', page=search_results.prev_num, **request.args) }}">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in range(1, search_results.pages + 1) %}
+                        {% if page_num == search_results.current_page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% elif page_num <= 2 or page_num >= search_results.pages - 1 or (page_num >= search_results.current_page - 2 and page_num <= search_results.current_page + 2) %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('candidate_database', page=page_num, **request.args) }}">{{ page_num }}</a>
+                            </li>
+                        {% elif page_num == 3 or page_num == search_results.pages - 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if search_results.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('candidate_database', page=search_results.next_num, **request.args) }}">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
