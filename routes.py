@@ -909,3 +909,272 @@ def add_test_candidates():
         flash(f'Error adding test candidates: {str(e)}', 'error')
     
     return redirect(url_for('smart_search'))
+
+# ============= Candidate Sourcing Routes =============
+
+@app.route('/candidate-sourcing')
+def candidate_sourcing():
+    """Main candidate sourcing page"""
+    return render_template('candidate_sourcing.html')
+
+@app.route('/candidate-sourcing/search', methods=['POST'])
+def search_external_candidates():
+    """Search for external candidates"""
+    from services.candidate_sourcing import CandidateSourcingService
+    
+    sourcing_service = CandidateSourcingService()
+    
+    job_title = request.form.get('job_title')
+    location = request.form.get('location')
+    skills = request.form.get('skills', '').split(',')
+    skills = [s.strip() for s in skills if s.strip()]
+    
+    # Search for candidates
+    candidates = sourcing_service.search_public_profiles(
+        job_title=job_title,
+        location=location,
+        skills=skills
+    )
+    
+    return render_template('sourcing_results.html', 
+                         candidates=candidates,
+                         job_title=job_title,
+                         location=location,
+                         skills=skills)
+
+@app.route('/candidate-sourcing/import', methods=['POST'])
+def import_candidate():
+    """Import a candidate profile"""
+    from services.candidate_sourcing import CandidateSourcingService
+    
+    sourcing_service = CandidateSourcingService()
+    
+    # Get profile data from form
+    profile_data = {
+        'first_name': request.form.get('first_name'),
+        'last_name': request.form.get('last_name'),
+        'email': request.form.get('email'),
+        'phone': request.form.get('phone'),
+        'location': request.form.get('location'),
+        'title': request.form.get('title'),
+        'company': request.form.get('company'),
+        'skills': request.form.get('skills', '').split(','),
+        'summary': request.form.get('summary'),
+        'experience': request.form.get('experience'),
+        'education': request.form.get('education')
+    }
+    
+    # Clean skills
+    profile_data['skills'] = [s.strip() for s in profile_data['skills'] if s.strip()]
+    
+    # Import the candidate
+    candidate = sourcing_service.import_candidate_profile(profile_data)
+    
+    if candidate:
+        flash(f'Successfully imported {candidate.first_name} {candidate.last_name}', 'success')
+        return redirect(url_for('view_results', analysis_id=candidate.id))
+    else:
+        flash('Error importing candidate profile', 'error')
+        return redirect(url_for('candidate_sourcing'))
+
+@app.route('/candidate-sourcing/campaign', methods=['GET', 'POST'])
+def sourcing_campaign():
+    """Create and manage sourcing campaigns"""
+    from services.candidate_sourcing import CandidateSourcingService
+    
+    if request.method == 'POST':
+        sourcing_service = CandidateSourcingService()
+        
+        job_title = request.form.get('job_title')
+        requirements = request.form.get('requirements')
+        location = request.form.get('location')
+        
+        # Create campaign
+        campaign = sourcing_service.create_sourcing_campaign(
+            job_title=job_title,
+            requirements=requirements,
+            location=location
+        )
+        
+        return render_template('sourcing_campaign_results.html', campaign=campaign)
+    
+    return render_template('create_sourcing_campaign.html')
+
+@app.route('/candidate-sourcing/bulk-import', methods=['GET', 'POST'])
+def bulk_import_candidates():
+    """Bulk import candidate profiles"""
+    from services.candidate_sourcing import CandidateSourcingService
+    import csv
+    import io
+    
+    if request.method == 'POST':
+        sourcing_service = CandidateSourcingService()
+        
+        # Check if CSV file was uploaded
+        if 'csv_file' in request.files:
+            file = request.files['csv_file']
+            if file and file.filename.endswith('.csv'):
+                # Read CSV
+                stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+                csv_reader = csv.DictReader(stream)
+                
+                candidates_data = []
+                for row in csv_reader:
+                    # Parse skills from CSV
+                    skills = row.get('skills', '').split(';') if row.get('skills') else []
+                    
+                    profile_data = {
+                        'first_name': row.get('first_name', ''),
+                        'last_name': row.get('last_name', ''),
+                        'email': row.get('email', ''),
+                        'phone': row.get('phone', ''),
+                        'location': row.get('location', ''),
+                        'title': row.get('title', ''),
+                        'company': row.get('company', ''),
+                        'skills': [s.strip() for s in skills if s.strip()],
+                        'summary': row.get('summary', ''),
+                        'experience': row.get('experience', ''),
+                        'education': row.get('education', '')
+                    }
+                    candidates_data.append(profile_data)
+                
+                # Import candidates
+                results = sourcing_service.bulk_import_candidates(candidates_data)
+                
+                flash(f'Imported {results["imported"]} candidates, skipped {results["skipped"]}, errors: {results["errors"]}', 'info')
+                return render_template('bulk_import_results.html', results=results)
+        
+        flash('Please upload a valid CSV file', 'error')
+    
+    return render_template('bulk_import.html')
+
+# ============= Enhanced Sourcing Toolbox Routes =============
+
+@app.route('/sourcing-toolbox')
+def sourcing_toolbox():
+    """Main sourcing toolbox page with all advanced tools"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    toolbox = SourcingToolbox()
+    
+    # Get various resources
+    search_tips = toolbox.get_advanced_search_tips()
+    communities = toolbox.get_developer_communities()
+    universities = toolbox.get_university_alumni_links()
+    
+    return render_template('sourcing_toolbox.html',
+                         search_tips=search_tips,
+                         communities=communities,
+                         universities=universities)
+
+@app.route('/sourcing-toolbox/boolean-builder', methods=['GET', 'POST'])
+def boolean_builder():
+    """Boolean search string builder"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    if request.method == 'POST':
+        toolbox = SourcingToolbox()
+        
+        job_title = request.form.get('job_title')
+        must_have_skills = request.form.get('must_have_skills', '').split(',')
+        nice_to_have_skills = request.form.get('nice_to_have_skills', '').split(',')
+        exclude_terms = request.form.get('exclude_terms', '').split(',')
+        location = request.form.get('location')
+        platforms = request.form.getlist('platforms')
+        
+        # Clean lists
+        must_have_skills = [s.strip() for s in must_have_skills if s.strip()]
+        nice_to_have_skills = [s.strip() for s in nice_to_have_skills if s.strip()]
+        exclude_terms = [t.strip() for t in exclude_terms if t.strip()]
+        
+        # Build Boolean searches
+        searches = toolbox.build_boolean_search(
+            job_title=job_title,
+            must_have_skills=must_have_skills,
+            nice_to_have_skills=nice_to_have_skills,
+            exclude_terms=exclude_terms,
+            location=location,
+            platforms=platforms if platforms else None
+        )
+        
+        return render_template('boolean_results.html', searches=searches)
+    
+    return render_template('boolean_builder.html')
+
+@app.route('/sourcing-toolbox/github-insights', methods=['GET', 'POST'])
+def github_insights():
+    """GitHub developer insights tool"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    if request.method == 'POST':
+        toolbox = SourcingToolbox()
+        username = request.form.get('username')
+        
+        # Get GitHub stats
+        stats = toolbox.get_github_developer_stats(username)
+        
+        if stats:
+            return render_template('github_insights_results.html', stats=stats)
+        else:
+            flash('Could not fetch GitHub data for this user', 'error')
+    
+    return render_template('github_insights.html')
+
+@app.route('/sourcing-toolbox/contact-finder', methods=['GET', 'POST'])
+def contact_finder():
+    """Contact discovery tool links"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    if request.method == 'POST':
+        toolbox = SourcingToolbox()
+        
+        name = request.form.get('name')
+        company = request.form.get('company')
+        
+        # Get contact finder links
+        links = toolbox.get_contact_finder_links(name, company)
+        
+        return render_template('contact_finder_results.html', 
+                             name=name, 
+                             company=company,
+                             links=links)
+    
+    return render_template('contact_finder.html')
+
+@app.route('/sourcing-toolbox/job-description-analyzer', methods=['GET', 'POST'])
+def job_description_analyzer():
+    """Analyze job description quality and bias"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    if request.method == 'POST':
+        toolbox = SourcingToolbox()
+        
+        job_description = request.form.get('job_description')
+        
+        # Analyze job description
+        analysis = toolbox.analyze_job_description_quality(job_description)
+        
+        return render_template('jd_analysis_results.html', analysis=analysis)
+    
+    return render_template('job_description_analyzer.html')
+
+@app.route('/sourcing-toolbox/salary-benchmark', methods=['GET', 'POST'])
+def salary_benchmark():
+    """Salary benchmarking tool"""
+    from services.sourcing_toolbox import SourcingToolbox
+    
+    if request.method == 'POST':
+        toolbox = SourcingToolbox()
+        
+        job_title = request.form.get('job_title')
+        location = request.form.get('location')
+        
+        # Get salary benchmark links
+        links = toolbox.get_salary_benchmark_links(job_title, location)
+        
+        return render_template('salary_benchmark_results.html',
+                             job_title=job_title,
+                             location=location,
+                             links=links)
+    
+    return render_template('salary_benchmark.html')

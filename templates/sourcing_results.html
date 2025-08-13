@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Candidate Sourcing{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-search me-2"></i>External Candidate Search Results
+    </h2>
+
+    <!-- Search Summary -->
+    <div class="alert alert-info">
+        <strong>Search Parameters:</strong>
+        <ul class="mb-0">
+            <li>Job Title: <strong>{{ job_title }}</strong></li>
+            {% if location %}
+            <li>Location: <strong>{{ location }}</strong></li>
+            {% endif %}
+            {% if skills %}
+            <li>Skills: <strong>{{ ', '.join(skills) }}</strong></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Results Count -->
+    <div class="mb-3">
+        <h4>
+            Found <span class="badge bg-primary">{{ candidates|length }}</span> Candidates
+        </h4>
+    </div>
+
+    <!-- Results Grid -->
+    {% if candidates %}
+        <div class="row">
+            {% for candidate in candidates %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            {% if candidate.avatar_url %}
+                            <img src="{{ candidate.avatar_url }}" class="rounded-circle me-3" 
+                                 style="width: 60px; height: 60px;" alt="Avatar">
+                            {% else %}
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-user fa-2x"></i>
+                            </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">
+                                    {{ candidate.username or 'Candidate' }}
+                                    <span class="badge bg-{{ 'success' if candidate.source == 'GitHub' else 'info' }} ms-2">
+                                        {{ candidate.source }}
+                                    </span>
+                                </h5>
+                                {% if candidate.type %}
+                                <p class="text-muted mb-2">{{ candidate.type }}</p>
+                                {% endif %}
+                                {% if candidate.skills %}
+                                <div class="mb-2">
+                                    {% for skill in candidate.skills %}
+                                    <span class="badge bg-dark">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="btn-group" role="group">
+                                    {% if candidate.profile_url %}
+                                    <a href="{{ candidate.profile_url }}" target="_blank" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt"></i> View Profile
+                                    </a>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-outline-success" 
+                                            onclick="importCandidate('{{ candidate.username }}', '{{ candidate.source }}')">
+                                        <i class="fas fa-user-plus"></i> Import
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> 
+            No candidates found matching your criteria. Try adjusting your search parameters.
+        </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="mt-4">
+        <a href="{{ url_for('candidate_sourcing') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> New Search
+        </a>
+    </div>
+</div>
+
+<script>
+function importCandidate(username, source) {
+    // In a real implementation, this would open a modal to collect more info
+    alert('Import functionality for ' + username + ' from ' + source + ' would be implemented here.');
+}
+</script>
+{% endblock %}

@@ -1,327 +1,373 @@
-import os
+"""
+Candidate Sourcing Service for TalentCompass AI
+Provides legitimate methods to source external candidates
+"""
+
 import json
 import logging
 import requests
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from models import db, ResumeAnalysis, CandidateSkill
 
-class CandidateSourcer:
-    """
-    Service for sourcing new candidates from external APIs
-    Uses multiple candidate databases and professional networks
-    """
+class CandidateSourcingService:
+    """Service for sourcing external candidates through legitimate channels"""
     
     def __init__(self):
-        self.rapidapi_key = os.environ.get('RAPIDAPI_KEY')
-        self.base_headers = {
-            'X-RapidAPI-Key': self.rapidapi_key,
-            'X-RapidAPI-Host': ''
-        }
-        
-    def search_candidates(
-        self, 
-        query: str,
-        location: str = None,
-        skills: List[str] = None,
-        experience_level: str = None,
-        limit: int = 20,
-        include_x: bool = True
-    ) -> Dict[str, Any]:
+        self.logger = logging.getLogger(__name__)
+    
+    def search_public_profiles(self, 
+                              job_title: str, 
+                              location: str = None,
+                              skills: List[str] = None,
+                              experience_years: int = None) -> List[Dict[str, Any]]:
         """
-        Search for candidates across multiple professional networks
+        Search for candidates using public data sources
         
         Args:
-            query: Job title or role description
-            location: Geographic location
+            job_title: Target job title/role
+            location: Target location
             skills: Required skills
-            experience_level: junior, mid, senior, executive
-            limit: Number of results to return
-            include_x: Whether to include X (Twitter) in search
-            
+            experience_years: Minimum years of experience
+        
         Returns:
-            Dictionary with candidate results from multiple sources
+            List of candidate profiles from public sources
         """
+        candidates = []
         
-        all_candidates = []
-        sources_used = []
+        # Build search query
+        query_parts = [job_title]
+        if location:
+            query_parts.append(location)
+        if skills:
+            query_parts.extend(skills[:3])  # Top 3 skills
         
-        # Search X (Twitter) for candidates - prioritize this for active job seekers
-        if include_x:
-            try:
-                from services.x_sourcing import search_x_for_candidates
-                x_results = search_x_for_candidates(query, skills, location, limit//3)
-                x_candidates = x_results.get('candidates', [])
-                if x_candidates:
-                    all_candidates.extend(x_candidates)
-                    sources_used.append('X')
-                    logging.info(f"Found {len(x_candidates)} candidates from X")
-            except Exception as e:
-                logging.error(f"X search error: {str(e)}")
+        search_query = ' '.join(query_parts)
         
-        # Search LinkedIn profiles via RapidAPI
-        linkedin_results = self._search_linkedin_profiles(query, location, skills, limit//3)
-        if linkedin_results:
-            all_candidates.extend(linkedin_results)
-            sources_used.append('LinkedIn')
+        # Search using GitHub Jobs API (if available)
+        github_candidates = self._search_github_profiles(search_query, skills)
+        candidates.extend(github_candidates)
         
-        # Search GitHub profiles for technical roles
-        if any(tech_skill in (skills or []) for tech_skill in ['Python', 'JavaScript', 'Java', 'React', 'Node.js']):
-            github_results = self._search_github_profiles(query, skills, limit//3)
-            if github_results:
-                all_candidates.extend(github_results)
-                sources_used.append('GitHub')
+        # Search using other public APIs
+        # Note: Many APIs require authentication
         
-        # Search AngelList for startup candidates (disabled for now)
-        # angellist_results = self._search_angellist_profiles(query, location, limit//4)
-        # if angellist_results:
-        #     all_candidates.extend(angellist_results)
-        #     sources_used.append('AngelList')
+        return candidates
+    
+    def _search_github_profiles(self, query: str, skills: List[str] = None) -> List[Dict[str, Any]]:
+        """
+        Search GitHub for developer profiles (public data)
+        """
+        candidates = []
+        
+        try:
+            # GitHub search API (public repositories and users)
+            # This searches for users with specific languages/skills
+            if skills:
+                for skill in skills[:2]:  # Limit to avoid rate limiting
+                    search_url = f"https://api.github.com/search/users"
+                    params = {
+                        'q': f"{skill} language:{skill}",
+                        'per_page': 5
+                    }
+                    
+                    headers = {
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                    
+                    response = requests.get(search_url, params=params, headers=headers, timeout=10)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        for user in data.get('items', []):
+                            candidate = {
+                                'source': 'GitHub',
+                                'profile_url': user.get('html_url'),
+                                'username': user.get('login'),
+                                'avatar_url': user.get('avatar_url'),
+                                'type': 'Developer',
+                                'skills': [skill]
+                            }
+                            candidates.append(candidate)
+        
+        except Exception as e:
+            self.logger.error(f"Error searching GitHub profiles: {e}")
+        
+        return candidates
+    
+    def import_candidate_profile(self, profile_data: Dict[str, Any]) -> Optional[ResumeAnalysis]:
+        """
+        Import an external candidate profile into the system
+        
+        Args:
+            profile_data: Dictionary containing candidate information
+        
+        Returns:
+            Created ResumeAnalysis object or None
+        """
+        try:
+            # Extract basic information
+            first_name = profile_data.get('first_name', '')
+            last_name = profile_data.get('last_name', '')
+            email = profile_data.get('email', '')
             
-        # Remove duplicates based on email/profile URL
-        unique_candidates = self._deduplicate_candidates(all_candidates)
+            # Check if candidate already exists
+            if email:
+                existing = ResumeAnalysis.query.filter_by(email=email).first()
+                if existing:
+                    self.logger.info(f"Candidate already exists: {email}")
+                    return existing
+            
+            # Create profile summary
+            profile_summary = self._create_profile_summary(profile_data)
+            
+            # Create new candidate record
+            candidate = ResumeAnalysis(
+                first_name=first_name,
+                last_name=last_name,
+                email=email or f"{first_name.lower()}.{last_name.lower()}@sourced.example.com",
+                phone=profile_data.get('phone', ''),
+                location=profile_data.get('location', ''),
+                resume_text=profile_summary,
+                source='external_sourcing',
+                status='sourced',
+                filename=f"sourced_profile_{datetime.utcnow().timestamp()}.txt",
+                upload_date=datetime.utcnow()
+            )
+            
+            # Set default values for now
+            # Could integrate with AI analysis later if needed
+            candidate.candidate_strengths = json.dumps(["To be analyzed"])
+            candidate.candidate_weaknesses = json.dumps(["To be analyzed"])
+            candidate.overall_fit_rating = 5.0
+            
+            db.session.add(candidate)
+            db.session.flush()
+            
+            # Add skills
+            skills = profile_data.get('skills', [])
+            for skill_name in skills:
+                skill = CandidateSkill(
+                    candidate_id=candidate.id,
+                    skill_name=skill_name,
+                    skill_level='unknown'
+                )
+                db.session.add(skill)
+            
+            db.session.commit()
+            return candidate
+            
+        except Exception as e:
+            db.session.rollback()
+            self.logger.error(f"Error importing candidate profile: {e}")
+            return None
+    
+    def _create_profile_summary(self, profile_data: Dict[str, Any]) -> str:
+        """Create a text summary from profile data"""
+        parts = []
+        
+        # Name and title
+        if profile_data.get('first_name'):
+            parts.append(f"Name: {profile_data.get('first_name')} {profile_data.get('last_name', '')}")
+        
+        if profile_data.get('title'):
+            parts.append(f"Current Role: {profile_data.get('title')}")
+        
+        if profile_data.get('company'):
+            parts.append(f"Company: {profile_data.get('company')}")
+        
+        if profile_data.get('location'):
+            parts.append(f"Location: {profile_data.get('location')}")
+        
+        # Experience
+        if profile_data.get('experience'):
+            parts.append(f"\nExperience:\n{profile_data.get('experience')}")
+        
+        # Skills
+        if profile_data.get('skills'):
+            skills_text = ', '.join(profile_data.get('skills', []))
+            parts.append(f"\nSkills: {skills_text}")
+        
+        # Education
+        if profile_data.get('education'):
+            parts.append(f"\nEducation:\n{profile_data.get('education')}")
+        
+        # Summary
+        if profile_data.get('summary'):
+            parts.append(f"\nSummary:\n{profile_data.get('summary')}")
+        
+        return '\n'.join(parts)
+    
+    def bulk_import_candidates(self, candidates_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Bulk import multiple candidate profiles
+        
+        Args:
+            candidates_data: List of candidate profile dictionaries
+        
+        Returns:
+            Import results summary
+        """
+        results = {
+            'total': len(candidates_data),
+            'imported': 0,
+            'skipped': 0,
+            'errors': 0,
+            'candidates': []
+        }
+        
+        for profile_data in candidates_data:
+            try:
+                candidate = self.import_candidate_profile(profile_data)
+                if candidate:
+                    results['imported'] += 1
+                    results['candidates'].append({
+                        'id': candidate.id,
+                        'name': f"{candidate.first_name} {candidate.last_name}",
+                        'email': candidate.email
+                    })
+                else:
+                    results['skipped'] += 1
+            except Exception as e:
+                results['errors'] += 1
+                self.logger.error(f"Error importing candidate: {e}")
+        
+        return results
+    
+    def create_sourcing_campaign(self, 
+                                job_title: str,
+                                requirements: str,
+                                location: str = None) -> Dict[str, Any]:
+        """
+        Create a targeted sourcing campaign
+        
+        Args:
+            job_title: Target job title
+            requirements: Job requirements text
+            location: Target location
+        
+        Returns:
+            Campaign configuration and search parameters
+        """
+        # Extract key skills from requirements (simple keyword extraction for now)
+        extracted = self._extract_requirements_simple(requirements)
+        
+        campaign = {
+            'job_title': job_title,
+            'location': location,
+            'created_date': datetime.utcnow().isoformat(),
+            'status': 'active',
+            'search_parameters': {
+                'primary_skills': extracted.get('required_skills', []),
+                'nice_to_have_skills': extracted.get('preferred_skills', []),
+                'experience_range': extracted.get('experience_range', '3-5 years'),
+                'education': extracted.get('education', []),
+                'certifications': extracted.get('certifications', [])
+            },
+            'search_queries': self._generate_search_queries(
+                job_title, 
+                location,
+                extracted.get('required_skills', [])
+            )
+        }
+        
+        return campaign
+    
+    def _generate_search_queries(self, 
+                                job_title: str, 
+                                location: str,
+                                skills: List[str]) -> List[str]:
+        """Generate optimized search queries for different platforms"""
+        queries = []
+        
+        # Basic query
+        base_query = f'"{job_title}"'
+        if location:
+            base_query += f' "{location}"'
+        queries.append(base_query)
+        
+        # Skill-focused queries
+        for skill in skills[:3]:
+            skill_query = f'"{job_title}" "{skill}"'
+            if location:
+                skill_query += f' "{location}"'
+            queries.append(skill_query)
+        
+        # Boolean search query
+        if skills:
+            boolean_query = f'"{job_title}" AND ({" OR ".join([f\'"{s}"\' for s in skills[:3]])})'
+            if location:
+                boolean_query += f' AND "{location}"'
+            queries.append(boolean_query)
+        
+        return queries
+    
+    def _extract_requirements_simple(self, requirements: str) -> Dict[str, Any]:
+        """Simple keyword extraction from requirements text"""
+        import re
+        
+        # Common skill keywords
+        skill_patterns = [
+            'python', 'java', 'javascript', 'typescript', 'react', 'angular', 'vue',
+            'node.js', 'nodejs', 'aws', 'azure', 'gcp', 'docker', 'kubernetes',
+            'sql', 'postgresql', 'mongodb', 'redis', 'elasticsearch',
+            'machine learning', 'ai', 'data science', 'analytics',
+            'ci/cd', 'devops', 'git', 'agile', 'scrum',
+            'flask', 'django', 'spring', 'express', '.net', 'rails'
+        ]
+        
+        # Education patterns
+        education_patterns = [
+            "bachelor's", "master's", "phd", "computer science", "engineering",
+            "mathematics", "statistics", "mba"
+        ]
+        
+        # Certification patterns
+        cert_patterns = [
+            'aws certified', 'azure certified', 'gcp certified', 'pmp',
+            'scrum master', 'cissp', 'comptia', 'cisco'
+        ]
+        
+        requirements_lower = requirements.lower()
+        
+        # Extract skills
+        found_skills = []
+        for skill in skill_patterns:
+            if skill in requirements_lower:
+                found_skills.append(skill.title() if len(skill) > 3 else skill.upper())
+        
+        # Extract education
+        found_education = []
+        for edu in education_patterns:
+            if edu in requirements_lower:
+                found_education.append(edu.title())
+        
+        # Extract certifications
+        found_certs = []
+        for cert in cert_patterns:
+            if cert in requirements_lower:
+                found_certs.append(cert.upper() if len(cert) <= 4 else cert.title())
+        
+        # Extract experience range (look for patterns like "3-5 years", "5+ years")
+        exp_pattern = r'(\d+)[\s\-to]+(\d+)?\s*\+?\s*years?'
+        exp_match = re.search(exp_pattern, requirements_lower)
+        experience_range = '3-5 years'  # default
+        if exp_match:
+            if exp_match.group(2):
+                experience_range = f"{exp_match.group(1)}-{exp_match.group(2)} years"
+            else:
+                experience_range = f"{exp_match.group(1)}+ years"
+        
+        # Classify skills as required vs preferred
+        required_keywords = ['required', 'must have', 'essential', 'mandatory']
+        preferred_keywords = ['preferred', 'nice to have', 'bonus', 'plus']
+        
+        required_skills = found_skills[:5] if found_skills else []
+        preferred_skills = found_skills[5:] if len(found_skills) > 5 else []
         
         return {
-            'candidates': unique_candidates[:limit],
-            'total_found': len(unique_candidates),
-            'sources_searched': sources_used,
-            'search_query': query,
-            'timestamp': datetime.utcnow().isoformat()
+            'required_skills': required_skills,
+            'preferred_skills': preferred_skills,
+            'experience_range': experience_range,
+            'education': found_education,
+            'certifications': found_certs
         }
-    
-    def _search_linkedin_profiles(self, query: str, location: str, skills: List[str], limit: int) -> List[Dict]:
-        """Search LinkedIn profiles using RapidAPI LinkedIn scraper"""
-        if not self.rapidapi_key:
-            logging.warning("RapidAPI key not found for LinkedIn search")
-            return []
-            
-        try:
-            # LinkedIn Profile Search API
-            url = "https://linkedin-profiles-and-company-data.p.rapidapi.com/search-profiles"
-            
-            headers = self.base_headers.copy()
-            headers['X-RapidAPI-Host'] = 'linkedin-profiles-and-company-data.p.rapidapi.com'
-            
-            params = {
-                'keywords': query,
-                'location': location or 'United States',
-                'limit': limit
-            }
-            
-            # Add skills to keywords if provided
-            if skills:
-                params['keywords'] += f" {' '.join(skills[:3])}"  # Add top 3 skills
-            
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                candidates = []
-                
-                for profile in data.get('profiles', []):
-                    candidate = {
-                        'source': 'LinkedIn',
-                        'name': profile.get('name', 'Unknown'),
-                        'title': profile.get('headline', ''),
-                        'location': profile.get('location', ''),
-                        'profile_url': profile.get('profileUrl', ''),
-                        'summary': profile.get('summary', '')[:500],  # Limit summary length
-                        'experience': self._extract_experience(profile.get('experience', [])),
-                        'skills': self._extract_skills(profile.get('skills', [])),
-                        'education': self._extract_education(profile.get('education', [])),
-                        'connections': profile.get('connectionsCount', 0),
-                        'estimated_fit': self._calculate_fit_score(profile, query, skills),
-                        'contact_info': {
-                            'linkedin': profile.get('profileUrl', ''),
-                            'email': profile.get('email', ''),  # Usually not available
-                            'phone': profile.get('phone', '')   # Usually not available
-                        }
-                    }
-                    candidates.append(candidate)
-                
-                logging.info(f"Found {len(candidates)} LinkedIn candidates")
-                return candidates
-                
-        except Exception as e:
-            logging.error(f"LinkedIn search error: {str(e)}")
-            
-        return []
-    
-    def _search_github_profiles(self, query: str, skills: List[str], limit: int) -> List[Dict]:
-        """Search GitHub profiles for technical candidates"""
-        if not self.rapidapi_key:
-            return []
-            
-        try:
-            # GitHub User Search API
-            url = "https://github-user-scraper.p.rapidapi.com/search-users"
-            
-            headers = self.base_headers.copy()
-            headers['X-RapidAPI-Host'] = 'github-user-scraper.p.rapidapi.com'
-            
-            # Build search query with programming languages/skills
-            tech_skills = [s for s in (skills or []) if s.lower() in 
-                          ['python', 'javascript', 'java', 'react', 'node.js', 'django', 'flask']]
-            
-            search_query = query
-            if tech_skills:
-                search_query += f" language:{tech_skills[0].lower()}"
-            
-            params = {
-                'query': search_query,
-                'per_page': limit
-            }
-            
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                candidates = []
-                
-                for user in data.get('users', []):
-                    candidate = {
-                        'source': 'GitHub',
-                        'name': user.get('name', user.get('login', 'Unknown')),
-                        'title': 'Software Developer',  # Inferred from GitHub
-                        'location': user.get('location', ''),
-                        'profile_url': user.get('html_url', ''),
-                        'summary': user.get('bio', '')[:300],
-                        'github_stats': {
-                            'public_repos': user.get('public_repos', 0),
-                            'followers': user.get('followers', 0),
-                            'following': user.get('following', 0)
-                        },
-                        'skills': tech_skills,  # Based on search
-                        'estimated_fit': self._calculate_github_fit(user, skills),
-                        'contact_info': {
-                            'github': user.get('html_url', ''),
-                            'email': user.get('email', ''),
-                            'blog': user.get('blog', '')
-                        }
-                    }
-                    candidates.append(candidate)
-                
-                logging.info(f"Found {len(candidates)} GitHub candidates")
-                return candidates
-                
-        except Exception as e:
-            logging.error(f"GitHub search error: {str(e)}")
-            
-        return []
-    
-    def _search_angellist_profiles(self, query: str, location: str, limit: int) -> List[Dict]:
-        """Search AngelList for startup candidates"""
-        # Note: This would use AngelList Talent API if available
-        # For now, return empty as AngelList has restricted API access
-        return []
-    
-    def _extract_experience(self, experience_data: List[Dict]) -> List[Dict]:
-        """Extract and format experience information"""
-        formatted_experience = []
-        for exp in experience_data[:3]:  # Top 3 experiences
-            formatted_experience.append({
-                'title': exp.get('title', ''),
-                'company': exp.get('company', ''),
-                'duration': exp.get('duration', ''),
-                'description': exp.get('description', '')[:200]  # Limit description
-            })
-        return formatted_experience
-    
-    def _extract_skills(self, skills_data: List) -> List[str]:
-        """Extract skills from profile data"""
-        if isinstance(skills_data, list):
-            return [skill.get('name', skill) if isinstance(skill, dict) else str(skill) 
-                   for skill in skills_data[:10]]  # Top 10 skills
-        return []
-    
-    def _extract_education(self, education_data: List[Dict]) -> List[Dict]:
-        """Extract education information"""
-        formatted_education = []
-        for edu in education_data[:2]:  # Top 2 education entries
-            formatted_education.append({
-                'school': edu.get('school', ''),
-                'degree': edu.get('degree', ''),
-                'field': edu.get('field', ''),
-                'year': edu.get('year', '')
-            })
-        return formatted_education
-    
-    def _calculate_fit_score(self, profile: Dict, query: str, required_skills: List[str]) -> float:
-        """Calculate estimated fit score based on profile match"""
-        score = 5.0  # Base score
-        
-        # Title/headline match
-        headline = profile.get('headline', '').lower()
-        if any(word in headline for word in query.lower().split()):
-            score += 2.0
-        
-        # Skills match
-        profile_skills = [s.lower() for s in self._extract_skills(profile.get('skills', []))]
-        if required_skills:
-            matched_skills = sum(1 for skill in required_skills 
-                               if skill.lower() in profile_skills)
-            skill_ratio = matched_skills / len(required_skills)
-            score += skill_ratio * 3.0
-        
-        # Experience level (based on connections or experience count)
-        connections = profile.get('connectionsCount', 0)
-        if connections > 500:
-            score += 1.0
-        elif connections > 100:
-            score += 0.5
-        
-        return min(score, 10.0)  # Cap at 10
-    
-    def _calculate_github_fit(self, user: Dict, required_skills: List[str]) -> float:
-        """Calculate fit score for GitHub users"""
-        score = 5.0
-        
-        # Repository count
-        repos = user.get('public_repos', 0)
-        if repos > 50:
-            score += 2.0
-        elif repos > 20:
-            score += 1.0
-        elif repos > 5:
-            score += 0.5
-        
-        # Followers (indication of reputation)
-        followers = user.get('followers', 0)
-        if followers > 100:
-            score += 1.5
-        elif followers > 20:
-            score += 0.5
-        
-        # Has bio (shows professionalism)
-        if user.get('bio'):
-            score += 0.5
-        
-        return min(score, 10.0)
-    
-    def _deduplicate_candidates(self, candidates: List[Dict]) -> List[Dict]:
-        """Remove duplicate candidates based on profile URL or email"""
-        seen = set()
-        unique_candidates = []
-        
-        for candidate in candidates:
-            # Create identifier based on profile URL or name+location
-            identifier = (candidate.get('profile_url') or 
-                         f"{candidate.get('name', '')}-{candidate.get('location', '')}")
-            
-            if identifier not in seen and identifier:
-                seen.add(identifier)
-                unique_candidates.append(candidate)
-        
-        return unique_candidates
-
-def search_external_candidates(
-    query: str,
-    location: str = None,
-    skills: List[str] = None,
-    experience_level: str = None,
-    limit: int = 20
-) -> Dict[str, Any]:
-    """
-    Main function to search for external candidates
-    """
-    sourcer = CandidateSourcer()
-    return sourcer.search_candidates(query, location, skills, experience_level, limit)

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Import Results - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-file-csv me-2"></i>Bulk Import Results
+    </h2>
+
+    <!-- Import Summary -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Import Summary</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h3 class="text-primary">{{ results.total }}</h3>
+                    <p class="text-muted">Total Records</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-success">{{ results.imported }}</h3>
+                    <p class="text-muted">Successfully Imported</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-warning">{{ results.skipped }}</h3>
+                    <p class="text-muted">Skipped (Duplicates)</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="text-danger">{{ results.errors }}</h3>
+                    <p class="text-muted">Errors</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Imported Candidates -->
+    {% if results.candidates %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Imported Candidates</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for candidate in results.candidates %}
+                        <tr>
+                            <td>{{ candidate.name }}</td>
+                            <td>{{ candidate.email }}</td>
+                            <td>
+                                <a href="{{ url_for('view_results', analysis_id=candidate.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="mt-4">
+        <a href="{{ url_for('bulk_import_candidates') }}" class="btn btn-primary">
+            <i class="fas fa-file-csv"></i> Import More
+        </a>
+        <a href="{{ url_for('candidate_database') }}" class="btn btn-success">
+            <i class="fas fa-database"></i> View All Candidates
+        </a>
+        <a href="{{ url_for('candidate_sourcing') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Sourcing
+        </a>
+    </div>
+</div>
+{% endblock %}

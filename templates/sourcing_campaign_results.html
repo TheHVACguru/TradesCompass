@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Sourcing Campaign - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-bullhorn me-2"></i>Sourcing Campaign Generated
+    </h2>
+
+    <!-- Campaign Summary -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Campaign Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Job Title:</strong> {{ campaign.job_title }}</p>
+                    <p><strong>Location:</strong> {{ campaign.location or 'Any' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> <span class="badge bg-success">{{ campaign.status }}</span></p>
+                    <p><strong>Created:</strong> {{ campaign.created_date }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Parameters -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-cogs"></i> Extracted Search Parameters</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Primary Skills:</h6>
+                    {% if campaign.search_parameters.primary_skills %}
+                        {% for skill in campaign.search_parameters.primary_skills %}
+                        <span class="badge bg-primary me-1 mb-1">{{ skill }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">None identified</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h6>Nice-to-Have Skills:</h6>
+                    {% if campaign.search_parameters.nice_to_have_skills %}
+                        {% for skill in campaign.search_parameters.nice_to_have_skills %}
+                        <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">None identified</p>
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>Experience Range:</h6>
+                    <p>{{ campaign.search_parameters.experience_range }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Education:</h6>
+                    {% if campaign.search_parameters.education %}
+                        <ul class="list-unstyled">
+                        {% for edu in campaign.search_parameters.education %}
+                            <li>• {{ edu }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Not specified</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <h6>Certifications:</h6>
+                    {% if campaign.search_parameters.certifications %}
+                        <ul class="list-unstyled">
+                        {% for cert in campaign.search_parameters.certifications %}
+                            <li>• {{ cert }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Not specified</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Queries -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-search"></i> Optimized Search Queries</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Use these queries on different platforms to find candidates:</p>
+            {% for query in campaign.search_queries %}
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" value="{{ query }}" readonly>
+                <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ query }}')">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            {% endfor %}
+            
+            <div class="alert alert-info mt-3">
+                <h6>Where to use these queries:</h6>
+                <ul class="mb-0">
+                    <li>Professional networking sites (with ToS compliance)</li>
+                    <li>Job board resume databases</li>
+                    <li>Google search with site-specific operators</li>
+                    <li>GitHub user search for developers</li>
+                    <li>Professional association directories</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('sourcing_campaign') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Campaign
+        </a>
+        <a href="{{ url_for('candidate_sourcing') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Sourcing
+        </a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show success feedback
+        event.target.innerHTML = '<i class="fas fa-check"></i> Copied';
+        setTimeout(() => {
+            event.target.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

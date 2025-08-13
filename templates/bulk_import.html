@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Import - Candidate Sourcing{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-file-csv me-2"></i>Bulk Import Candidates
+    </h2>
+
+    <!-- Instructions -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-info-circle"></i> CSV Format Instructions</h5>
+        </div>
+        <div class="card-body">
+            <p>Upload a CSV file with the following columns:</p>
+            <ul>
+                <li><strong>first_name</strong> - Candidate's first name (required)</li>
+                <li><strong>last_name</strong> - Candidate's last name (required)</li>
+                <li><strong>email</strong> - Email address</li>
+                <li><strong>phone</strong> - Phone number</li>
+                <li><strong>location</strong> - City, State/Country</li>
+                <li><strong>title</strong> - Current job title</li>
+                <li><strong>company</strong> - Current company</li>
+                <li><strong>skills</strong> - Semicolon-separated skills (e.g., Python;JavaScript;AWS)</li>
+                <li><strong>summary</strong> - Professional summary</li>
+                <li><strong>experience</strong> - Work experience details</li>
+                <li><strong>education</strong> - Educational background</li>
+            </ul>
+            
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-download"></i> 
+                <a href="#" onclick="downloadTemplate()">Download CSV Template</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-upload"></i> Upload CSV File</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('bulk_import_candidates') }}" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Select CSV File</label>
+                    <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+                    <div class="form-text">Maximum file size: 10MB</div>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Import Candidates
+                    </button>
+                    <a href="{{ url_for('candidate_sourcing') }}" class="btn btn-secondary">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function downloadTemplate() {
+    // Create CSV template
+    const csvContent = `first_name,last_name,email,phone,location,title,company,skills,summary,experience,education
+John,Doe,john.doe@example.com,555-0100,New York NY,Senior Developer,Tech Corp,Python;JavaScript;AWS,Experienced developer,10 years in software development,BS Computer Science
+Jane,Smith,jane.smith@example.com,555-0101,San Francisco CA,Data Scientist,AI Company,Python;Machine Learning;TensorFlow,ML expert,5 years in data science,MS Data Science`;
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'candidate_import_template.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+</script>
+{% endblock %}

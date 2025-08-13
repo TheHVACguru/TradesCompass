@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Sourcing Toolbox - TalentCompass AI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-toolbox me-2"></i>Enhanced Sourcing Toolbox
+        <small class="text-muted">Professional Recruitment Tools</small>
+    </h2>
+
+    <!-- Tool Cards Grid -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-code fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Boolean Search Builder</h5>
+                    <p class="card-text">Create advanced search strings for LinkedIn, GitHub, and Google</p>
+                    <a href="{{ url_for('boolean_builder') }}" class="btn btn-primary">
+                        Build Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fab fa-github fa-3x text-dark mb-3"></i>
+                    <h5 class="card-title">GitHub Insights</h5>
+                    <p class="card-text">Analyze developer profiles, repositories, and activity</p>
+                    <a href="{{ url_for('github_insights') }}" class="btn btn-dark">
+                        Analyze Developer
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-address-book fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Contact Finder</h5>
+                    <p class="card-text">Access contact discovery tools and email finders</p>
+                    <a href="{{ url_for('contact_finder') }}" class="btn btn-success">
+                        Find Contacts
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">JD Analyzer</h5>
+                    <p class="card-text">Check job descriptions for bias and inclusivity</p>
+                    <a href="{{ url_for('job_description_analyzer') }}" class="btn btn-info">
+                        Analyze JD
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Salary Benchmark</h5>
+                    <p class="card-text">Research compensation data across platforms</p>
+                    <a href="{{ url_for('salary_benchmark') }}" class="btn btn-warning">
+                        Check Salaries
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-3x text-purple mb-3"></i>
+                    <h5 class="card-title">University Alumni</h5>
+                    <p class="card-text">Search top university alumni networks</p>
+                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#alumniModal">
+                        View Universities
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Tips Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Advanced Search Tips</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for platform, tips in search_tips.items() %}
+                <div class="col-md-6 mb-3">
+                    <h6 class="text-capitalize">{{ platform }} Search</h6>
+                    <ul class="small">
+                        {% for tip in tips[:3] %}
+                        <li>{{ tip }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Communities -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-users"></i> Developer Communities</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for category, community_list in communities.items() %}
+                <div class="col-md-3">
+                    <h6>{{ category.replace('_', ' ').title() }}</h6>
+                    <ul class="list-unstyled small">
+                        {% for community in community_list[:3] %}
+                        <li>
+                            <a href="{{ community.url }}" target="_blank">
+                                {{ community.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Alumni Modal -->
+    <div class="modal fade" id="alumniModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">University Alumni Networks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        {% for uni_name, uni_link in universities.items() %}
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ uni_link }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                {{ uni_name }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
