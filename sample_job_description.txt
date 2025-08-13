@@ -1,0 +1,25 @@
+Senior Software Engineer - Full Stack
+
+We are seeking an experienced Full Stack Software Engineer to join our growing team. The ideal candidate will have strong experience with modern web technologies and a passion for building scalable applications.
+
+Requirements:
+- 5+ years of experience in software development
+- Strong proficiency in Python, JavaScript, and React
+- Experience with cloud platforms (AWS, Azure, or GCP)
+- Knowledge of database systems (PostgreSQL, MongoDB)
+- Experience with RESTful APIs and microservices
+- Excellent problem-solving and communication skills
+- Bachelor's degree in Computer Science or related field
+
+Nice to have:
+- Experience with Machine Learning or AI
+- Knowledge of DevOps practices and CI/CD
+- Experience with containerization (Docker, Kubernetes)
+- Contributions to open-source projects
+
+Responsibilities:
+- Design and develop scalable web applications
+- Collaborate with cross-functional teams
+- Write clean, maintainable code
+- Participate in code reviews
+- Mentor junior developers
