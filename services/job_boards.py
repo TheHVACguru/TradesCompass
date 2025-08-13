@@ -124,6 +124,64 @@ class IndeedAPI(JobBoardAPI):
             logging.error(f"Unexpected error in Indeed search: {str(e)}")
             return []
 
+class LinkedInAPI(JobBoardAPI):
+    """LinkedIn job search integration using RapidAPI"""
+    
+    def __init__(self):
+        super().__init__(os.environ.get("RAPIDAPI_KEY"))
+        self.base_url = "https://linkedin-jobs-search.p.rapidapi.com/"
+        self.headers = {
+            "X-RapidAPI-Key": self.api_key if self.api_key else "",
+            "X-RapidAPI-Host": "linkedin-jobs-search.p.rapidapi.com"
+        }
+    
+    def search_jobs(self, query: str, location: str = "United States", max_results: int = 5) -> List[Dict[str, Any]]:
+        if not self.api_key:
+            logging.info("RapidAPI key not found, skipping LinkedIn search")
+            return []
+        
+        try:
+            payload = {
+                "search_terms": query,
+                "location": location,
+                "page": "1"
+            }
+            
+            response = requests.post(
+                self.base_url, 
+                json=payload,
+                headers=self.headers,
+                timeout=10
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            jobs = []
+            
+            # Parse LinkedIn job results
+            if isinstance(data, list):
+                for idx, job in enumerate(data[:max_results]):
+                    job_info = {
+                        'title': job.get('job_title', 'N/A'),
+                        'company': job.get('company_name', 'N/A'),
+                        'location': job.get('job_location', location),
+                        'url': job.get('job_url', '#'),
+                        'summary': job.get('job_description', 'No description available')[:200] + '...' if job.get('job_description') else 'No description available',
+                        'posted_date': job.get('posted_date', 'Recently'),
+                        'salary': job.get('salary', 'Not specified'),
+                        'source': 'LinkedIn'
+                    }
+                    jobs.append(job_info)
+            
+            return jobs
+            
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error fetching jobs from LinkedIn: {str(e)}")
+            return []
+        except Exception as e:
+            logging.error(f"Unexpected error in LinkedIn search: {str(e)}")
+            return []
+
 class USAJobsAPI(JobBoardAPI):
     """USAJobs.gov federal job search integration"""
     
@@ -186,6 +244,7 @@ class MultiJobBoardSearch:
         self.job_boards = [
             ZipRecruiterAPI(),
             IndeedAPI(),
+            LinkedInAPI(),
             USAJobsAPI()
         ]
     

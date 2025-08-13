@@ -1,6 +1,6 @@
 # Overview
 
-A comprehensive Flask-based AI-powered recruitment platform that revolutionizes candidate screening and management. The system provides multi-channel resume intake (manual upload + email automation), advanced candidate database search, AI-powered analysis using OpenAI GPT-4o, and multi-source job matching across ZipRecruiter, Indeed, and USAJobs platforms. Features include candidate tagging, status tracking, email processing automation, and a comprehensive recruitment dashboard.
+A comprehensive Flask-based AI-powered recruitment platform that revolutionizes candidate screening and management. The system provides multi-channel resume intake (manual upload + email automation), advanced candidate database search, AI-powered analysis using OpenAI GPT-4o, and multi-source job matching across ZipRecruiter, Indeed, LinkedIn, and USAJobs platforms. Features include candidate tagging, status tracking, email processing automation, and a comprehensive recruitment dashboard.
 
 # User Preferences
 
@@ -13,7 +13,7 @@ Preferred communication style: Simple, everyday language.
 - **Database**: PostgreSQL with advanced indexing for candidate search, email processing logs, and relationship management
 - **File Processing**: Multi-format support (PDF, DOCX, TXT) with enhanced text extraction and error handling
 - **AI Integration**: OpenAI GPT-4o with structured JSON responses for resume analysis and candidate information extraction
-- **Multi-Source Job Matching**: Integrated APIs for ZipRecruiter, Indeed Publisher, and USAJobs federal positions
+- **Multi-Source Job Matching**: Integrated APIs for ZipRecruiter, Indeed Publisher, LinkedIn (via RapidAPI), and USAJobs federal positions
 - **Email Automation**: IMAP-based email processing for automatic resume intake from email attachments
 
 ## Frontend Architecture
@@ -30,7 +30,7 @@ Preferred communication style: Simple, everyday language.
 - **Database Optimization**: Strategic indexes on ratings, skills, dates, and search fields for performance
 
 ## Advanced Service Layer
-- **Multi-Job Board Integration**: Aggregated search across ZipRecruiter, Indeed, and USAJobs with deduplication
+- **Multi-Job Board Integration**: Aggregated search across ZipRecruiter, Indeed, LinkedIn, and USAJobs with deduplication
 - **Candidate Database Services**: Advanced search, similarity matching, and statistical analysis
 - **Email Processing Engine**: IMAP integration with attachment extraction, job description parsing, and automated analysis
 - **Enhanced AI Services**: Improved candidate information extraction including phone, location, and skills with better error handling
@@ -47,6 +47,7 @@ Preferred communication style: Simple, everyday language.
 - **OpenAI API**: GPT-4o model for resume analysis and enhanced candidate information extraction
 - **ZipRecruiter API**: Job search with comprehensive job details and company information
 - **Indeed Publisher API**: Access to Indeed's job database with location-based search
+- **LinkedIn API**: Job search via RapidAPI's LinkedIn endpoint for professional network job postings
 - **USAJobs API**: Federal job opportunities with government position details
 - **Email Services**: IMAP integration for Gmail, Outlook, Yahoo, and other providers
 
@@ -65,7 +66,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Environment Configuration
 - **Required**: OPENAI_API_KEY for AI-powered analysis
-- **Job Boards**: ZIPRECRUITER_API_KEY, INDEED_PUBLISHER_ID, USAJOBS_API_KEY, USAJOBS_USER_AGENT
+- **Job Boards**: ZIPRECRUITER_API_KEY, INDEED_PUBLISHER_ID, RAPIDAPI_KEY (for LinkedIn), USAJOBS_API_KEY, USAJOBS_USER_AGENT
 - **Email Processing**: EMAIL_USER, EMAIL_PASSWORD, IMAP_SERVER, IMAP_PORT for automated resume intake
 - **Database**: DATABASE_URL (automatically configured), SESSION_SECRET for secure sessions
 - **Optional**: Email folder configuration and processing parameters
