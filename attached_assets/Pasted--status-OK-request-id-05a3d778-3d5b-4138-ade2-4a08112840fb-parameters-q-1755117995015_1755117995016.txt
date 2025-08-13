@@ -1,0 +1,1033 @@
+{
+  "status": "OK",
+  "request_id": "05a3d778-3d5b-4138-ade2-4a08112840fb",
+  "parameters": {
+    "query": "developer jobs in chicago",
+    "page": 1,
+    "num_pages": 1,
+    "date_posted": "all",
+    "country": "us",
+    "language": "en"
+  },
+  "data": [
+    {
+      "job_id": "gy2_8w_wv2pqxqQAAAAAAA==",
+      "job_title": "Back End Developer, Trilogy (Remote) - $60,000/year USD",
+      "employer_name": "Trilogy",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpITinSpExriO0kM-qr9Jib1ZHGA6VwtRvEUNK&s=0",
+      "employer_website": "https://trilogy.com",
+      "job_publisher": "LinkedIn",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.linkedin.com/jobs/view/back-end-developer-trilogy-remote-%2460-000-year-usd-at-trilogy-4283563860?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/back-end-developer-trilogy-remote-%2460-000-year-usd-at-trilogy-4283563860?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Careerhubs.pro",
+          "apply_link": "https://careerhubs.pro/job/458194?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Remote Jobs USA",
+          "apply_link": "https://remoteverve.com/job/676944?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Amazon Store",
+          "apply_link": "https://highstore09.puranigaadi.com/blogs/news/back-end-developer-trilogy-remote-60-000-year-usd?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "You're an engineer who doesn't tolerate bad code, slow deployments, or outdated development practices. You don't just write software—you build AI-driven systems that make traditional engineering look sluggish and inefficient. If that sounds like you, keep reading.\n\nMost software teams are still writing code the old way—manual debugging, trial-and-error deployments, and features that barely leverage AI beyond a sprinkle of Copilot suggestions. Trilogy is different. Every part of our development process is infused with AI: feature ideation, bug detection, defect resolution, and performance optimization. This isn't about dabbling in AI tools; this is about fully integrating AI into the software lifecycle to eliminate waste, ship faster, and build with precision.\n\nIn this role, you will take existing B2B products, break them down, rebuild them as cloud-native applications, and optimize them with AI at every level. You'll be developing and deploying AI-powered features, using cutting-edge retrieval-augmented generation (RAG) for automated defect detection, and ensuring every release is smooth—zero outages, zero disruptions, zero excuses. If you're looking for a job where you spend weeks debating architecture decisions instead of shipping, this isn't it.\n\nIf you're ready to push the boundaries of AI-driven software engineering and accelerate your career into high-scale cloud-native development, apply now. If you prefer sticking to what you already know, writing test cases by hand, or working in teams that are afraid of automation, this isn't for you.\n\nWhat You Will Be Doing\n• Using analysis tools and RAG vector stores to identify, diagnose, and correct product defects and fix bugs.\n• Leveraging AI development agents to design, develop, and deploy innovative features for cloud-native applications.\n• Collaborating with a global team to deliver high-quality, enterprise-grade solutions.\n\nWhat You Won’t Be Doing\n• Routine Monotony: We keep cumbersome infrastructure tasks to a minimum so you can focus on creating innovative solutions.\n• Endless Meetings: We value your expertise in development over sitting in meeting rooms. Expect more coding, less talking.\n\nBack End Developer Key Responsibilities\n• Implement AI-driven features to streamline workflows and empower service providers with innovative tools.\n\nBasic Requirements\n• 4+ years of professional experience in commercial software development, focusing on production code for server-side web applications\n• Experience using GenAI code assistants (e.g., Github Copilot, Cursor, v0.dev); we are not looking for traditional ML engineers without LLM experience\n• A willingness to use GenAI in your day-to-day development work\n\nAbout Trilogy\n\nHundreds of software businesses run on the Trilogy Business Platform. For three decades, Trilogy has been known for 3 things: Relentlessly seeking top talent, Innovating new technology, and incubating new businesses. Our technological innovation is spearheaded by a passion for simple customer-facing designs. Our incubation of new businesses ranges from entirely new moon-shot ideas to rearchitecting existing projects for today's modern cloud-based stack. Trilogy is a place where you can be surrounded with great people, be proud of doing great work, and grow your career by leaps and bounds.\n\nThere is so much to cover for this exciting role, and space here is limited. Hit the Apply button if you found this interesting and want to learn more. We look forward to meeting you!\n\nWorking with us\n\nThis is a full-time (40 hours per week), long-term position. The position is immediately available and requires entering into an independent contractor agreement with Crossover as a Contractor of Record. The compensation level for this role is $30 USD/hour, which equates to $60,000 USD/year assuming 40 hours per week and 50 weeks per year. The payment period is weekly. Consult www.crossover.com/help-and-faqs for more details on this topic.\n\nCrossover Job Code: LJ-3889-US-Chicago-BackEndDevelop.009",
+      "job_is_remote": true,
+      "job_posted_at": "1 day ago",
+      "job_posted_at_timestamp": 1754956800,
+      "job_posted_at_datetime_utc": "2025-08-12T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dgy2_8w_wv2pqxqQAAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": "HOUR",
+      "job_highlights": {
+        "Qualifications": [
+          "You're an engineer who doesn't tolerate bad code, slow deployments, or outdated development practices",
+          "You don't just write software—you build AI-driven systems that make traditional engineering look sluggish and inefficient",
+          "Most software teams are still writing code the old way—manual debugging, trial-and-error deployments, and features that barely leverage AI beyond a sprinkle of Copilot suggestions",
+          "If you prefer sticking to what you already know, writing test cases by hand, or working in teams that are afraid of automation, this isn't for you",
+          "4+ years of professional experience in commercial software development, focusing on production code for server-side web applications",
+          "Experience using GenAI code assistants (e.g., Github Copilot, Cursor, v0.dev); we are not looking for traditional ML engineers without LLM experience",
+          "A willingness to use GenAI in your day-to-day development work",
+          "The position is immediately available and requires entering into an independent contractor agreement with Crossover as a Contractor of Record"
+        ],
+        "Benefits": [
+          "The compensation level for this role is $30 USD/hour, which equates to $60,000 USD/year assuming 40 hours per week and 50 weeks per year",
+          "The payment period is weekly"
+        ],
+        "Responsibilities": [
+          "In this role, you will take existing B2B products, break them down, rebuild them as cloud-native applications, and optimize them with AI at every level",
+          "You'll be developing and deploying AI-powered features, using cutting-edge retrieval-augmented generation (RAG) for automated defect detection, and ensuring every release is smooth—zero outages, zero disruptions, zero excuses",
+          "Using analysis tools and RAG vector stores to identify, diagnose, and correct product defects and fix bugs",
+          "Leveraging AI development agents to design, develop, and deploy innovative features for cloud-native applications",
+          "Collaborating with a global team to deliver high-quality, enterprise-grade solutions",
+          "Routine Monotony: We keep cumbersome infrastructure tasks to a minimum so you can focus on creating innovative solutions",
+          "Endless Meetings: We value your expertise in development over sitting in meeting rooms",
+          "Expect more coding, less talking",
+          "Back End Developer Key Responsibilities",
+          "Implement AI-driven features to streamline workflows and empower service providers with innovative tools"
+        ]
+      },
+      "job_onet_soc": "15113400",
+      "job_onet_job_zone": "3"
+    },
+    {
+      "job_id": "lvnnzb7rONa_Z8olAAAAAA==",
+      "job_title": "Senior Full-Stack Developer ($90,000-$150,000)",
+      "employer_name": "Synergy Interactive",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2L9v2XgIe_jBb_z2CEMWoArxsrYklfEKoV3He&s=0",
+      "employer_website": null,
+      "job_publisher": "LinkedIn",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.linkedin.com/jobs/view/senior-full-stack-developer-%2490-000-%24150-000-at-synergy-interactive-4283786859?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/senior-full-stack-developer-%2490-000-%24150-000-at-synergy-interactive-4283786859?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobaaj",
+          "apply_link": "https://www.jobaaj.com/job/jobot-senior-full-stack-developer-chicago-illinois-usa-5-to-7-years-692569?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": true
+        },
+        {
+          "publisher": "Teal",
+          "apply_link": "https://www.tealhq.com/job/senior-full-stack-developer_bbd4e89d-e5c3-4102-9c1f-6c0c19bf5a7b?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "BeBee",
+          "apply_link": "https://us.bebee.com/job/3eb916de98e52abd7e3fef30e59a0dac?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Web3 Jobs Online - Crypto, Web3 And Blockchain Jobs",
+          "apply_link": "https://web3jobs.online/jobs/senior-full-stack-developer-protokol-79918112/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobs Trabajo.org",
+          "apply_link": "https://us.trabajo.org/job-3035-7bb18ee40f9476ca99f0462518621b4c?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobilize",
+          "apply_link": "https://www.jobilize.com/job/us-il-chicago-senior-full-stack-developer-sagepath-reply-hiring-now?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "Job Description\n\nWe are seeking a highly skilled and experienced Senior Full-Stack Technologist to join our growing team on-site in our Chicago office. The ideal candidate will have a robust understanding of both front-end and back-end technologies, possess a proven track record of working in an agency setting, and demonstrate the ability to make informed decisions quickly.\n\nKey Responsibilities\n• Work in a fast-paced environment, managing multiple projects and deadlines.\n• Take ownership of projects and make critical decisions when necessary.\n• Design, develop, and maintain scalable web applications and services.\n• Collaborate with cross-functional teams to define, design, and ship new features.\n• Ensure the performance, quality, and responsiveness of applications.\n• Identify and correct bottlenecks and fix bugs.\n• Stay up-to-date with new technologies and industry trends.\n• Participate in code reviews and provide constructive feedback.\n\nRequired Qualifications\n• Proven experience as a Full-Stack Developer, architect or similar role.\n• Strong knowledge of back-end technologies such as PHP (Laravel), Go, and Node.js.\n• Proficiency in front-end technologies such as HTML, CSS, JavaScript, and modern frameworks (e.g., React, Next.js).\n• Understanding of operating systems and general computing including scripting such as BASH.\n• Experience with relational databases (MySQL, Postgres).\n• Familiarity with cloud services (e.g., AWS).\n• Understanding of version control systems (e.g., Git).\n• Experience working in an agency environment or similar fast-paced setting.\n• Excellent problem-solving skills and the ability to work independently and as part of a team.\n• Strong communication skills and the ability to articulate technical concepts to non-technical stakeholders.\n\nPreferred Qualifications\n• A bachelor’s degree in Computer Science or a closely related discipline.\n• Demonstrated proficiency in owning and solving novel software solutions across a range of technologies.\n• Experience with mobile development (e.g., iOS, Android) is a plus.\n• Experience with desktop development (e.g., MacOS, Windows) is a plus.\n• Experience with working with video content creators.\n• Experience with DevOps practices and CI/CD pipelines.\n• Knowledge of containerization technologies (e.g., Docker, Kubernetes).\n• Familiarity with agile methodologies.",
+      "job_is_remote": false,
+      "job_posted_at": "7 hours ago",
+      "job_posted_at_timestamp": 1755090000,
+      "job_posted_at_datetime_utc": "2025-08-13T13:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dlvnnzb7rONa_Z8olAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "The ideal candidate will have a robust understanding of both front-end and back-end technologies, possess a proven track record of working in an agency setting, and demonstrate the ability to make informed decisions quickly",
+          "Proven experience as a Full-Stack Developer, architect or similar role",
+          "Strong knowledge of back-end technologies such as PHP (Laravel), Go, and Node.js",
+          "Proficiency in front-end technologies such as HTML, CSS, JavaScript, and modern frameworks (e.g., React, Next.js)",
+          "Understanding of operating systems and general computing including scripting such as BASH",
+          "Experience with relational databases (MySQL, Postgres)",
+          "Familiarity with cloud services (e.g., AWS)",
+          "Understanding of version control systems (e.g., Git)",
+          "Experience working in an agency environment or similar fast-paced setting",
+          "Excellent problem-solving skills and the ability to work independently and as part of a team",
+          "Strong communication skills and the ability to articulate technical concepts to non-technical stakeholders"
+        ],
+        "Responsibilities": [
+          "Work in a fast-paced environment, managing multiple projects and deadlines",
+          "Take ownership of projects and make critical decisions when necessary",
+          "Design, develop, and maintain scalable web applications and services",
+          "Collaborate with cross-functional teams to define, design, and ship new features",
+          "Ensure the performance, quality, and responsiveness of applications",
+          "Identify and correct bottlenecks and fix bugs",
+          "Stay up-to-date with new technologies and industry trends",
+          "Participate in code reviews and provide constructive feedback"
+        ]
+      },
+      "job_onet_soc": "15113300",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "FzS7yhFLldOoG44LAAAAAA==",
+      "job_title": "C# Developer - Core Technology",
+      "employer_name": "Maven Securities",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSab2O6mSWZ_B28rWOWmPbJtGA78omE067hWayG&s=0",
+      "employer_website": "https://www.mavensecurities.com",
+      "job_publisher": "LinkedIn",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.linkedin.com/jobs/view/c%23-developer-core-technology-at-maven-securities-4283810165?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/c%23-developer-core-technology-at-maven-securities-4283810165?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobs And Careers",
+          "apply_link": "https://www.career.com/job/lensa/developer-net-csharp-information-technology/j202506231956161354274?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Indeed Jobs Philippines",
+          "apply_link": "https://onestop90.puranigaadi.com/blogs/news/developer-net-c-information-technology-id-10122?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "ABOUT THE COMPANY:\n\nMaven is a market-leading proprietary trading firm allocating internal capital across discretionary, systematic, and market-making strategies. Our collective expertise spans traders, engineers, and technologists, unified by an unwavering dedication to enhance our efficiency as a premier liquidity provider for globally listed derivatives. We leverage groundbreaking execution and pricing technologies to elevate and improve how financial markets operate.\n\nCore Tech design, builds and runs the Core Platforms and its architecture at Maven. It provides applications, services and libraries upon which the whole business depends. The team’s main responsibility is for middleware and backend services; we also develop full-stack solutions, including web-based front-ends.\n\nThe Role:\n\nAn opportunity to create outstanding solutions within a highly skilled, supportive and multi-disciplinary team, developing and improving to reach your full potential. You should be passionate about quality, and able to work on fast-paced projects which have direct impact to our trading activities. Team dynamics are crucial to us whereby we recognise the value of strong individual contributions.\n\nWhat you’re going to do:\n• Design and develop sound solutions to support critical business functions with a focus on testability, maintainability, performance and resilience\n• Craft great code and tests, using automation as your friend\n• Analyse, capture and communicate your design decisions\n• Losely interact and collaborate with stakeholders, SRE’s and Infrastructure engineers\n\nWhat you’re going to need:\n• Strong analytical and system design skills\n• Excellent C# ability including strong focus on testing processes\n• .NET Core; CI/CD, containerization (Docker and/or Kubernetes)\n\nNice to have:\n• Modern Front-end UI development experience, especially React and TypeScript\n• Event-driven design, DDD, CQRS and/or EventSourcing experience",
+      "job_is_remote": false,
+      "job_posted_at": "19 hours ago",
+      "job_posted_at_timestamp": 1755046800,
+      "job_posted_at_datetime_utc": "2025-08-13T01:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DFzS7yhFLldOoG44LAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "You should be passionate about quality, and able to work on fast-paced projects which have direct impact to our trading activities",
+          "Strong analytical and system design skills",
+          "Excellent C# ability including strong focus on testing processes",
+          ".NET Core; CI/CD, containerization (Docker and/or Kubernetes)",
+          "Modern Front-end UI development experience, especially React and TypeScript",
+          "Event-driven design, DDD, CQRS and/or EventSourcing experience"
+        ],
+        "Responsibilities": [
+          "Core Tech design, builds and runs the Core Platforms and its architecture at Maven",
+          "It provides applications, services and libraries upon which the whole business depends",
+          "The team’s main responsibility is for middleware and backend services; we also develop full-stack solutions, including web-based front-ends",
+          "An opportunity to create outstanding solutions within a highly skilled, supportive and multi-disciplinary team, developing and improving to reach your full potential",
+          "Design and develop sound solutions to support critical business functions with a focus on testability, maintainability, performance and resilience",
+          "Craft great code and tests, using automation as your friend",
+          "Analyse, capture and communicate your design decisions",
+          "Losely interact and collaborate with stakeholders, SRE’s and Infrastructure engineers"
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "t8XP63BjPCsr0GgVAAAAAA==",
+      "job_title": "Entry Level Software Developer - Apprentice",
+      "employer_name": "Catalyte",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt6lfTz0K0_3fRk4SQnHfzUmQrAL3eFZPO4tYo&s=0",
+      "employer_website": "https://www.catalyte.io",
+      "job_publisher": "Indeed",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.indeed.com/viewjob?jk=aa7678c137ec9ded&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "Indeed",
+          "apply_link": "https://www.indeed.com/viewjob?jk=aa7678c137ec9ded&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Glassdoor",
+          "apply_link": "https://www.glassdoor.com/job-listing/entry-level-software-developer-apprentice-catalyte-JV_IC1128808_KO0,41_KE42,50.htm?jl=1009839454872&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/software-developer-entry-level-apprentice-at-catalyte-4278844862?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jooble",
+          "apply_link": "https://jooble.org/jdp/-7841192585891981848?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Teal",
+          "apply_link": "https://www.tealhq.com/job/dev10-entry-level-software-developer-nationwide_ddbbce7b-e20c-43ce-a29a-e4468b977e9d?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "SimplyHired",
+          "apply_link": "https://www.simplyhired.com/job/M9MDM-QIgBN4MNfQhEQq2tkBaLk5-rBN29EszEwYcsRrAo09kN3oqA?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Recruit.net",
+          "apply_link": "https://www.recruit.net/job/software-developer-apprentice-jobs/C8D8D74609BA6A8E?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobilize",
+          "apply_link": "https://www.jobilize.com/job/us-il-chicago-software-developer-entry-level-apprentice-catalyte-hiring?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "APPRENTICE SOFTWARE DEVELOPER\n\nLocation: Onsite in CHICAGO (specific details below)\n\nWe are targeting candidates who live in our priority recruitment area of Chicago which includes these zip codes: 60619, 60620, 60621, 60827, 60649, 60628, 60636, 60624, 60644, 60653\n\nBecome a software developer. No experience needed. Fast track your entry into the software development industry with Catalyte.\n\nDuring your software developer journey, you will be provided the skills needed to succeed. Under the tutelage of experienced software developers, you will work on a team to hone both technical and interpersonal skills critical for real-world success. You’ll also be given the opportunity to build software for one of our many clients. You'll receive mentorship, coaching, and ongoing support throughout your Catalyte career.\n\nQualifications\n• Be at least 18 years old\n• Basic proficiency using a computer and the internet\n• Be a U.S. citizen or eligible to work in the U.S. for 30 continuous months. Catalyte does not offer visa assistance or sponsorship of any kind.\n• Curiosity to learn new skills\n• Motivated\n\nWhat We Offer\n• Start your career without prior experience!\n• Mentorship from experienced Software Engineering professionals\n• Competitive salary\n• Paid time off\n• Career acceleration\n• Certification assistance\n\nAbout Catalyte\n\nCatalyte is an AI-enabled workforce company. Its proprietary technology uses 200K data points to discover and develop high-potential talent. As a result, Catalyte offers employers tenacious, high-performing talent that increases productivity, quality and diversity metrics while reducing the total cost of talent. By redefining hiring and elevating ability over resumes, Catalyte transforms individuals, companies and communities. For more information, visit\n\nBenefits including Healthcare, Vision, Dental, 401K, and Company Paid Time-Off (including company paid holidays, paid sick leave (6 days), & PTO (6 days)) are available to Catalyte employees. There is no application deadline for this position because Catalyte accepts applications on an ongoing basis. Please use the \"Click here to Apply\" link to register and complete the screening to be considered.\n\nCatalyte provides equal employment opportunities to all employees and applicants for employment and prohibits discrimination and harassment of any type without regard to race, color, religion, age, sex, national origin, disability status, genetics, protected veteran status, sexual orientation, gender identity or expression, or any other characteristic protected by federal, state or local laws.\n\nJob Type: Full-time\n\nPay: $16.20 - $19.24 per hour\n\nBenefits:\n• 401(k)\n• Dental insurance\n• Health insurance\n• Paid holidays\n• Paid time off\n• Vision insurance\n\nWork Location: In person",
+      "job_is_remote": false,
+      "job_posted_at": "5 days ago",
+      "job_posted_at_timestamp": 1754611200,
+      "job_posted_at_datetime_utc": "2025-08-08T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": [
+        "paid_time_off",
+        "dental_coverage",
+        "health_insurance"
+      ],
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dt8XP63BjPCsr0GgVAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_min_salary": 16.2,
+      "job_max_salary": 19.24,
+      "job_salary_period": "HOUR",
+      "job_highlights": {
+        "Qualifications": [
+          "No experience needed",
+          "Under the tutelage of experienced software developers, you will work on a team to hone both technical and interpersonal skills critical for real-world success",
+          "Be at least 18 years old",
+          "Basic proficiency using a computer and the internet",
+          "Be a U.S. citizen or eligible to work in the U.S. for 30 continuous months",
+          "Curiosity to learn new skills",
+          "Motivated"
+        ],
+        "Benefits": [
+          "You'll receive mentorship, coaching, and ongoing support throughout your Catalyte career",
+          "Start your career without prior experience!",
+          "Mentorship from experienced Software Engineering professionals",
+          "Competitive salary",
+          "Paid time off",
+          "Career acceleration",
+          "Certification assistance",
+          "Benefits including Healthcare, Vision, Dental, 401K, and Company Paid Time-Off (including company paid holidays, paid sick leave (6 days), & PTO (6 days)) are available to Catalyte employees",
+          "Pay: $16.20 - $19.24 per hour",
+          "401(k)",
+          "Dental insurance",
+          "Health insurance",
+          "Paid holidays",
+          "Paid time off",
+          "Vision insurance"
+        ],
+        "Responsibilities": [
+          "During your software developer journey, you will be provided the skills needed to succeed",
+          "You’ll also be given the opportunity to build software for one of our many clients"
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "cbG_xTcnuiygUvjlAAAAAA==",
+      "job_title": "SR. SOFTWARE DEVELOPER FULL STACK - REMOTE",
+      "employer_name": "Palco",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3bxWQtOkVoa-s1c-7U1r_3XS5flDLqXCb5eXu&s=0",
+      "employer_website": "https://palcofirst.com",
+      "job_publisher": "ZipRecruiter",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.ziprecruiter.com/c/Palco/Job/SR.-SOFTWARE-DEVELOPER-FULL-STACK-REMOTE/-in-Chicago,IL?jid=07dfd108e7637955&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "ZipRecruiter",
+          "apply_link": "https://www.ziprecruiter.com/c/Palco/Job/SR.-SOFTWARE-DEVELOPER-FULL-STACK-REMOTE/-in-Chicago,IL?jid=07dfd108e7637955&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "JobzMall",
+          "apply_link": "https://www.jobzmall.com/salesforce/job/software-developer-full-stack-3?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": true
+        },
+        {
+          "publisher": "SimplyHired",
+          "apply_link": "https://www.simplyhired.com/job/LKVZV5Pxuz6hkTfWhX06snHNg9VK4ff_QrueRlvEVpJ3tSanRP5V3w?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "SR. SOFTWARE DEVELOPER FULL STACK\n\nPalco is a visionary company pioneering an emerging health-care movement that empowers people with disabilities and those aging to live independent and quality lives. Made possible by our amazing team, Palco provides technology and financial services to aid individuals and their families to thrive in their home and communities. Partnered with government agencies and fortune 500 managed care organizations across the country, we are dedicated to creating exceptional outcomes for our clients and the millions of people that count on them. We are a highly organized company that offers a solid work/life balance, autonomy, generous paid time off, bonus potential, and career advancement opportunities. Our staff make long-lasting impact on the lives of people every day.\n\nWe are seeking a highly skilled Senior Full Stack Developer to join our growing team. In this role, you will be responsible for designing, developing, and maintaining scalable web applications. You’ll work across the entire tech stack, from backend services to frontend interfaces, ensuring seamless functionality and performance. This role requires a balance of technical expertise, problem-solving, leadership, and collaboration with cross-functional teams. This role offers the opportunity to work on challenging projects, contribute to innovative solutions, and help shape the future of our technology stack.\nDuties and Responsibilities\n• Application Development\n• Design, develop, and maintain scalable and reliable web applications using modern frameworks and technologies.\n• Build and enhance responsive, user-friendly frontend interfaces.\n• Develop backend services and APIs to support web and mobile applications.\n• Write clean, efficient, and well-documented code following best practices.\n• Collaboration & Leadership\n• Collaborate with product managers, designers, and other developers to define and deliver new features.\n• Participate in architectural discussions and contribute to technical decision-making.\n• Provide technical leadership and mentorship to junior developers.\n• Conduct code reviews to ensure quality and consistency across the codebase.\n• Testing & Deployment\n• Develop and execute unit and integration tests to ensure application stability.\n• Optimize applications for performance, scalability, and security.\n• Automate deployment processes and ensure continuous delivery.\n• Maintenance & Support\n• Monitor applications in production and respond to issues in a timely manner.\n• Continuously improve existing applications based on feedback and evolving requirements.\n• Stay up to date with industry trends and emerging technologies to ensure solutions remain modern and effective.\n\nRequirements\n• 5+ years of experience in full stack web development.\n• Strong proficiency in frontend frameworksIe.g. React, Nodejs, or Angular).\n• Extensive experience with backend technologies (e.g. Elixir, Java, Ruby, or Python).\n• Proficiency with databases.\n• Experience building and consuming APIs.\n• Familiarity with containerization and orchestration tools (e.g., Docker, Kubernetes).\n• Strong understanding of CI/CD pipelines and automated deployment tools.\n• Experience with cloud platforms.\n• Knowledge of modern authentication methods.\n• Strong problem-solving skills, attention to detail, and ability to work independently.\n• Excellent communication skills and ability to collaborate with both technical and non-technical teams.\n\nDuties and Responsibilities\n• Collaborate with product owners to design and engineer the right solutions rapidly\n• Develop new features in the full stack: web UI, the backend APIs, and database\n• Build automated tests in a test-driven framework to ensure uncompromising quality\n\nSkills, Education, and Experience\n• Bachelor’s degree in computer science, computer engineering, or similar technical discipline\n• 5 years web development experience with emphasis on JavaScript, React experience preferred\n• 5 years API development experience, Elixir/Phoenix preferred\n• 5 years database development experience, MYSQL preferred\n• 5 years Docker experience\n• 5 years Linux operating system experience\n\nJoin Us\n\nThis position is remote/work-from-home role. Enjoy the convenience of working from home and maximize your time by unplugging at the end of your workday.\n\nCompany benefits designed for you:\n• Generous Paid time off.\n• Quarterly/Annual bonus potential.\n• Retirement Savings: We will support you as you save for your future.\n• Career Growth Opportunities: We help you thrive, so together, we can grow. We provide opportunities to advance your career with a vast portfolio of businesses and a global footprint.\n• Insurance: Medical (Employer shared cost), Dental, Vision, STD, LTD, Life and AD&D, Accident, Cancer\n• Great Work Environment: We are proud of our company culture of collaboration and the recognition we’ve received for our diversity efforts.\n\nWhen you join Palco, you are engaged in creating the future - both our company’s, the people we serve, and your own. We understand that our success is directly related to the success of our team. We strive to create a culture where you can:\n• Bring your authentic self to work.\n• Grow and thrive, both personally and professionally.\n• Make a difference with our clients, in our communities, and with the millions of people we support.\n• Experience work/life balance.\n• Feel value and a greater purpose through the work you do.\n\nPalco, Inc. is an Equal Employment Opportunity (EEO) employer and does not discriminate in any employer/employee relations based on race, color, religion, sex, sexual orientation, gender identity and expression, national origin, age, marital status, disability, veteran status, genetic information or any other basis.",
+      "job_is_remote": false,
+      "job_posted_at": "2 days ago",
+      "job_posted_at_timestamp": 1754870400,
+      "job_posted_at_datetime_utc": "2025-08-11T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": [
+        "dental_coverage",
+        "health_insurance",
+        "paid_time_off"
+      ],
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DcbG_xTcnuiygUvjlAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "5+ years of experience in full stack web development",
+          "Strong proficiency in frontend frameworksIe",
+          "g. React, Nodejs, or Angular)",
+          "Extensive experience with backend technologies (e.g. Elixir, Java, Ruby, or Python)",
+          "Proficiency with databases",
+          "Experience building and consuming APIs",
+          "Familiarity with containerization and orchestration tools (e.g., Docker, Kubernetes)",
+          "Strong understanding of CI/CD pipelines and automated deployment tools",
+          "Experience with cloud platforms",
+          "Knowledge of modern authentication methods",
+          "Strong problem-solving skills, attention to detail, and ability to work independently",
+          "Excellent communication skills and ability to collaborate with both technical and non-technical teams",
+          "Bachelor’s degree in computer science, computer engineering, or similar technical discipline",
+          "5 years Docker experience",
+          "5 years Linux operating system experience"
+        ],
+        "Benefits": [
+          "Enjoy the convenience of working from home and maximize your time by unplugging at the end of your workday",
+          "Company benefits designed for you:",
+          "Generous Paid time off",
+          "Quarterly/Annual bonus potential",
+          "Retirement Savings: We will support you as you save for your future",
+          "Career Growth Opportunities: We help you thrive, so together, we can grow",
+          "We provide opportunities to advance your career with a vast portfolio of businesses and a global footprint",
+          "Insurance: Medical (Employer shared cost), Dental, Vision, STD, LTD, Life and AD&D, Accident, Cancer",
+          "Bring your authentic self to work",
+          "Grow and thrive, both personally and professionally",
+          "Make a difference with our clients, in our communities, and with the millions of people we support",
+          "Experience work/life balance",
+          "Feel value and a greater purpose through the work you do"
+        ],
+        "Responsibilities": [
+          "In this role, you will be responsible for designing, developing, and maintaining scalable web applications",
+          "You’ll work across the entire tech stack, from backend services to frontend interfaces, ensuring seamless functionality and performance",
+          "This role requires a balance of technical expertise, problem-solving, leadership, and collaboration with cross-functional teams",
+          "This role offers the opportunity to work on challenging projects, contribute to innovative solutions, and help shape the future of our technology stack",
+          "Application Development",
+          "Design, develop, and maintain scalable and reliable web applications using modern frameworks and technologies",
+          "Build and enhance responsive, user-friendly frontend interfaces",
+          "Develop backend services and APIs to support web and mobile applications",
+          "Write clean, efficient, and well-documented code following best practices",
+          "Collaboration & Leadership",
+          "Collaborate with product managers, designers, and other developers to define and deliver new features",
+          "Participate in architectural discussions and contribute to technical decision-making",
+          "Provide technical leadership and mentorship to junior developers",
+          "Conduct code reviews to ensure quality and consistency across the codebase",
+          "Testing & Deployment",
+          "Develop and execute unit and integration tests to ensure application stability",
+          "Optimize applications for performance, scalability, and security",
+          "Automate deployment processes and ensure continuous delivery",
+          "Maintenance & Support",
+          "Monitor applications in production and respond to issues in a timely manner",
+          "Continuously improve existing applications based on feedback and evolving requirements",
+          "Stay up to date with industry trends and emerging technologies to ensure solutions remain modern and effective",
+          "Collaborate with product owners to design and engineer the right solutions rapidly",
+          "Develop new features in the full stack: web UI, the backend APIs, and database",
+          "Build automated tests in a test-driven framework to ensure uncompromising quality"
+        ]
+      },
+      "job_onet_soc": "15113300",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "w8z2Wy3lrIUqlHu0AAAAAA==",
+      "job_title": "Manager, Full-Stack Software Engineer - Fintech & Tax Domain",
+      "employer_name": "Deloitte",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3uIpE_ooltKt1A5J-Cqj5IYkVZ0RQJuJJgSxt&s=0",
+      "employer_website": "https://www.deloitte.com",
+      "job_publisher": "LinkedIn",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.linkedin.com/jobs/view/manager-full-stack-software-engineer-fintech-tax-domain-at-deloitte-4284005782?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/manager-full-stack-software-engineer-fintech-tax-domain-at-deloitte-4284005782?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "ZipRecruiter",
+          "apply_link": "https://www.ziprecruiter.com/c/Deloitte/Job/Manager,-Full-Stack-Software-Engineer-Fintech-&-Tax-Domain/-in-Chicago,IL?jid=8ec58222e2116f80&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Snagajob",
+          "apply_link": "https://www.snagajob.com/jobs/1106605977?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "KHON2 Jobs",
+          "apply_link": "https://jobs.khon2.com/jobs/senior-software-engineer-mumps-and-psl-expertise-chicago-illinois/2272413812-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "LilyLifestyle Jobs",
+          "apply_link": "https://jobs.lilylifestyle.co.uk/jobs/senior-software-engineer-mumps-and-psl-expertise-chicago-illinois/2285086820-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "WTNH Jobs",
+          "apply_link": "https://jobs.wtnh.com/jobs/senior-software-engineer-mumps-and-psl-expertise-chicago-illinois/2272413812-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Hire The Better",
+          "apply_link": "https://www.hirethebetter.com/jobs/senior-software-engineer-mumps-and-psl-expertise-chicago-illinois/2285086820-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Churchill Jobs",
+          "apply_link": "https://www.churchilljobs.com/jobs/senior-software-engineer-mumps-and-psl-expertise-chicago-illinois/2285086820-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "Manager, Full-Stack Software Engineer\n\nRole Overview: As a Manager, Full-stack Software Engineer , you will actively engage in your engineering craft, taking a hands-on approach to multiple high-visibility projects. Your expertise will be pivotal in delivering solutions that delight customers and users, while also driving tangible value for Deloitte's business investments. You will leverage your extensive engineering craftsmanship and advanced proficiency across multiple programming languages and modern frameworks, consistently demonstrating your exemplary track record in delivering high-quality, outcome-focused solutions. The ideal candidate will be a dependable team player and mentor, collaborating with cross-functional teams to design, develop, and deploy advanced software solutions.\n\nRecruiting for this role will end on 31 December 2025.\n\nKey Responsibilities:\n• Outcome-Driven Accountability: Embrace and drive a culture of accountability for customer and business outcomes. Develop engineering solutions that solve complex problems with valuable outcomes, ensuring high-quality, lean designs and implementations.\n• Technical Leadership and Advocacy: Serve as the technical advocate for products, ensuring code integrity, feasibility, and alignment with business and customer goals. Lead requirement analysis, contributing to low-level architecture and component design, development, unit testing, integrations, and support.\n• Engineering Craftsmanship: Maintain accountability for the integrity of code design, implementation, quality, data, and ongoing maintenance and operations. Stay hands-on, self-driven, and continuously learn new approaches, languages, and frameworks. Create technical specifications, and write high-quality, supportable, scalable code and review code of other engineers, mentoring them, to ensure all quality KPIs are met or exceeded. Demonstrate collaborative skills to work effectively with diverse teams.\n• Customer-Centric Engineering: Develop lean engineering solutions through rapid, inexpensive experimentation to solve customer needs. Engage with customers and product teams before, during, and after delivery to ensure the right solution is delivered at the right time.\n• Incremental and Iterative Delivery: Adopt a mindset that favors action and evidence over extensive planning. Utilize a leaning-forward approach to navigate complexity and uncertainty, delivering lean, supportable, and maintainable solutions.\n• Cross-Functional Collaboration and Integration: Work collaboratively with empowered, cross-functional teams including product management, experience, and delivery. Integrate diverse perspectives to make well-informed decisions that balance feasibility, viability, usability, and value. Foster a collaborative environment that enhances team synergy and innovation.\n• Advanced Technical Proficiency: Possess deep expertise in modern software engineering practices and principles, including Agile methodologies and DevSecOps to deliver daily product deployments using full automation from code check-in to production with all quality checks through SDLC lifecycle. Strive to be a role model, leveraging these techniques to optimize solutioning and product delivery. Demonstrate strong understanding of the full lifecycle product development, focusing on continuous improvement and learning.\n• Domain Expertise: Quickly acquire domain-specific knowledge relevant to the business or product. Translate business/user needs, architectures, and UX/UI designs into technical specifications and code. Be a valuable, flexible, and dedicated team member, supportive of teammates, and focused on quality and tech debt payoff.\n• Effective Communication and Influence: Exhibit exceptional communication skills, capable of articulating complex technical concepts clearly and compellingly. Inspire and influence teammates and product teams through well-structured arguments and trade-offs supported by evidence. Create coherent narratives that align technical solutions with business objectives.\n• Engagement and Collaborative Co-Creation: Engage and collaborate with product engineering teams at all organizational levels, including customers as needed. Build and maintain constructive relationships, fostering a culture of co-creation and shared momentum towards achieving product goals. Align diverse perspectives and drive consensus to create feasible solutions.\n\nThe team: US Deloitte Technology Product Engineering has modernized software and product delivery, creating a scalable, cost-effective model that focuses on value/outcomes that leverages a progressive and responsive talent structure. As Deloitte's primary internal development team, Product Engineering delivers innovative digital solutions to businesses, service lines, and internal operations with proven bottom-line results and outcomes. It helps power Deloitte's success. It is the engine that drives Deloitte, serving many of the world's largest, most respected companies. We develop and deploy cutting-edge internal and go-to-market solutions that help Deloitte operate effectively and lead in the market. Our reputation is built on a tradition of delivering with excellence.\n\nThe successful candidate will possess:\n• Excellent interpersonal and organizational skills, with the ability to handle diverse situations, complex projects, and changing priorities, behaving with passion, empathy, and care.\n\nRequired Qualifications:\n• A bachelor's degree in computer science, software engineering, or a related discipline. Experience is the most relevant factor.\n• 8+ years of experience with Angular, NodeJS, Python, C#, .NET Core, SQL/NoSQL.\n• 8+ years of experience with cloud-native engineering, using FaaS, PaaS, and micro-services on cloud hyperscalers such as Azure, AWS (mandatory), or GCP.\n• 5+ years of hands-on experience with Amazon cloud-native services (e.g., MSK, SNS/SQS, Lambda, Step Functions, Glue, Aurora, RDS, DynamoDB, S3, Athena).\n• 1+ years of experience with AI/ML and GenAI (e.g., Azure Cognitive Services, Azure Machine Learning, Azure OpenAI, Amazon SageMaker, or Amazon Bedrock).\n• Prior software engineering experience with the understanding of Business Context Diagrams (BCD), sequence/activity/state/entity relationship/data flow diagrams, OOP/OOD, data structures, algorithms, and code instrumentations.\n• Prior experience using methodologies & tools such as XP, Lean, SAFe, DevSecOps, SRE, ADO, GitHub, SonarQube, etc. to deliver high-quality products rapidly.\n• Prior experience supporting projects in the Fintech domain, with a focus on complex financial systems or advanced calculations and algorithm development.\n• Prior transformation or modernization experience, leading a team as a technical lead.\n\nOther:\n• Ability to travel 10%, on average, based on the work you do and products you build.\n• Limited immigration sponsorship may be available.\n\nThe wage range for this role takes into account the wide range of factors that are considered in making compensation decisions including but not limited to skill sets; experience and training; licensure and certifications; and other business and organizational needs. The disclosed range estimate has not been adjusted for the applicable geographic differential associated with the location at which the position may be filled. At Deloitte, it is not typical for an individual to be hired at or near the top of the range for their role and compensation decisions are dependent on the facts and circumstances of each case. A reasonable estimate of the current range is $ 107,700 to $ 221,200.\n\nYou may also be eligible to participate in a discretionary annual incentive program, subject to the rules governing the program, whereby an award, if any, depends on various factors, including, without limitation, individual and organizational performance.\n\nInformation for applicants with a need for accommodation:\n\nHyperlink: https://www2.deloitte.com/us/en/pages/careers/articles/join-deloitte-assistance-for-disabled-applicants.html\n\n#EA_EXPHIRE",
+      "job_is_remote": false,
+      "job_posted_at": "20 hours ago",
+      "job_posted_at_timestamp": 1755043200,
+      "job_posted_at_datetime_utc": "2025-08-13T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dw8z2Wy3lrIUqlHu0AAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_min_salary": 108000,
+      "job_max_salary": 221000,
+      "job_salary_period": "YEAR",
+      "job_highlights": {
+        "Qualifications": [
+          "Translate business/user needs, architectures, and UX/UI designs into technical specifications and code",
+          "Be a valuable, flexible, and dedicated team member, supportive of teammates, and focused on quality and tech debt payoff",
+          "Effective Communication and Influence: Exhibit exceptional communication skills, capable of articulating complex technical concepts clearly and compellingly",
+          "Inspire and influence teammates and product teams through well-structured arguments and trade-offs supported by evidence",
+          "Excellent interpersonal and organizational skills, with the ability to handle diverse situations, complex projects, and changing priorities, behaving with passion, empathy, and care",
+          "A bachelor's degree in computer science, software engineering, or a related discipline",
+          "Experience is the most relevant factor",
+          "8+ years of experience with Angular, NodeJS, Python, C#, .NET Core, SQL/NoSQL",
+          "8+ years of experience with cloud-native engineering, using FaaS, PaaS, and micro-services on cloud hyperscalers such as Azure, AWS (mandatory), or GCP",
+          "5+ years of hands-on experience with Amazon cloud-native services (e.g., MSK, SNS/SQS, Lambda, Step Functions, Glue, Aurora, RDS, DynamoDB, S3, Athena)",
+          "1+ years of experience with AI/ML and GenAI (e.g., Azure Cognitive Services, Azure Machine Learning, Azure OpenAI, Amazon SageMaker, or Amazon Bedrock)",
+          "Prior software engineering experience with the understanding of Business Context Diagrams (BCD), sequence/activity/state/entity relationship/data flow diagrams, OOP/OOD, data structures, algorithms, and code instrumentations",
+          "Prior experience using methodologies & tools such as XP, Lean, SAFe, DevSecOps, SRE, ADO, GitHub, SonarQube, etc",
+          "Prior experience supporting projects in the Fintech domain, with a focus on complex financial systems or advanced calculations and algorithm development",
+          "Prior transformation or modernization experience, leading a team as a technical lead",
+          "Ability to travel 10%, on average, based on the work you do and products you build",
+          "Limited immigration sponsorship may be available"
+        ],
+        "Benefits": [
+          "The wage range for this role takes into account the wide range of factors that are considered in making compensation decisions including but not limited to skill sets; experience and training; licensure and certifications; and other business and organizational needs",
+          "A reasonable estimate of the current range is $ 107,700 to $ 221,200",
+          "You may also be eligible to participate in a discretionary annual incentive program, subject to the rules governing the program, whereby an award, if any, depends on various factors, including, without limitation, individual and organizational performance"
+        ],
+        "Responsibilities": [
+          "Role Overview: As a Manager, Full-stack Software Engineer , you will actively engage in your engineering craft, taking a hands-on approach to multiple high-visibility projects",
+          "Your expertise will be pivotal in delivering solutions that delight customers and users, while also driving tangible value for Deloitte's business investments",
+          "You will leverage your extensive engineering craftsmanship and advanced proficiency across multiple programming languages and modern frameworks, consistently demonstrating your exemplary track record in delivering high-quality, outcome-focused solutions",
+          "The ideal candidate will be a dependable team player and mentor, collaborating with cross-functional teams to design, develop, and deploy advanced software solutions",
+          "Outcome-Driven Accountability: Embrace and drive a culture of accountability for customer and business outcomes",
+          "Develop engineering solutions that solve complex problems with valuable outcomes, ensuring high-quality, lean designs and implementations",
+          "Technical Leadership and Advocacy: Serve as the technical advocate for products, ensuring code integrity, feasibility, and alignment with business and customer goals",
+          "Lead requirement analysis, contributing to low-level architecture and component design, development, unit testing, integrations, and support",
+          "Engineering Craftsmanship: Maintain accountability for the integrity of code design, implementation, quality, data, and ongoing maintenance and operations",
+          "Stay hands-on, self-driven, and continuously learn new approaches, languages, and frameworks",
+          "Create technical specifications, and write high-quality, supportable, scalable code and review code of other engineers, mentoring them, to ensure all quality KPIs are met or exceeded",
+          "Demonstrate collaborative skills to work effectively with diverse teams",
+          "Customer-Centric Engineering: Develop lean engineering solutions through rapid, inexpensive experimentation to solve customer needs",
+          "Engage with customers and product teams before, during, and after delivery to ensure the right solution is delivered at the right time",
+          "Incremental and Iterative Delivery: Adopt a mindset that favors action and evidence over extensive planning",
+          "Utilize a leaning-forward approach to navigate complexity and uncertainty, delivering lean, supportable, and maintainable solutions",
+          "Cross-Functional Collaboration and Integration: Work collaboratively with empowered, cross-functional teams including product management, experience, and delivery",
+          "Integrate diverse perspectives to make well-informed decisions that balance feasibility, viability, usability, and value",
+          "Foster a collaborative environment that enhances team synergy and innovation",
+          "Advanced Technical Proficiency: Possess deep expertise in modern software engineering practices and principles, including Agile methodologies and DevSecOps to deliver daily product deployments using full automation from code check-in to production with all quality checks through SDLC lifecycle",
+          "Strive to be a role model, leveraging these techniques to optimize solutioning and product delivery",
+          "Demonstrate strong understanding of the full lifecycle product development, focusing on continuous improvement and learning",
+          "Domain Expertise: Quickly acquire domain-specific knowledge relevant to the business or product",
+          "Create coherent narratives that align technical solutions with business objectives",
+          "Engagement and Collaborative Co-Creation: Engage and collaborate with product engineering teams at all organizational levels, including customers as needed",
+          "Build and maintain constructive relationships, fostering a culture of co-creation and shared momentum towards achieving product goals",
+          "Align diverse perspectives and drive consensus to create feasible solutions",
+          "to deliver high-quality products rapidly"
+        ]
+      },
+      "job_onet_soc": "15113300",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "FCd_ofXbhDvoWo2rAAAAAA==",
+      "job_title": "Python Developer",
+      "employer_name": "BlackRock",
+      "employer_logo": null,
+      "employer_website": "https://www.blackrock.com",
+      "job_publisher": "BlackRock Careers",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://careers.blackrock.com/job/chicago/python-developer/45831/84680585728?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "BlackRock Careers",
+          "apply_link": "https://careers.blackrock.com/job/chicago/python-developer/45831/84680585728?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobs By Workable",
+          "apply_link": "https://apply.workable.com/two95-international-inc-3/j/C9929C3750?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": true
+        },
+        {
+          "publisher": "Indeed",
+          "apply_link": "https://www.indeed.com/viewjob?jk=0b62ff075ce8b923&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Built In Chicago",
+          "apply_link": "https://www.builtinchicago.org/job/python-developer/6815907?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "ZipRecruiter",
+          "apply_link": "https://www.ziprecruiter.com/c/SV-Tech-Systems-Inc/Job/Python-Developer/-in-Chicago,IL?jid=4dffdfe73fa0f995&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Smart Recruiters Jobs",
+          "apply_link": "https://jobs.smartrecruiters.com/SVTechSystemsInc1/82351746-python-developer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Hire Veterans",
+          "apply_link": "https://hireveterans.com/job/10938156/python-developer/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Built In",
+          "apply_link": "https://builtin.com/job/python-developer/6815907?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "About this role\n\nAbout This Role \n\nWe are a dynamic, data-driven team at the intersection of finance and technology. We are seeking a highly skilled Python Engineer to join our team so if you have a passion for programming, a solid foundation in statistics, and a keen interest in financial markets, we want to hear from you!\n\nAs a software engineer, you will build applications and processes to help drive business growth. This position requires strong programming skills, analytical thinking, and a passion for learning. You will collaborate with experienced engineers to develop and improve software systems. \n• Focus on user experience: Understand product usage and gather feedback to enhance usability. \n• Problem-solving: Tackle coding challenges of all sizes with determination and creativity. \n• Continuous learning: Stay curious and up-to-date to deliver effective software solutions. \n• Teamwork: Work collaboratively and communicate effectively with colleagues. \n• Growth mindset: Seek opportunities to expand knowledge in both business and technology within the fintech landscape. \n\nRole Responsibilities:\n• Design, code, test, and support reliable, robust software applications and services that meet high-quality standards \n• Participate in cross-functional feature requirements gathering, design, and implementation \n• Collaborate with product management to prioritize and organize development sprints \n• Perform code reviews and provide timely, constructive feedback to fellow engineers \n\nKey Qualifications \n• 2–5 years of experience in Python programming \n• Strong background in mathematics, algorithms, logic, and statistics \n• Extensive database experience (MySQL preferred; SQL/Postgres also valuable)\n• Bachelor’s or Master’s degree in Computer Science or STEM field \n\n \n\nRelevant Experience:\n• Proficiency with Python packages, such as Pandas, NumPy, DashApps \n• Hands-on experience with AWS (RDS, EC2, serverless) and Docker \n• Interest and knowledge in finance, particularly Options, Stocks, and Bonds \n\nFor Chicago, IL Only the salary range for this position is USD$0.00 - USD$0.00 . Additionally, employees are eligible for an annual discretionary bonus, and benefits including healthcare, leave benefits, and retirement benefits. BlackRock operates a pay-for-performance compensation philosophy and your total compensation may vary based on role, location, and firm, department and individual performance.\n\nOur benefits\n\nTo help you stay energized, engaged and inspired, we offer a wide range of benefits including a strong retirement plan, tuition reimbursement, comprehensive healthcare, support for working parents and Flexible Time Off (FTO) so you can relax, recharge and be there for the people you care about.\n\nOur hybrid work model\n\nBlackRock’s hybrid work model is designed to enable a culture of collaboration and apprenticeship that enriches the experience of our employees, while supporting flexibility for all. Employees are currently required to work at least 4 days in the office per week, with the flexibility to work from home 1 day a week. Some business groups may require more time in the office due to their roles and responsibilities. We remain focused on increasing the impactful moments that arise when we work together in person – aligned with our commitment to performance and innovation. As a new joiner, you can count on this hybrid model to accelerate your learning and onboarding experience here at BlackRock.\n\nAbout BlackRock\n\nAt BlackRock, we are all connected by one mission: to help more and more people experience financial well-being. Our clients, and the people they serve, are saving for retirement, paying for their children’s educations, buying homes and starting businesses. Their investments also help to strengthen the global economy: support businesses small and large; finance infrastructure projects that connect and power cities; and facilitate innovations that drive progress.\n\nThis mission would not be possible without our smartest investment – the one we make in our employees. It’s why we’re dedicated to creating an environment where our colleagues feel welcomed, valued and supported with networks, benefits and development opportunities to help them thrive.\n\nFor additional information on BlackRock, please visit @blackrock | Twitter: @blackrock | LinkedIn: www.linkedin.com/company/blackrock\n\nBlackRock is proud to be an equal opportunity workplace. We are committed to equal employment opportunity to all applicants and existing employees, and we evaluate qualified applicants without regard to race, creed, color, national origin, sex (including pregnancy and gender identity/expression), sexual orientation, age, ancestry, physical or mental disability, marital status, political affiliation, religion, citizenship status, genetic information, veteran status, or any other basis protected under applicable federal, state, or local law. View the EEOC’s Know Your Rights poster and its supplement and the pay transparency statement.\n\nBlackRock is committed to full inclusion of all qualified individuals and to providing reasonable accommodations or job modifications for individuals with disabilities. If reasonable accommodation/adjustments are needed throughout the employment process, please email Disability.Assistance@blackrock.com. All requests are treated in line with our privacy policy.\n\nBlackRock will consider for employment qualified applicants with arrest or conviction records in a manner consistent with the requirements of the law, including any applicable fair chance law.",
+      "job_is_remote": false,
+      "job_posted_at": "8 days ago",
+      "job_posted_at_timestamp": 1754352000,
+      "job_posted_at_datetime_utc": "2025-08-05T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": [
+        "health_insurance"
+      ],
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DFCd_ofXbhDvoWo2rAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "This position requires strong programming skills, analytical thinking, and a passion for learning",
+          "Growth mindset: Seek opportunities to expand knowledge in both business and technology within the fintech landscape. ",
+          "2–5 years of experience in Python programming ",
+          "Strong background in mathematics, algorithms, logic, and statistics ",
+          "Bachelor’s or Master’s degree in Computer Science or STEM field ",
+          "Proficiency with Python packages, such as Pandas, NumPy, DashApps ",
+          "Hands-on experience with AWS (RDS, EC2, serverless) and Docker ",
+          "Interest and knowledge in finance, particularly Options, Stocks, and Bonds "
+        ],
+        "Benefits": [
+          "For Chicago, IL Only the salary range for this position is USD$0.00 - USD$0.00 ",
+          "Additionally, employees are eligible for an annual discretionary bonus, and benefits including healthcare, leave benefits, and retirement benefits",
+          "BlackRock operates a pay-for-performance compensation philosophy and your total compensation may vary based on role, location, and firm, department and individual performance",
+          "To help you stay energized, engaged and inspired, we offer a wide range of benefits including a strong retirement plan, tuition reimbursement, comprehensive healthcare, support for working parents and Flexible Time Off (FTO) so you can relax, recharge and be there for the people you care about"
+        ],
+        "Responsibilities": [
+          "As a software engineer, you will build applications and processes to help drive business growth",
+          "You will collaborate with experienced engineers to develop and improve software systems. ",
+          "Focus on user experience: Understand product usage and gather feedback to enhance usability. ",
+          "Problem-solving: Tackle coding challenges of all sizes with determination and creativity. ",
+          "Continuous learning: Stay curious and up-to-date to deliver effective software solutions. ",
+          "Teamwork: Work collaboratively and communicate effectively with colleagues. ",
+          "Design, code, test, and support reliable, robust software applications and services that meet high-quality standards ",
+          "Participate in cross-functional feature requirements gathering, design, and implementation ",
+          "Collaborate with product management to prioritize and organize development sprints ",
+          "Perform code reviews and provide timely, constructive feedback to fellow engineers "
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "9BafUuKRoDqYu72OAAAAAA==",
+      "job_title": "Junior Software Developer",
+      "employer_name": "Jobright.ai",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc11c46XEF7nUag98qauGWM3tBuQH8ELcz8Cbg&s=0",
+      "employer_website": "https://jobright.ai",
+      "job_publisher": "LinkedIn",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://www.linkedin.com/jobs/view/junior-software-developer-at-jobright-ai-4283015754?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/junior-software-developer-at-jobright-ai-4283015754?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Fastweb",
+          "apply_link": "https://www.fastweb.com/career-planning/internships/170552-junior-software-developer-internship?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobgether",
+          "apply_link": "https://jobgether.com/offer/68638fc1c4f0b4b0ae146a85-junior-software-developer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "BeBee",
+          "apply_link": "https://us.bebee.com/job/9a0a8306c3d72c949dbc66e3e74ea56f?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Talent.com",
+          "apply_link": "https://www.talent.com/view?id=ad8ee1652f81&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Jobs And Careers",
+          "apply_link": "https://www.career.com/job/tech-consulting/junior-software-developer/j202507101031425455513?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "ITRate.co",
+          "apply_link": "https://jobs.itrate.co/job/xr8dkZgB_CyF9o_0XO_-0825?i=d7c41de67e6a4084aa978662a789eaa9&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "Jobright is an AI-powered career platform that helps job seekers discover the top opportunities in the US. We are NOT a staffing agency. Jobright does not hire directly for these positions. We connect you with verified openings from employers you can trust.\n\nJob Summary:\n\nGannett Fleming, Inc. is a privately held AEC firm dedicated to innovating in the infrastructure sector. They are seeking a Software Developer to join their agile software development team, focusing on website and mobile app development for technical applications within the construction industry.\n\nResponsibilities:\n\n• Software development using C#, JavaScript, ASP.NET, HTML/CSS, Razor, and SQL.\n\n• Mobile application development for existing and new websites using MAUI, Xamarin, Swift, and Bluetooth technology.\n\n• Assist in the test-driven development (TDD) software development process to take software requirements and convert them into test cases before software is fully developed.\n\n• Use Visual Studio IDE and code management platforms for checking-out and merging code.\n\n• Assist in planning and development of scope of work with the project team.\n\n• Assist clients or team members with technical issues.\n\n• Assist in identifying client needs and opportunities; interact in client project meetings.\n\n• Participate in code reviews of candidate code and other team member’s work.\n\n• Research and stay up to date on the latest tools, technologies, trends and approaches for testing and incorporating the ones that make sense.\n\n• Participate in the preparation and modification of reports, specifications, plans, schedules, studies, and designs required for the completion of assigned projects.\n\n• Design and code complex algorithms, and test code effectively (compose, document, execute a test plan).\n\n• Participate in weekly team meetings.\n\n• Document software in accordance with development standards and\n\n• Database development and management using Microsoft SQL Server.\n\n• Analyze website traffic and recommend any necessary improvements.\n\n• Analyze website error messages (in Azure), investigate, and implement fixes.\n\n• Stay abreast of industry trends and all applicable technologies, including scripting, security, authoring tools, and new languages.\n\nQualifications:\n\nRequired:\n\n• Bachelor's degree in a technical field such as Engineering or Computer Science.\n\n• Experience with web/software development languages such as C#, Java, ASP.NET Core, HTML/CSS, JavaScript.\n\n• Familiarity with Microsoft Windows, Microsoft Office suite.\n\n• Software development using C#, JavaScript, ASP.NET, HTML/CSS, Razor, and SQL.\n\n• Mobile application development for existing and new websites using MAUI, Xamarin, Swift, and Bluetooth technology.\n\n• Assist in the test-driven development (TDD) software development process to take software requirements and convert them into test cases before software is fully developed.\n\n• Use Visual Studio IDE and code management platforms for checking-out and merging code.\n\n• Assist in planning and development of scope of work with the project team.\n\n• Assist clients or team members with technical issues.\n\n• Assist in identifying client needs and opportunities; interact in client project meetings.\n\n• Participate in code reviews of candidate code and other team member’s work.\n\n• Research and stay up to date on the latest tools, technologies, trends and approaches for testing and incorporating the ones that make sense.\n\n• Participate in the preparation and modification of reports, specifications, plans, schedules, studies, and designs required for the completion of assigned projects.\n\n• Design and code complex algorithms, and test code effectively (compose, document, execute a test plan).\n\n• Participate in weekly team meetings.\n\n• Document software in accordance with development standards.\n\n• Database development and management using Microsoft SQL Server.\n\n• Analyze website traffic and recommend any necessary improvements.\n\n• Analyze website error messages (in Azure), investigate, and implement fixes.\n\n• Stay abreast of industry trends and all applicable technologies, including scripting, security, authoring tools, and new languages.\n\nPreferred:\n\n• Previous experience with transportation consulting, mobile application development, or professional services.\n\n• Proficiency in the following areas is a plus: MAUI, Visual Studio, Entity Framework/Entity Framework Core, ASP.NET Core, relational database concepts, Source Control (TFS, GitHub), MVC, HTML, CSS, XML, frameworks (React/Vue/Angular or similar), VBA, Azure, ESRI (GIS), agile development process, and mobile app development.\n\nCompany:\n\nGannett Fleming is a privately held AEC firm partnering closely with our clients on some of the toughest challenges facing our communities today—and into the future. Founded in 1915, the company is headquartered in Mechanicsburg, Pennsylvania, USA, with a team of 1001-5000 employees. The company is currently Late Stage. Gannett Fleming has a track record of offering H1B sponsorships.",
+      "job_is_remote": false,
+      "job_posted_at": "2 days ago",
+      "job_posted_at_timestamp": 1754870400,
+      "job_posted_at_datetime_utc": "2025-08-11T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3D9BafUuKRoDqYu72OAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "Bachelor's degree in a technical field such as Engineering or Computer Science",
+          "Experience with web/software development languages such as C#, Java, ASP",
+          "NET Core, HTML/CSS, JavaScript",
+          "Familiarity with Microsoft Windows, Microsoft Office suite",
+          "Software development using C#, JavaScript, ASP.NET, HTML/CSS, Razor, and SQL",
+          "Mobile application development for existing and new websites using MAUI, Xamarin, Swift, and Bluetooth technology",
+          "Database development and management using Microsoft SQL Server",
+          "NET Core, relational database concepts, Source Control (TFS, GitHub), MVC, HTML, CSS, XML, frameworks (React/Vue/Angular or similar), VBA, Azure, ESRI (GIS), agile development process, and mobile app development"
+        ],
+        "Responsibilities": [
+          "Software development using C#, JavaScript, ASP.NET, HTML/CSS, Razor, and SQL",
+          "Mobile application development for existing and new websites using MAUI, Xamarin, Swift, and Bluetooth technology",
+          "Assist in the test-driven development (TDD) software development process to take software requirements and convert them into test cases before software is fully developed",
+          "Use Visual Studio IDE and code management platforms for checking-out and merging code",
+          "Assist in planning and development of scope of work with the project team",
+          "Assist clients or team members with technical issues",
+          "Assist in identifying client needs and opportunities; interact in client project meetings",
+          "Participate in code reviews of candidate code and other team member’s work",
+          "Research and stay up to date on the latest tools, technologies, trends and approaches for testing and incorporating the ones that make sense",
+          "Participate in the preparation and modification of reports, specifications, plans, schedules, studies, and designs required for the completion of assigned projects",
+          "Design and code complex algorithms, and test code effectively (compose, document, execute a test plan)",
+          "Participate in weekly team meetings",
+          "Document software in accordance with development standards and",
+          "Database development and management using Microsoft SQL Server",
+          "Analyze website traffic and recommend any necessary improvements",
+          "Analyze website error messages (in Azure), investigate, and implement fixes",
+          "Stay abreast of industry trends and all applicable technologies, including scripting, security, authoring tools, and new languages",
+          "Assist in the test-driven development (TDD) software development process to take software requirements and convert them into test cases before software is fully developed",
+          "Use Visual Studio IDE and code management platforms for checking-out and merging code",
+          "Assist in planning and development of scope of work with the project team",
+          "Assist clients or team members with technical issues",
+          "Assist in identifying client needs and opportunities; interact in client project meetings",
+          "Participate in code reviews of candidate code and other team member’s work",
+          "Research and stay up to date on the latest tools, technologies, trends and approaches for testing and incorporating the ones that make sense",
+          "Participate in the preparation and modification of reports, specifications, plans, schedules, studies, and designs required for the completion of assigned projects",
+          "Design and code complex algorithms, and test code effectively (compose, document, execute a test plan)",
+          "Participate in weekly team meetings",
+          "Document software in accordance with development standards",
+          "Analyze website traffic and recommend any necessary improvements",
+          "Analyze website error messages (in Azure), investigate, and implement fixes",
+          "Stay abreast of industry trends and all applicable technologies, including scripting, security, authoring tools, and new languages"
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "aUxpjZGwAgf0g9DZAAAAAA==",
+      "job_title": "Senior Developer - IT",
+      "employer_name": "United Airlines",
+      "employer_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6DMswunk7F25_BeXSf2w8JVHG65s4lc7v5wfG&s=0",
+      "employer_website": "https://www.united.com",
+      "job_publisher": "United Airlines Jobs",
+      "job_employment_type": "Full-time",
+      "job_employment_types": [
+        "FULLTIME"
+      ],
+      "job_apply_link": "https://careers.united.com/us/en/job/WHQ00025185/Senior-Developer-IT?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "United Airlines Jobs",
+          "apply_link": "https://careers.united.com/us/en/job/WHQ00025185/Senior-Developer-IT?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Indeed",
+          "apply_link": "https://www.indeed.com/viewjob?jk=87c0983aac6e3237&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Glassdoor",
+          "apply_link": "https://www.glassdoor.com/job-listing/senior-developer-it-united-airlines-JV_IC1128808_KO0,19_KE20,35.htm?jl=1009786338038&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "LinkedIn",
+          "apply_link": "https://www.linkedin.com/jobs/view/senior-developer-it-at-united-airlines-4281443646?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "JSfirm.com",
+          "apply_link": "https://www.jsfirm.com/Management/Senior+Developer+-+IT/Chicago-Illinois/jobID_1678329?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Psychiatric Jobs - Illinois Psychiatric Society",
+          "apply_link": "https://ilpsych.careerwebsite.com/job/senior-developer-it/79537383/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Adzuna",
+          "apply_link": "https://www.adzuna.com/details/5342627266?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "BeBee",
+          "apply_link": "https://us.bebee.com/job/bff8ca067da233b6fc73d480ea22d030?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "Achieving our goals starts with supporting yours. Grow your career, access top-tier health and wellness benefits, build lasting connections with your team and our customers, and travel the world using our extensive route network.\n\nCome join us to create what’s next. Let’s define tomorrow, together.\n\nDescription\n\nUnited's Digital Technology team is comprised of many talented individuals all working together with cutting-edge technology to build the best airline in the history of aviation. Our team designs, develops and maintains massively scaling technology solutions brought to life with innovative architectures, data analytics, and digital solutions.\n\nTeam Overview: The Crew Technology team provides web and mobile digital solutions to the largest frontline employee group at United. 45 thousand United Pilots and Flight Attendants rely on these solutions for safer operations of our flights and to manage their quality of life and to provide top tier customer service to millions of travelers. With innovation as the forefront, this team consistently delivers industry leading solutions. The world's greatest airline is set to become the largest. We invite you to be part of our major expansion, transformation and modernization journey and help us build cutting-edge digital solutions leveraging the latest technologies and cloud architecture.\n\nJob Overview and Responsibilities:\n\nThe Senior Developer plays a critical role in creating and maintaining the strategic partnership between business needs and technology delivery. The Senior Developer's role is to lead the efforts to plan, design, develop and launch efficient systems and solutions in support of core organizational functions that support Crew Planning. This individual will apply proven communication, analytical and problem-solving skills to help identify, communicate, and resolve issues, opportunities or problems in order to maximize the benefit of IT and Business investments. The Senior Developer is highly experienced and has decision-making authority. The Senior Developer is self – sufficient, requires no direct supervision, and mentors/coaches’ others. The Senior Developer has extensive knowledge/experience across multiple technologies and business areas.\nQualifications\n\nWhat’s needed to succeed (Minimum Qualifications):\n• Bachelor’s degree in Computer Science, Engineering, or a relevant field\n• 7+ years of experience in application design, development, installation, and modification of software\n• 5+ years of experience with Java\n• Web-based API experience is required\n• Proven experience with Linux command line scripting (Bash)\n• Experience with Python development\n• Experience with code management tools such as Git, GitHub, and GitLab\n• Experience with the Eclipse development environment\n• Experience with relational database design and development\n• Strong business acumen\n• Strong creativity and innovation skills\n• Strong strategic thinking skills\n• Effective verbal and written communication skills\n• Experience with vendor management\n• Strong negotiation skills\n• Demonstrated ability to deliver high-quality code and applications on time\n• Skilled in component and unit testing following standard practices and methodologies\n• Experienced in utilizing technology and domain knowledge to deliver developed or integrated components\n• Effective at analyzing moderately complex problems involving a variety of factors\n• Skilled in triaging and analyzing production support issues\n• Consistently meets delivery timelines with minimal supervision\n• Active and effective participant in requirements gathering and analysis\n• Must be legally authorized to work in the United States without sponsorship\n• Successful completion of interview required to meet job qualifications\n• Reliable and punctual attendance is an essential function of the position\n\nWhat will help you propel from the pack (Preferred Qualifications):\n• Experience with VNC systems\n• Experience with batch job management (e.g., Altair Grid Engine)\n• Familiarity with Jeppesen optimization tools (e.g., RAVE, Developer’s Workspace, Studio)\n• Experience with constraint-based optimization tools (e.g., MiniZinc)\n• Experience with AWS (Amazon Web Services)\n\nThe base pay range for this role is $109,820.00 to $149,600.00.\nThe base salary range/hourly rate listed is dependent on job-related, factors such as experience, education, and skills. This position is also eligible for bonus and/or long-term incentive compensation awards.\n\nYou may be eligible for the following competitive benefits: medical, dental, vision, life, accident & disability, parental leave, employee assistance program, commuter, paid holidays, paid time off, 401(k) and flight privileges.\n\nUnited Airlines is an equal opportunity employer. United Airlines recruits, employs, trains, compensates and promotes regardless of race, religion, color, national origin, gender identity, sexual orientation, physical ability, age, veteran status and other protected status as required by applicable law. Equal Opportunity Employer - Minorities/Women/Veterans/Disabled/LGBT.\n\nWe will ensure that individuals with disabilities are provided reasonable accommodation to participate in the job application or interview process, to perform crucial job functions. Please contact JobAccommodations@united.com to request accommodation.",
+      "job_is_remote": false,
+      "job_posted_at": "21 hours ago",
+      "job_posted_at_timestamp": 1755039600,
+      "job_posted_at_datetime_utc": "2025-08-12T23:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": [
+        "dental_coverage",
+        "health_insurance",
+        "paid_time_off"
+      ],
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3DaUxpjZGwAgf0g9DZAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "The Senior Developer is highly experienced and has decision-making authority",
+          "The Senior Developer is self – sufficient, requires no direct supervision, and mentors/coaches’ others",
+          "Bachelor’s degree in Computer Science, Engineering, or a relevant field",
+          "7+ years of experience in application design, development, installation, and modification of software",
+          "5+ years of experience with Java",
+          "Web-based API experience is required",
+          "Proven experience with Linux command line scripting (Bash)",
+          "Experience with Python development",
+          "Experience with code management tools such as Git, GitHub, and GitLab",
+          "Experience with the Eclipse development environment",
+          "Experience with relational database design and development",
+          "Strong business acumen",
+          "Strong creativity and innovation skills",
+          "Strong strategic thinking skills",
+          "Effective verbal and written communication skills",
+          "Experience with vendor management",
+          "Strong negotiation skills",
+          "Demonstrated ability to deliver high-quality code and applications on time",
+          "Skilled in component and unit testing following standard practices and methodologies",
+          "Experienced in utilizing technology and domain knowledge to deliver developed or integrated components",
+          "Effective at analyzing moderately complex problems involving a variety of factors",
+          "Skilled in triaging and analyzing production support issues",
+          "Consistently meets delivery timelines with minimal supervision",
+          "Active and effective participant in requirements gathering and analysis",
+          "Must be legally authorized to work in the United States without sponsorship",
+          "Successful completion of interview required to meet job qualifications",
+          "Reliable and punctual attendance is an essential function of the position"
+        ],
+        "Benefits": [
+          "The base pay range for this role is $109,820.00 to $149,600.00",
+          "The base salary range/hourly rate listed is dependent on job-related, factors such as experience, education, and skills",
+          "This position is also eligible for bonus and/or long-term incentive compensation awards",
+          "You may be eligible for the following competitive benefits: medical, dental, vision, life, accident & disability, parental leave, employee assistance program, commuter, paid holidays, paid time off, 401(k) and flight privileges"
+        ],
+        "Responsibilities": [
+          "The Senior Developer plays a critical role in creating and maintaining the strategic partnership between business needs and technology delivery",
+          "The Senior Developer's role is to lead the efforts to plan, design, develop and launch efficient systems and solutions in support of core organizational functions that support Crew Planning",
+          "This individual will apply proven communication, analytical and problem-solving skills to help identify, communicate, and resolve issues, opportunities or problems in order to maximize the benefit of IT and Business investments"
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    },
+    {
+      "job_id": "2uK0sgpQkyzo97mNAAAAAA==",
+      "job_title": "Java Developer-5",
+      "employer_name": "Realign LLC",
+      "employer_logo": null,
+      "employer_website": "https://realign-llc.com",
+      "job_publisher": "Indeed",
+      "job_employment_type": "Contractor",
+      "job_employment_types": [
+        "CONTRACTOR",
+        "CONTRACTOR"
+      ],
+      "job_apply_link": "https://www.indeed.com/viewjob?jk=84895885de53cb23&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "job_apply_is_direct": false,
+      "apply_options": [
+        {
+          "publisher": "Indeed",
+          "apply_link": "https://www.indeed.com/viewjob?jk=84895885de53cb23&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "Glassdoor",
+          "apply_link": "https://www.glassdoor.com/job-listing/java-developer-5-realign-llc-JV_IC1128808_KO0,16_KE17,28.htm?jl=1009839899385&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        },
+        {
+          "publisher": "SimplyHired",
+          "apply_link": "https://www.simplyhired.com/job/ks5r5cS6bzt8lunkgwiZM_Ff0SpO6T3g6u97ZdU32dCkkNEB9FY7Zg?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+          "is_direct": false
+        }
+      ],
+      "job_description": "Job Type: Contract\n\nJob Category: IT\n\nJob Description\n\nRole: Java Developer\n\nLocation: Chicago, IL\n\nRequired Skills:\n• Agile Methodology\n• Java, Spring and messaging based development\n• Oracle SQL and PL/SOL\n• Knowledge in Secure Software Development Life Cycle (SSDLC)\n• REST web service Development\n\nPreferred/ Recommended:\n• Linux shell scripting\n• Junit\n• The factor standard for unit testing Java applications: Experience with Charles River Experience in wealth management\n\nMajor Duties:\n• Design and develop messaging and web service components based on design documents that fit within technical framework as outlined by technical architects\n• Ensure code meets standards and is tested appropriate to the platform\n• Provide technical guidance to the development team as required.\n• A team player with an ability to own the design and code as per requirement given.\n• Communicate status (written and verbal) to project team and management\n• Continuously looks for ways to improve the applications stability, scalability and user experience\n\nKnowledge/ Skills:\n• Agile Methodology\n• Knowledge of Spring, messaging, Java, Application servers Knowledge of full software development lifecycle\n• Strong analytical and problem-solving Skills\n• A positive goal orientated attitude with a focus on delivery\n\nRequired Skills\nCloud Developer",
+      "job_is_remote": false,
+      "job_posted_at": "5 days ago",
+      "job_posted_at_timestamp": 1754611200,
+      "job_posted_at_datetime_utc": "2025-08-08T00:00:00.000Z",
+      "job_location": "Chicago, IL",
+      "job_city": "Chicago",
+      "job_state": "Illinois",
+      "job_country": "US",
+      "job_latitude": 41.88325,
+      "job_longitude": -87.6323879,
+      "job_benefits": null,
+      "job_google_link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3D2uK0sgpQkyzo97mNAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+      "job_salary": null,
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_period": null,
+      "job_highlights": {
+        "Qualifications": [
+          "Agile Methodology",
+          "Java, Spring and messaging based development",
+          "Oracle SQL and PL/SOL",
+          "Knowledge in Secure Software Development Life Cycle (SSDLC)",
+          "REST web service Development",
+          "Agile Methodology",
+          "Knowledge of Spring, messaging, Java, Application servers Knowledge of full software development lifecycle",
+          "Strong analytical and problem-solving Skills",
+          "A positive goal orientated attitude with a focus on delivery",
+          "Required Skills",
+          "Cloud Developer"
+        ],
+        "Responsibilities": [
+          "Design and develop messaging and web service components based on design documents that fit within technical framework as outlined by technical architects",
+          "Ensure code meets standards and is tested appropriate to the platform",
+          "Provide technical guidance to the development team as required",
+          "A team player with an ability to own the design and code as per requirement given",
+          "Communicate status (written and verbal) to project team and management",
+          "Continuously looks for ways to improve the applications stability, scalability and user experience"
+        ]
+      },
+      "job_onet_soc": "15113200",
+      "job_onet_job_zone": "4"
+    }
+  ]
+}
