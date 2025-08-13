@@ -592,6 +592,9 @@ def smart_search():
     """Enhanced search with fuzzy matching and AI"""
     from services.fuzzy_search import FuzzySearchService
     
+    # Always get total candidate count for display
+    total_candidates = ResumeAnalysis.query.count()
+    
     search_service = FuzzySearchService()
     query = request.args.get('q', '')
     search_type = request.args.get('type', 'fuzzy')
@@ -611,9 +614,6 @@ def smart_search():
         except Exception as e:
             logging.error(f"Smart search error: {e}")
             flash(f'Search error: {str(e)}', 'error')
-    
-    # Also get total candidate count for display
-    total_candidates = ResumeAnalysis.query.count()
     
     return render_template('smart_search.html', 
                          results=results, 
