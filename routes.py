@@ -47,18 +47,18 @@ def upload_file():
     """Handle file upload and processing"""
     if 'file' not in request.files:
         flash('No file selected', 'error')
-        return redirect(request.url)
+        return redirect(url_for('index'))
     
     file = request.files['file']
     job_description = request.form.get('job_description', '').strip()
     
     if file.filename == '':
         flash('No file selected', 'error')
-        return redirect(request.url)
+        return redirect(url_for('index'))
     
     if not job_description:
         flash('Please provide a job description for analysis', 'error')
-        return redirect(request.url)
+        return redirect(url_for('index'))
     
     if file and file.filename and allowed_file(file.filename):
         try:
