@@ -54,17 +54,87 @@
         </div>
     </div>
 
-    <!-- Search Filters -->
-    <div class="row mb-4">
+    <!-- Search Type Toggle -->
+    <div class="row mb-3">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="search_type_toggle" id="internal_search" 
+                       {{ 'checked' if current_filters.get('search_type', 'internal') == 'internal' else '' }}>
+                <label class="btn btn-outline-primary" for="internal_search">
+                    <i class="fas fa-database me-2"></i>My Candidate Database
+                </label>
+                
+                <input type="radio" class="btn-check" name="search_type_toggle" id="external_search"
+                       {{ 'checked' if current_filters.get('search_type') == 'external' else '' }}>
+                <label class="btn btn-outline-success" for="external_search">
+                    <i class="fas fa-search-plus me-2"></i>Find New Candidates
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Search Query (shown only for external search) -->
+    <div class="row mb-4" id="external_query_section" style="display: {{ 'block' if current_filters.get('search_type') == 'external' else 'none' }};">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-filter me-2"></i>Search Filters
+                        <i class="fas fa-search-plus me-2"></i>Search LinkedIn, GitHub & Professional Networks
                     </h5>
                 </div>
                 <div class="card-body">
                     <form method="GET" action="{{ url_for('candidate_database') }}">
+                        <input type="hidden" name="search_type" value="external">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-briefcase me-1"></i>Job Title or Role</label>
+                                <input type="text" class="form-control form-control-lg" name="query" 
+                                       value="{{ current_filters.get('query', '') }}"
+                                       placeholder="Senior Software Engineer, Data Scientist, Product Manager..."
+                                       required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i>Location</label>
+                                <input type="text" class="form-control" name="location" 
+                                       value="{{ current_filters.location or '' }}"
+                                       placeholder="San Francisco, CA">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label"><i class="fas fa-code me-1"></i>Key Skills</label>
+                                <input type="text" class="form-control" name="skills" 
+                                       value="{{ ', '.join(current_filters.skills) if current_filters.skills else '' }}"
+                                       placeholder="Python, React, AWS">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-search me-2"></i>Search External Candidates
+                                </button>
+                                <small class="text-muted ms-3">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Searches LinkedIn, GitHub, and other professional networks
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Internal Search Filters -->
+    <div class="row mb-4" id="internal_filters_section" style="display: {{ 'none' if current_filters.get('search_type') == 'external' else 'block' }};">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>Database Search Filters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('candidate_database') }}">
+                        <input type="hidden" name="search_type" value="internal">
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="fas fa-code me-1"></i>Skills (comma-separated)</label>
@@ -153,10 +223,21 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h5>
-                    <i class="fas fa-list me-2"></i>
+                    <i class="fas fa-{{ 'globe' if search_results.get('search_type') == 'external' else 'list' }} me-2"></i>
                     {{ search_results.total }} candidates found
+                    {% if search_results.get('search_type') == 'external' %}
+                        <small class="text-success">from professional networks</small>
+                    {% else %}
+                        <small class="text-muted">in your database</small>
+                    {% endif %}
                 </h5>
                 <div>
+                    {% if search_results.get('sources_searched') %}
+                        <span class="badge bg-info me-2">
+                            <i class="fas fa-network-wired me-1"></i>
+                            Sources: {{ search_results.sources_searched | join(', ') }}
+                        </span>
+                    {% endif %}
                     <span class="text-muted">
                         Page {{ search_results.current_page }} of {{ search_results.pages }}
                     </span>
@@ -174,14 +255,30 @@
                     <div class="card-header d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="mb-1">
-                                <strong>{{ candidate.name if candidate.name.strip() != 'Unknown' else 'Unknown Candidate' }}</strong>
+                                <strong>{{ candidate.name if candidate.get('name', '').strip() != 'Unknown' else 'Unknown Candidate' }}</strong>
                             </h6>
-                            <small class="text-muted">{{ candidate.filename }}</small>
+                            {% if search_results.get('search_type') == 'external' %}
+                                <small class="text-muted">
+                                    <span class="badge bg-{{ 'primary' if candidate.source == 'LinkedIn' else 'dark' if candidate.source == 'GitHub' else 'info' }}">
+                                        <i class="fab fa-{{ 'linkedin' if candidate.source == 'LinkedIn' else 'github' if candidate.source == 'GitHub' else 'globe' }} me-1"></i>
+                                        {{ candidate.source }}
+                                    </span>
+                                    {% if candidate.get('title') %}
+                                        • {{ candidate.title }}
+                                    {% endif %}
+                                </small>
+                            {% else %}
+                                <small class="text-muted">{{ candidate.filename }}</small>
+                            {% endif %}
                         </div>
                         <div class="text-end">
-                            {% if candidate.overall_fit_rating %}
-                                <span class="badge bg-{{ 'success' if candidate.overall_fit_rating >= 8 else 'warning' if candidate.overall_fit_rating >= 6 else 'danger' }}">
-                                    {{ "%.1f"|format(candidate.overall_fit_rating) }}/10
+                            {% if candidate.get('overall_fit_rating') or candidate.get('estimated_fit') %}
+                                {% set fit_score = candidate.get('overall_fit_rating') or candidate.get('estimated_fit') %}
+                                <span class="badge bg-{{ 'success' if fit_score >= 8 else 'warning' if fit_score >= 6 else 'danger' }}">
+                                    {{ "%.1f"|format(fit_score) }}/10
+                                    {% if candidate.get('estimated_fit') and not candidate.get('overall_fit_rating') %}
+                                        <small>est.</small>
+                                    {% endif %}
                                 </span>
                             {% endif %}
                         </div>
@@ -189,14 +286,33 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-12">
-                                {% if candidate.email %}
+                                {% if search_results.get('search_type') == 'external' %}
+                                    {% if candidate.get('contact_info', {}).get('email') %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-envelope me-1"></i>{{ candidate.contact_info.email }}
+                                        </small><br>
+                                    {% endif %}
+                                    {% if candidate.get('location') %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ candidate.location }}
+                                        </small><br>
+                                    {% endif %}
+                                    {% if candidate.get('profile_url') %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-link me-1"></i>
+                                            <a href="{{ candidate.profile_url }}" target="_blank" class="text-decoration-none">View Profile</a>
+                                        </small>
+                                    {% endif %}
+                                {% else %}
+                                    {% if candidate.email %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-envelope me-1"></i>{{ candidate.email }}
+                                        </small><br>
+                                    {% endif %}
                                     <small class="text-muted">
-                                        <i class="fas fa-envelope me-1"></i>{{ candidate.email }}
-                                    </small><br>
+                                        <i class="fas fa-calendar me-1"></i>{{ candidate.upload_date[:10] if candidate.upload_date else 'Unknown' }}
+                                    </small>
                                 {% endif %}
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar me-1"></i>{{ candidate.upload_date[:10] if candidate.upload_date else 'Unknown' }}
-                                </small>
                             </div>
                         </div>
 
@@ -268,12 +384,34 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-{{ 'success' if candidate.status == 'active' else 'primary' if candidate.status == 'contacted' else 'secondary' }}">
-                                {{ candidate.status.title() if candidate.status else 'Active' }}
-                            </span>
-                            <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-eye me-1"></i>View Details
-                            </a>
+                            {% if search_results.get('search_type') == 'external' %}
+                                <div>
+                                    <span class="badge bg-success">New Candidate</span>
+                                    {% if candidate.get('connections') %}
+                                        <span class="badge bg-info ms-1">{{ candidate.connections }} connections</span>
+                                    {% endif %}
+                                    {% if candidate.get('github_stats', {}).get('public_repos') %}
+                                        <span class="badge bg-dark ms-1">{{ candidate.github_stats.public_repos }} repos</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {% if candidate.get('profile_url') %}
+                                        <a href="{{ candidate.profile_url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-external-link-alt me-1"></i>View Profile
+                                        </a>
+                                    {% endif %}
+                                    <button class="btn btn-sm btn-success" onclick="addToDatabase('{{ candidate.name }}', '{{ candidate.source }}')">
+                                        <i class="fas fa-plus me-1"></i>Add to Database
+                                    </button>
+                                </div>
+                            {% else %}
+                                <span class="badge bg-{{ 'success' if candidate.status == 'active' else 'primary' if candidate.status == 'contacted' else 'secondary' }}">
+                                    {{ candidate.status.title() if candidate.status else 'Active' }}
+                                </span>
+                                <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -333,4 +471,27 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+// Toggle between internal and external search
+document.getElementById('internal_search').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('internal_filters_section').style.display = 'block';
+        document.getElementById('external_query_section').style.display = 'none';
+    }
+});
+
+document.getElementById('external_search').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('internal_filters_section').style.display = 'none';
+        document.getElementById('external_query_section').style.display = 'block';
+    }
+});
+
+// Add candidate to database (placeholder function)
+function addToDatabase(candidateName, source) {
+    alert('Adding ' + candidateName + ' from ' + source + ' to your database...\n\nThis would normally:\n1. Save candidate profile\n2. Trigger AI analysis\n3. Extract skills and experience\n4. Add to your searchable database');
+}
+</script>
+
 {% endblock %}

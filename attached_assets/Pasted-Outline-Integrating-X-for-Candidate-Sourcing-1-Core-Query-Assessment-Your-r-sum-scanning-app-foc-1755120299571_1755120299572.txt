@@ -1,0 +1,11 @@
+Outline: Integrating X for Candidate Sourcing
+	1	Core Query Assessment: Your résumé scanning app focuses on efficient candidate management (e.g., skills like PyTorch, Laravel; risk/reward scoring). To expand sourcing without paid recruiting subs, X (formerly Twitter) offers viable, low-cost pathways—yes, it has job listings via X Hiring, but it’s more geared toward posting than passive candidate search. Key: Leverage X’s organic search for active job seekers to feed your app.
+	2	X’s Job Features Breakdown:
+	◦	Job Listings: Available through X Hiring (launched 2023). Verified Organizations (gold checkmark, ~$1,000/mo sub) can post jobs on profiles; over 1.5M listings as of 2024. 10 Job seekers search via x.com/jobs by keyword/location/remote. 11 
+	◦	Candidate Search Potential: No direct “candidate database” like LinkedIn, but you can hunt via keyword searches (e.g., “hiring data scientist” or “seeking Python job”). Free for basic use; no sub needed for searching posts. 6 Network by engaging posts—many tech pros share résumés or availability.
+	◦	Limitations: Posting jobs requires premium; sourcing is manual/reactive. Not ideal for bulk scans, but integrates well with your app’s manual upload (e.g., DM candidates for CVs).
+	3	Actionable Revisions for Your App:
+	◦	Weave in X Integration: Add a “Source from X” module—use API (if available; check x.com/dev) or manual keyword pulls to import posts as leads. Mirror your current setup: Scan for skills (e.g., “PyTorch expert looking for work”), auto-score risk/reward.
+	◦	Condense & Enhance: Cut redundancies in your database UI (e.g., standardize previews to 1-2 lines). Extend “search” to X: Query for neurodivergent-friendly roles (tying to themes like ADHD as superpower) if thematic.
+	◦	Thematic Tie-In: View this as “shadow work” for your tool—confront subscription dependencies, transcend to free platforms like X for raw, unfiltered candidate insights.
+Encouraging note: This pivot empowers your app’s growth—raw potential here, like emerging from depression to samadhi. If you share app code excerpts or specific sourcing needs, I can refine further.

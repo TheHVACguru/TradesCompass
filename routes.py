@@ -152,9 +152,10 @@ def view_history():
 
 @app.route('/candidates')
 def candidate_database():
-    """Advanced candidate search and database view"""
+    """Combined candidate search - both internal database and external sourcing"""
     page = request.args.get('page', 1, type=int)
     per_page = 20
+    search_type = request.args.get('search_type', 'internal')  # internal or external
     
     # Get search filters from query parameters
     skills_str = request.args.get('skills', '').strip()
@@ -170,22 +171,54 @@ def candidate_database():
     keywords_str = request.args.get('keywords', '').strip()
     experience_keywords = [k.strip() for k in keywords_str.split(',') if k.strip()] if keywords_str else []
     
-    # Search candidates
-    search_results = search_candidates(
-        skills=skills if skills else None,
-        min_fit_rating=min_fit_rating,
-        max_risk_score=max_risk_score,
-        min_reward_score=min_reward_score,
-        location=location,
-        status=status,
-        sort_by=sort_by,
-        experience_keywords=experience_keywords if experience_keywords else None,
-        page=page,
-        per_page=per_page
-    )
+    # Query string for external search
+    query_str = request.args.get('query', '').strip()
     
-    # Get statistics
-    stats = get_candidate_statistics()
+    if search_type == 'external' and query_str:
+        # Search external candidate sources
+        from services.candidate_sourcing import search_external_candidates
+        
+        external_results = search_external_candidates(
+            query=query_str,
+            location=location,
+            skills=skills if skills else None,
+            limit=per_page
+        )
+        
+        search_results = {
+            'candidates': external_results.get('candidates', []),
+            'total': external_results.get('total_found', 0),
+            'current_page': 1,
+            'pages': 1,
+            'per_page': per_page,
+            'has_prev': False,
+            'has_next': False,
+            'prev_num': None,
+            'next_num': None,
+            'sources_searched': external_results.get('sources_searched', []),
+            'search_type': 'external'
+        }
+        
+        stats = {'total_candidates': len(external_results.get('candidates', []))}
+        
+    else:
+        # Search internal candidate database
+        search_results = search_candidates(
+            skills=skills if skills else None,
+            min_fit_rating=min_fit_rating,
+            max_risk_score=max_risk_score,
+            min_reward_score=min_reward_score,
+            location=location,
+            status=status,
+            sort_by=sort_by,
+            experience_keywords=experience_keywords if experience_keywords else None,
+            page=page,
+            per_page=per_page
+        )
+        search_results['search_type'] = 'internal'
+        
+        # Get statistics
+        stats = get_candidate_statistics()
     
     return render_template('candidates.html', 
                          search_results=search_results,
@@ -198,7 +231,9 @@ def candidate_database():
                              'location': location,
                              'keywords': experience_keywords,
                              'status': status,
-                             'sort_by': sort_by
+                             'sort_by': sort_by,
+                             'search_type': search_type,
+                             'query': query_str
                          })
 
 @app.route('/candidates/<int:candidate_id>')
