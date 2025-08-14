@@ -26,9 +26,9 @@ def safe_redirect(referrer_url, fallback_endpoint):
     
     try:
         parsed_referrer = urlparse(referrer_url)
-        # Only allow redirects with no netloc (relative URLs) or empty scheme
+        # Only allow redirects with no netloc AND no scheme (relative URLs only)
         # This prevents redirects to external sites
-        if not parsed_referrer.netloc or not parsed_referrer.scheme:
+        if not parsed_referrer.netloc and not parsed_referrer.scheme:
             return redirect(referrer_url)
     except Exception:
         pass
