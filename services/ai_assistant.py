@@ -10,6 +10,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 from config import Config
 from openai import OpenAI
+from services.candidate_sourcing import CandidateSourcingService
 
 class RecruitmentAssistant:
     """Friendly AI assistant to guide recruiters through the hiring process"""
@@ -17,6 +18,7 @@ class RecruitmentAssistant:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.client = OpenAI(api_key=Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else None
+        self.sourcing_service = CandidateSourcingService()
         
         # Assistant personality traits
         self.personality = {
@@ -311,16 +313,146 @@ class RecruitmentAssistant:
         
         return questions[:8]  # Return top 8 questions
     
-    def get_conversation_response(self, user_message: str, context: Dict = None) -> str:
-        """Generate a conversational response to user queries"""
+    def detect_external_search_intent(self, message: str) -> bool:
+        """Detect if user wants to search for candidates outside the database"""
+        external_keywords = [
+            'find candidates', 'search for', 'look for', 'find me',
+            'source', 'external', 'outside', 'new candidates',
+            'more candidates', 'additional candidates', 'other candidates',
+            'github', 'linkedin', 'online', 'web', 'internet',
+            'expand search', 'broader search', 'wider search'
+        ]
+        
+        message_lower = message.lower()
+        return any(keyword in message_lower for keyword in external_keywords)
+    
+    def search_external_candidates(self, query: str, location: str = None) -> Dict[str, Any]:
+        """Search for candidates using external APIs"""
+        # Parse the query to extract relevant information
+        intent = self.analyze_search_intent(query)
+        
+        # Extract job title from trade type
+        job_titles = {
+            'electrician': 'Electrician',
+            'hvac': 'HVAC Technician',
+            'plumber': 'Plumber',
+            'carpenter': 'Carpenter',
+            'window': 'Window Installer',
+            'general': 'Construction Worker'
+        }
+        
+        job_title = job_titles.get(intent['trade'], 'Trades Professional')
+        
+        # Prepare skills list
+        skills = []
+        if intent['trade']:
+            skills.append(intent['trade'])
+        skills.extend(intent.get('skills', []))
+        
+        # Determine experience years from level
+        experience_map = {
+            'senior': 10,
+            'mid': 5,
+            'junior': 1
+        }
+        experience_years = experience_map.get(intent['experience_level'], None)
+        
+        # Call the sourcing service
+        try:
+            self.logger.info(f"Searching external sources for: {job_title} in {location}")
+            candidates = self.sourcing_service.search_public_profiles(
+                job_title=job_title,
+                location=location,
+                skills=skills[:3],  # Limit to top 3 skills
+                experience_years=experience_years
+            )
+            
+            return {
+                'success': True,
+                'candidates': candidates,
+                'search_query': query,
+                'sources_searched': candidates[0]['sources_searched'] if candidates else [],
+                'count': len(candidates)
+            }
+        except Exception as e:
+            self.logger.error(f"Error searching external candidates: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'candidates': [],
+                'count': 0
+            }
+    
+    def format_external_candidates(self, candidates: List[Dict]) -> str:
+        """Format external candidates for display in chat"""
+        if not candidates:
+            return "I couldn't find any candidates matching your criteria in external sources. Try adjusting your search terms or location."
+        
+        response = f"🔍 I found {len(candidates)} potential candidates from external sources:\n\n"
+        
+        for idx, candidate in enumerate(candidates[:5], 1):  # Show top 5
+            source = candidate.get('source', 'Unknown')
+            profile_url = candidate.get('profile_url', '')
+            name = candidate.get('name', candidate.get('username', 'Candidate'))
+            skills = ', '.join(candidate.get('skills', [])[:3])
+            location = candidate.get('location', 'Not specified')
+            
+            response += f"**{idx}. {name}** ({source})\n"
+            if skills:
+                response += f"   Skills: {skills}\n"
+            response += f"   Location: {location}\n"
+            if profile_url:
+                response += f"   [View Profile]({profile_url})\n"
+            response += "\n"
+        
+        if len(candidates) > 5:
+            response += f"...and {len(candidates) - 5} more candidates.\n\n"
+        
+        response += "Would you like me to add any of these candidates to your database for further review?"
+        
+        return response
+    
+    def get_conversation_response(self, user_message: str, context: Dict = None) -> Dict[str, Any]:
+        """Generate a conversational response to user queries with external search capability"""
+        
+        # Check if user wants to search externally
+        if self.detect_external_search_intent(user_message):
+            # Extract location if mentioned
+            location = context.get('location', 'United States')
+            
+            # Perform external search
+            search_results = self.search_external_candidates(user_message, location)
+            
+            if search_results['success']:
+                formatted_response = self.format_external_candidates(search_results['candidates'])
+                return {
+                    'response': formatted_response,
+                    'external_search': True,
+                    'candidates_found': search_results['count'],
+                    'sources': search_results.get('sources_searched', [])
+                }
+            else:
+                return {
+                    'response': "I tried searching external sources but encountered an issue. Let me help you search our internal database instead.",
+                    'external_search': False,
+                    'error': search_results.get('error')
+                }
+        
+        # Regular conversation response
         if not self.client:
-            return "I'd love to help, but I need the OpenAI API key configured first. Please add it in your settings!"
+            return {
+                'response': "I'd love to help, but I need the OpenAI API key configured first. Please add it in your settings!",
+                'external_search': False
+            }
         
         try:
             system_prompt = """You are Scout, a friendly and helpful recruitment assistant for TradesCompass Pro. 
             You help recruiters find skilled trades professionals (electricians, HVAC techs, plumbers, carpenters, etc.).
             Be conversational, encouraging, and professional. Use occasional emojis for friendliness.
-            Keep responses concise and actionable. Focus on practical recruiting advice."""
+            Keep responses concise and actionable. Focus on practical recruiting advice.
+            
+            If someone asks about finding or searching for candidates, mention that you can search both the internal database 
+            and external sources like GitHub and other professional networks."""
             
             # Add context if available
             context_info = ""
@@ -340,8 +472,14 @@ class RecruitmentAssistant:
                 temperature=0.8
             )
             
-            return response.choices[0].message.content
+            return {
+                'response': response.choices[0].message.content,
+                'external_search': False
+            }
             
         except Exception as e:
             self.logger.error(f"Error generating conversation response: {e}")
-            return "I'm having a bit of trouble right now, but I'm still here to help! What can I assist you with?"
+            return {
+                'response': "I'm having a bit of trouble right now, but I'm still here to help! What can I assist you with?",
+                'external_search': False
+            }

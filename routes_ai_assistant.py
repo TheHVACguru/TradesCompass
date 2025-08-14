@@ -64,16 +64,19 @@ def ai_assistant_chat():
     if not user_message:
         return jsonify({'error': 'No message provided'}), 400
     
-    # Generate response
-    response = assistant.get_conversation_response(user_message, context)
+    # Generate response (now returns a dict with external search capability)
+    response_data = assistant.get_conversation_response(user_message, context)
     
-    # If the message contains a search query, analyze intent
+    # If the message contains a search query, analyze intent (only for non-external searches)
     intent_analysis = None
-    if any(word in user_message.lower() for word in ['find', 'search', 'looking for', 'need']):
+    if not response_data.get('external_search') and any(word in user_message.lower() for word in ['find', 'search', 'looking for', 'need']):
         intent_analysis = assistant.analyze_search_intent(user_message)
     
     return jsonify({
-        'response': response,
+        'response': response_data.get('response', ''),
+        'external_search': response_data.get('external_search', False),
+        'candidates_found': response_data.get('candidates_found', 0),
+        'sources': response_data.get('sources', []),
         'intent': intent_analysis,
         'suggestions': assistant.suggest_next_action(context) if context else None
     })
