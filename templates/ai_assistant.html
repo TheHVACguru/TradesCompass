@@ -241,12 +241,14 @@
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 8px;
+    color: #212529; /* Ensure dark text color */
 }
 
 .assistant-message, .user-message {
     margin-bottom: 1rem;
     padding: 0.75rem;
     border-radius: 8px;
+    color: #212529 !important; /* Force dark text color */
 }
 
 .assistant-message {
@@ -254,10 +256,55 @@
     border-left: 4px solid #007bff;
 }
 
+.assistant-message strong {
+    color: #007bff !important; /* Blue color for assistant name */
+}
+
 .user-message {
     background: #e3f2fd;
     border-left: 4px solid #2196F3;
     text-align: right;
+}
+
+.user-message strong {
+    color: #2196F3 !important; /* Blue color for "You:" label */
+}
+
+/* Dark theme overrides */
+[data-bs-theme="dark"] .chat-messages {
+    background: #2b3035;
+    color: #dee2e6;
+}
+
+[data-bs-theme="dark"] .assistant-message {
+    background: #343a40;
+    color: #dee2e6 !important;
+    border-left-color: #0dcaf0;
+}
+
+[data-bs-theme="dark"] .assistant-message strong {
+    color: #0dcaf0 !important;
+}
+
+[data-bs-theme="dark"] .user-message {
+    background: #495057;
+    color: #dee2e6 !important;
+    border-left-color: #6ea8fe;
+}
+
+[data-bs-theme="dark"] .user-message strong {
+    color: #6ea8fe !important;
+}
+
+/* Ensure form controls have proper contrast */
+[data-bs-theme="dark"] .form-control {
+    background-color: #212529;
+    color: #dee2e6;
+    border-color: #495057;
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+    color: #6c757d;
 }
 
 .bg-gradient {

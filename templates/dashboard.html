@@ -299,6 +299,12 @@ function quickAssistantTip() {
     const tipDiv = document.getElementById('assistant-tip');
     const tipText = document.getElementById('tip-text');
     
+    // Check if elements exist before using them
+    if (!tipDiv || !tipText) {
+        console.error('Tip elements not found');
+        return;
+    }
+    
     // Select a random tip
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
     
@@ -308,7 +314,9 @@ function quickAssistantTip() {
     
     // Hide after 10 seconds
     setTimeout(() => {
-        tipDiv.style.display = 'none';
+        if (tipDiv) {
+            tipDiv.style.display = 'none';
+        }
     }, 10000);
 }
 
