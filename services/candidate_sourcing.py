@@ -392,3 +392,43 @@ class CandidateSourcingService:
             'education': found_education,
             'certifications': found_certs
         }
+
+
+# Standalone function for external candidate search (used by routes.py)
+def search_external_candidates(query: str, 
+                              location: str = None,
+                              skills: List[str] = None,
+                              limit: int = 20) -> Dict[str, Any]:
+    """
+    Search for external candidates through public sources
+    
+    Args:
+        query: Search query string (job title or keywords)
+        location: Target location
+        skills: List of required skills
+        limit: Maximum number of results
+    
+    Returns:
+        Dictionary containing candidates, total found, and sources searched
+    """
+    sourcing_service = CandidateSourcingService()
+    
+    # Extract job title from query (use the query as job title)
+    job_title = query
+    
+    # Search public profiles
+    candidates = sourcing_service.search_public_profiles(
+        job_title=job_title,
+        location=location,
+        skills=skills,
+        experience_years=None  # Could be extracted from query if needed
+    )
+    
+    # Limit results
+    limited_candidates = candidates[:limit] if len(candidates) > limit else candidates
+    
+    return {
+        'candidates': limited_candidates,
+        'total_found': len(limited_candidates),
+        'sources_searched': ['GitHub', 'Public Profiles']
+    }
