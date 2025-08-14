@@ -9,6 +9,7 @@ import requests
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from models import db, ResumeAnalysis, CandidateSkill
+from config import Config
 
 class CandidateSourcingService:
     """Service for sourcing external candidates through legitimate channels"""
