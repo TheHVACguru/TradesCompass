@@ -188,8 +188,14 @@ class SourcingToolbox:
         Returns:
             Developer statistics including repos, languages, contributions
         """
+        import os
         try:
             headers = {'Accept': 'application/vnd.github.v3+json'}
+            
+            # Add GitHub token if available for higher rate limits
+            github_token = os.environ.get('GITHUB_TOKEN')
+            if github_token:
+                headers['Authorization'] = f'token {github_token}'
             
             # Get user info
             user_url = f"https://api.github.com/users/{username}"

@@ -57,6 +57,7 @@ class CandidateSourcingService:
         """
         Search GitHub for developer profiles (public data)
         """
+        import os
         candidates = []
         
         try:
@@ -73,6 +74,11 @@ class CandidateSourcingService:
                     headers = {
                         'Accept': 'application/vnd.github.v3+json'
                     }
+                    
+                    # Add GitHub token if available for higher rate limits
+                    github_token = os.environ.get('GITHUB_TOKEN')
+                    if github_token:
+                        headers['Authorization'] = f'token {github_token}'
                     
                     response = requests.get(search_url, params=params, headers=headers, timeout=10)
                     
@@ -294,7 +300,8 @@ class CandidateSourcingService:
         
         # Boolean search query
         if skills:
-            boolean_query = f'"{job_title}" AND ({" OR ".join([f\'"{s}"\' for s in skills[:3]])})'
+            skills_formatted = [f'"{s}"' for s in skills[:3]]
+            boolean_query = f'"{job_title}" AND ({" OR ".join(skills_formatted)})'
             if location:
                 boolean_query += f' AND "{location}"'
             queries.append(boolean_query)
