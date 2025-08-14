@@ -39,3 +39,4 @@ with app.app_context():
 
 # Import and register routes
 import routes  # noqa: F401
+import routes_ai_assistant  # noqa: F401

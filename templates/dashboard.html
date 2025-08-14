@@ -15,6 +15,41 @@
         </div>
     </div>
 
+    <!-- AI Assistant Widget -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card ai-assistant-widget" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-2">
+                                <i class="fas fa-robot me-2"></i>Meet Scout, Your AI Assistant
+                            </h4>
+                            <p class="mb-3">Get personalized recruiting guidance, smart search suggestions, and interview tips.</p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('ai_assistant_page') }}" class="btn btn-light btn-sm">
+                                    <i class="fas fa-comments me-1"></i>Chat with Scout
+                                </a>
+                                <button class="btn btn-outline-light btn-sm" onclick="quickAssistantTip()">
+                                    <i class="fas fa-lightbulb me-1"></i>Quick Tip
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-robot fa-4x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div id="assistant-tip" class="mt-3" style="display: none;">
+                        <div class="alert alert-light text-dark mb-0">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <span id="tip-text">Loading tip...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
@@ -244,4 +279,60 @@
         </div>
     </div>
 </div>
+
+<script>
+// Quick Assistant Tip Function
+function quickAssistantTip() {
+    const tips = [
+        "Search for candidates with specific certifications like 'OSHA 30' for safety-conscious hires.",
+        "Candidates with both residential and commercial experience are often more versatile.",
+        "Use the 'Years of Experience' filter to find seasoned professionals quickly.",
+        "Don't forget to check safety certifications - they're crucial for compliance!",
+        "Candidates willing to travel often have broader project experience.",
+        "Try searching for union affiliations if you have union requirements.",
+        "EPA certification is essential for HVAC technicians working with refrigerants.",
+        "Master electricians can supervise journeymen and pull permits.",
+        "Look for candidates with CDL licenses if the job requires driving company vehicles.",
+        "Check for state-specific licenses - they vary significantly across regions."
+    ];
+    
+    const tipDiv = document.getElementById('assistant-tip');
+    const tipText = document.getElementById('tip-text');
+    
+    // Select a random tip
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    
+    // Show the tip
+    tipText.textContent = randomTip;
+    tipDiv.style.display = 'block';
+    
+    // Hide after 10 seconds
+    setTimeout(() => {
+        tipDiv.style.display = 'none';
+    }, 10000);
+}
+
+// Show a welcome tip on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        const welcomeTips = [
+            "Welcome! I'm Scout, your AI assistant. Click 'Chat with Scout' to get personalized recruiting help.",
+            "Pro tip: Upload multiple resumes at once by dragging and dropping them onto the upload page.",
+            "New feature: Use Smart Search to find candidates using natural language queries!"
+        ];
+        
+        const tipDiv = document.getElementById('assistant-tip');
+        const tipText = document.getElementById('tip-text');
+        
+        if (tipDiv && tipText) {
+            tipText.textContent = welcomeTips[Math.floor(Math.random() * welcomeTips.length)];
+            tipDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                tipDiv.style.display = 'none';
+            }, 8000);
+        }
+    }, 2000);
+});
+</script>
 {% endblock %}

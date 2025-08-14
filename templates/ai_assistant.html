@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}AI Assistant - TradesCompass Pro{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Assistant Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="assistant-header">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="assistant-avatar">
+                        <i class="fas fa-robot fa-3x text-primary"></i>
+                    </div>
+                    <div class="ms-4">
+                        <h1 class="mb-1">Meet {{ assistant_name }}</h1>
+                        <p class="lead text-muted mb-0">Your AI Recruitment Assistant</p>
+                        <p class="greeting-text mt-2">{{ greeting }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card bg-primary bg-opacity-10">
+                <div class="stat-icon">
+                    <i class="fas fa-users text-primary"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats.total_candidates }}</h3>
+                    <p class="text-muted mb-0">Total Candidates</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-success bg-opacity-10">
+                <div class="stat-icon">
+                    <i class="fas fa-search text-success"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats.active_searches }}</h3>
+                    <p class="text-muted mb-0">Active Searches</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-info bg-opacity-10">
+                <div class="stat-icon">
+                    <i class="fas fa-clock text-info"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="mb-0">{{ stats.recent_uploads }}</h3>
+                    <p class="text-muted mb-0">Today's Uploads</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggested Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card suggestion-card">
+                <div class="card-header bg-gradient">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Suggested Next Steps
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for suggestion in suggestions %}
+                    <div class="suggestion-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="mb-1">{{ suggestion.message }}</p>
+                                {% if suggestion.action == 'tip' %}
+                                    <span class="badge bg-info">Helpful Tip</span>
+                                {% endif %}
+                            </div>
+                            {% if suggestion.button_text %}
+                            <a href="{{ suggestion.link }}" class="btn btn-primary btn-sm">
+                                {{ suggestion.button_text }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Chat Interface -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card chat-card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>Chat with {{ assistant_name }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="chat-messages" class="chat-messages mb-3">
+                        <!-- Messages will appear here -->
+                        <div class="assistant-message">
+                            <strong>{{ assistant_name }}:</strong> How can I help you find the perfect candidate today?
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="chat-input" class="form-control" 
+                               placeholder="Ask me anything about recruiting..." 
+                               onkeypress="if(event.key === 'Enter') sendMessage()">
+                        <button class="btn btn-primary" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions Panel -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="quickAction('upload_help')">
+                        <i class="fas fa-upload me-2"></i>How to Upload Resumes
+                    </button>
+                    <button class="btn btn-outline-success btn-sm w-100 mb-2" onclick="quickAction('search_help')">
+                        <i class="fas fa-search me-2"></i>Search Tips
+                    </button>
+                    <button class="btn btn-outline-info btn-sm w-100 mb-2" onclick="quickAction('filter_help')">
+                        <i class="fas fa-filter me-2"></i>Using Filters
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm w-100 mb-2" onclick="quickAction('contact_help')">
+                        <i class="fas fa-phone me-2"></i>Contacting Candidates
+                    </button>
+                    <hr>
+                    <button class="btn btn-primary btn-sm w-100 mb-2" onclick="analyzeCurrentSearch()">
+                        <i class="fas fa-chart-line me-2"></i>Analyze My Search
+                    </button>
+                    <button class="btn btn-success btn-sm w-100" onclick="getInterviewQuestions()">
+                        <i class="fas fa-question-circle me-2"></i>Interview Questions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Assistant -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-magic me-2"></i>Smart Search Assistant
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="smart-search" class="form-label">Describe what you're looking for:</label>
+                        <textarea id="smart-search" class="form-control" rows="2" 
+                                  placeholder="e.g., 'I need an experienced HVAC technician with EPA certification in Miami'"></textarea>
+                    </div>
+                    <button class="btn btn-info" onclick="analyzeSearch()">
+                        <i class="fas fa-brain me-2"></i>Analyze & Search
+                    </button>
+                    <div id="search-analysis" class="mt-3" style="display: none;">
+                        <!-- Analysis results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.assistant-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    color: white;
+}
+
+.assistant-avatar {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.greeting-text {
+    font-size: 1.1rem;
+    font-style: italic;
+}
+
+.stat-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.suggestion-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+}
+
+.suggestion-card .card-header {
+    background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.suggestion-item {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.chat-card {
+    height: 500px;
+}
+
+.chat-messages {
+    height: 350px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.assistant-message, .user-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.assistant-message {
+    background: white;
+    border-left: 4px solid #007bff;
+}
+
+.user-message {
+    background: #e3f2fd;
+    border-left: 4px solid #2196F3;
+    text-align: right;
+}
+
+.bg-gradient {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+</style>
+
+<script>
+function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    // Add user message to chat
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML += `
+        <div class="user-message">
+            <strong>You:</strong> ${message}
+        </div>
+    `;
+    
+    // Clear input
+    input.value = '';
+    
+    // Send to backend
+    fetch('/api/ai-assistant/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            message: message,
+            context: {
+                candidates_found: {{ stats.total_candidates }},
+                current_page: 'assistant'
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Add assistant response
+        chatMessages.innerHTML += `
+            <div class="assistant-message">
+                <strong>{{ assistant_name }}:</strong> ${data.response}
+            </div>
+        `;
+        
+        // Show intent analysis if available
+        if (data.intent && data.intent.suggestions.length > 0) {
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <em>${data.intent.suggestions.join(' ')}</em>
+                </div>
+            `;
+        }
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+function quickAction(action) {
+    fetch('/api/ai-assistant/quick-action', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: action})
+    })
+    .then(response => response.json())
+    .then(data => {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML += `
+            <div class="assistant-message">
+                <strong>{{ assistant_name }}:</strong> ${data.response}
+            </div>
+        `;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+function analyzeSearch() {
+    const query = document.getElementById('smart-search').value;
+    if (!query) return;
+    
+    fetch('/api/ai-assistant/analyze-search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({query: query})
+    })
+    .then(response => response.json())
+    .then(data => {
+        const analysisDiv = document.getElementById('search-analysis');
+        analysisDiv.style.display = 'block';
+        
+        let html = '<div class="alert alert-info">';
+        html += '<h6>Search Analysis:</h6>';
+        
+        if (data.trade) {
+            html += `<p><strong>Trade:</strong> ${data.trade}</p>`;
+        }
+        if (data.certifications.length > 0) {
+            html += `<p><strong>Certifications:</strong> ${data.certifications.join(', ')}</p>`;
+        }
+        if (data.experience_level) {
+            html += `<p><strong>Experience Level:</strong> ${data.experience_level}</p>`;
+        }
+        
+        html += '<h6>Suggestions:</h6><ul>';
+        data.suggestions.forEach(suggestion => {
+            html += `<li>${suggestion}</li>`;
+        });
+        html += '</ul>';
+        
+        html += `<a href="/candidates?query=${encodeURIComponent(query)}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-search me-2"></i>Run This Search
+                 </a>`;
+        html += '</div>';
+        
+        analysisDiv.innerHTML = html;
+    });
+}
+
+function analyzeCurrentSearch() {
+    const lastSearch = sessionStorage.getItem('lastSearch') || 'HVAC technician with EPA certification';
+    document.getElementById('smart-search').value = lastSearch;
+    analyzeSearch();
+}
+
+function getInterviewQuestions() {
+    // Prompt for trade type
+    const trade = prompt('Which trade? (electrician, hvac, plumber, carpenter, general):', 'general');
+    const level = prompt('Experience level? (junior, mid, senior):', 'mid');
+    
+    fetch('/api/ai-assistant/interview-questions', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            trade: trade || 'general',
+            experience_level: level || 'mid'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const chatMessages = document.getElementById('chat-messages');
+        let questionsHtml = '<strong>Interview Questions:</strong><ol>';
+        data.questions.forEach(q => {
+            questionsHtml += `<li>${q}</li>`;
+        });
+        questionsHtml += '</ol>';
+        
+        chatMessages.innerHTML += `
+            <div class="assistant-message">
+                ${questionsHtml}
+            </div>
+        `;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+</script>
+{% endblock %}
