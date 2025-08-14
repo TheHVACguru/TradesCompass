@@ -4,6 +4,25 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- API Key Status Warnings -->
+    {% if current_filters.search_type == 'external' %}
+        {% if not configured_sourcing %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>External search disabled:</strong> No API keys configured. 
+            Please add API keys for GitHub, PeopleDataLabs, SeekOut, or SourceHub in Replit Secrets to enable external candidate sourcing.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif configured_sourcing|length < 4 %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Active sources:</strong> {{ configured_sourcing|join(', ') }}.
+            Add more API keys to search additional sources.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+    {% endif %}
+    
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">

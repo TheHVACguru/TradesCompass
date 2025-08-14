@@ -254,9 +254,7 @@ class CandidateSourcingService:
         """
         Search SourceHub for candidate profiles
         """
-        import os
-        api_key = os.environ.get('SOURCEHUB_API_KEY')
-        if not api_key:
+        if not Config.SOURCEHUB_API_KEY:
             self.logger.warning('SOURCEHUB_API_KEY is not set - skipping SourceHub search')
             return []
         
@@ -264,7 +262,7 @@ class CandidateSourcingService:
         try:
             # Build search parameters
             headers = {
-                'X-API-Key': api_key,
+                'X-API-Key': Config.SOURCEHUB_API_KEY,
                 'Accept': 'application/json'
             }
             

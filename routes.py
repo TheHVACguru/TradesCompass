@@ -12,6 +12,7 @@ from services.job_boards import search_relevant_jobs
 from services.candidate_database import search_candidates, get_candidate_statistics, get_similar_candidates
 from services.email_integration import EmailResumeProcessor
 from services.salesforce_integration import SalesforceIntegration
+from config import Config
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
 
@@ -223,6 +224,10 @@ def candidate_database():
         # Get statistics
         stats = get_candidate_statistics()
     
+    # Get API key status for display
+    api_status = Config.get_missing_keys()
+    configured_sourcing = Config.get_sourcing_providers()
+    
     return render_template('candidates.html', 
                          search_results=search_results,
                          stats=stats,
@@ -237,7 +242,9 @@ def candidate_database():
                              'sort_by': sort_by,
                              'search_type': search_type,
                              'query': query_str
-                         })
+                         },
+                         api_status=api_status,
+                         configured_sourcing=configured_sourcing)
 
 @app.route('/candidates/<int:candidate_id>')
 def candidate_detail(candidate_id):
