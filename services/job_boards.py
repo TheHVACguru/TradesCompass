@@ -19,7 +19,7 @@ class JSearchAPI(JobBoardAPI):
     """JSearch API - Comprehensive job aggregator from Google for Jobs and 150,000+ sources"""
     
     def __init__(self):
-        super().__init__(os.environ.get("RAPIDAPI_KEY"))
+        super().__init__(os.environ.get("RAPID_API_KEY"))
         self.base_url = "https://jsearch.p.rapidapi.com/search"
         self.headers = {
             "X-RapidAPI-Key": self.api_key if self.api_key else "",
@@ -218,7 +218,7 @@ class LinkedInAPI(JobBoardAPI):
     """LinkedIn job search integration using RapidAPI"""
     
     def __init__(self):
-        super().__init__(os.environ.get("RAPIDAPI_KEY"))
+        super().__init__(os.environ.get("RAPID_API_KEY"))
         self.base_url = "https://linkedin-jobs-search.p.rapidapi.com/"
         self.headers = {
             "X-RapidAPI-Key": self.api_key if self.api_key else "",

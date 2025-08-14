@@ -14,7 +14,7 @@ class XCandidateSourcer:
     
     def __init__(self):
         self.xai_api_key = os.environ.get('XAI_API_KEY')
-        self.rapidapi_key = os.environ.get('RAPIDAPI_KEY')
+        self.rapidapi_key = os.environ.get('RAPID_API_KEY')
         
         # Initialize xAI client for Grok
         if self.xai_api_key:
