@@ -12,9 +12,9 @@ def analyze_resume(resume_text, job_description):
     """Analyze resume against job description using OpenAI"""
     try:
         system_prompt = """# Overview
-You are an expert technical recruiter specializing in AI, automation, and software roles. You have been given a job description and a candidate resume. Your task is to analyze the resume in relation to the job description and provide a detailed screening report.
+You are an expert trades and construction recruiter specializing in skilled tradesmen including electricians, plumbers, HVAC technicians, carpenters, masons, roofers, window/door installers, and other construction professionals. You have been given a job description and a candidate resume. Your task is to analyze the resume in relation to the job description and provide a detailed screening report.
 
-Focus specifically on how well the candidate matches the core requirements and ideal profile outlined in the job description. Evaluate both technical skill alignment and business impact potential.
+Focus specifically on how well the candidate matches the core requirements including: certifications/licenses, hands-on experience, safety compliance, technical skills, and reliability. Evaluate both technical competency and work ethic/professionalism.
 
 # Analysis Framework
 - **Candidate Strengths**: Specific qualifications, skills, and experiences that directly match or exceed job requirements
@@ -71,9 +71,9 @@ Please analyze this candidate's resume against the job description and provide a
 def extract_candidate_info(resume_text):
     """Extract candidate contact information from resume"""
     try:
-        system_prompt = """You are an expert at extracting contact information from resumes. Extract the candidate's first name, last name, email address, phone number, location, and key skills from the resume text.
+        system_prompt = """You are an expert at extracting contact information from skilled trades and construction resumes. Extract the candidate's first name, last name, email address, phone number, location, and key trade skills from the resume text.
 
-Also identify the top 5 most relevant technical skills mentioned in the resume for job searching purposes.
+Also identify the top 5 most relevant trade skills, certifications, and licenses mentioned in the resume. Look specifically for: OSHA certifications, state licenses (electrical, plumbing, HVAC, contractor), EPA certifications, union affiliations, and specific trade skills.
 
 Respond with JSON in this exact format:
 {

@@ -312,26 +312,40 @@ class CandidateSourcingService:
         """Simple keyword extraction from requirements text"""
         import re
         
-        # Common skill keywords
+        # Trades-specific skill keywords
         skill_patterns = [
-            'python', 'java', 'javascript', 'typescript', 'react', 'angular', 'vue',
-            'node.js', 'nodejs', 'aws', 'azure', 'gcp', 'docker', 'kubernetes',
-            'sql', 'postgresql', 'mongodb', 'redis', 'elasticsearch',
-            'machine learning', 'ai', 'data science', 'analytics',
-            'ci/cd', 'devops', 'git', 'agile', 'scrum',
-            'flask', 'django', 'spring', 'express', '.net', 'rails'
+            # Construction
+            'framing', 'drywall', 'concrete', 'masonry', 'roofing', 'siding', 'flooring',
+            'carpentry', 'demolition', 'excavation', 'foundation', 'steel erection', 'scaffolding',
+            # HVAC
+            'hvac installation', 'hvac repair', 'ductwork', 'refrigeration', 'heat pump', 
+            'air conditioning', 'furnace', 'boiler', 'ventilation', 'sheet metal', 'brazing',
+            # Electrical
+            'electrical wiring', 'panel installation', 'circuit breaker', 'conduit', 'voltage',
+            'residential electrical', 'commercial electrical', 'industrial electrical', 'troubleshooting',
+            # Plumbing
+            'pipe fitting', 'soldering', 'drain cleaning', 'water heater', 'fixture installation',
+            'pex', 'copper', 'pvc', 'sewage', 'gas line', 'backflow prevention',
+            # Windows/Doors/Hurricane
+            'window installation', 'door installation', 'hurricane shutters', 'impact windows',
+            'sliding doors', 'garage doors', 'storm doors', 'weatherproofing', 'caulking',
+            # General skills
+            'blueprint reading', 'osha compliance', 'power tools', 'hand tools', 'measuring',
+            'safety protocols', 'code compliance', 'permit', 'inspection', 'estimation'
         ]
         
-        # Education patterns
+        # Education patterns for trades
         education_patterns = [
-            "bachelor's", "master's", "phd", "computer science", "engineering",
-            "mathematics", "statistics", "mba"
+            'trade school', 'vocational', 'apprenticeship', 'journeyman', 'master',
+            'technical college', 'community college', 'certification program'
         ]
         
-        # Certification patterns
+        # Trades certification patterns
         cert_patterns = [
-            'aws certified', 'azure certified', 'gcp certified', 'pmp',
-            'scrum master', 'cissp', 'comptia', 'cisco'
+            'osha 10', 'osha 30', 'epa certified', 'nate certified', 'journeyman license',
+            'master license', 'contractor license', 'electrical license', 'plumbing license',
+            'hvac license', 'cfc certification', 'backflow certification', 'welding certification',
+            'forklift certified', 'boom lift certified', 'scissor lift certified'
         ]
         
         requirements_lower = requirements.lower()

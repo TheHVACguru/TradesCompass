@@ -1,6 +1,6 @@
 # Overview
 
-TalentCompass AI - A comprehensive Flask-based AI-powered recruitment platform that revolutionizes talent acquisition and management. The system provides multi-channel resume intake (manual upload + email automation), advanced smart search capabilities with fuzzy matching and AI semantic search, comprehensive analytics dashboards, enhanced task management with productivity tracking, professional candidate sourcing tools, AI-powered candidate recommendations, and job matching through JSearch API (aggregating from 150,000+ sources). Features include candidate tagging, status tracking, referral management, talent pools, performance metrics, Boolean search builders, GitHub developer insights, job description bias analyzer, and a unified recruitment command center.
+TradesCompass Pro - A specialized Flask-based AI-powered recruitment platform designed specifically for hiring skilled tradesmen in construction, HVAC, electrical, plumbing, window/door installation, hurricane shutters, and other trades. The system provides comprehensive trades-focused features including license/certification verification, safety compliance tracking, union status management, and skill-based matching. Key capabilities include multi-channel resume intake, trades-specific AI analysis, job matching through JSearch API (150,000+ sources), OSHA/EPA certification tracking, hourly rate management, tool ownership verification, and travel willingness tracking. The platform helps contractors and construction companies efficiently source, evaluate, and hire qualified tradesmen while ensuring compliance and safety standards.
 
 # User Preferences
 
@@ -23,17 +23,18 @@ Preferred communication style: Simple, everyday language.
 - **Responsive Design**: Mobile-friendly interface with progressive enhancement
 
 ## Enhanced Data Model
-- **ResumeAnalysis**: Extended model with phone, location, source tracking, status management, and recruiter notes
-- **CandidateSkill**: Dedicated skill tracking with proficiency levels and experience years
-- **CandidateTag**: Custom tagging system with color coding for candidate organization  
-- **EmailProcessingLog**: Comprehensive email automation tracking with error logging and processing statistics
-- **Database Optimization**: Strategic indexes on ratings, skills, dates, and search fields for performance
+- **ResumeAnalysis**: Extended model with trades-specific fields including licenses, certifications, union status, years of experience, hourly rate expectations, tool ownership, and travel willingness
+- **CandidateSkill**: Trades skill tracking for electrical, plumbing, HVAC, carpentry, masonry, and other construction skills
+- **CandidateTag**: Custom tagging for trade specializations, safety certifications, and project types
+- **EmailProcessingLog**: Automated resume intake from contractors and staffing agencies
+- **RecruiterTask**: Task management for background checks, license verification, and safety training scheduling
+- **Database Optimization**: Indexes optimized for license searches, certification queries, and location-based matching
 
 ## Advanced Service Layer
-- **Multi-Job Board Integration**: Primary JSearch API aggregation (150,000+ sources including LinkedIn, Indeed, Glassdoor, ZipRecruiter, Monster) with intelligent fallback to individual APIs
-- **Candidate Database Services**: Advanced search, similarity matching, and statistical analysis
-- **Email Processing Engine**: IMAP integration with attachment extraction, job description parsing, and automated analysis
-- **Enhanced AI Services**: Improved candidate information extraction including phone, location, and skills with better error handling
+- **Trades Job Board Integration**: JSearch API configured for construction and trades positions across 150,000+ sources with focus on Indeed, ZipRecruiter, and specialized trade job boards
+- **Trades Candidate Services**: License verification, certification tracking, safety compliance scoring, and union affiliation management
+- **Contractor Email Processing**: Automated processing of resumes from general contractors, subcontractors, and trade unions
+- **Trades-Focused AI**: Specialized analysis for trade certifications (OSHA, EPA), state licenses, years of hands-on experience, and safety record evaluation
 
 ## Security & Configuration
 - **Database Security**: PostgreSQL with connection pooling and environment-based configuration

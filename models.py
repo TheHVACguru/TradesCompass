@@ -35,6 +35,16 @@ class ResumeAnalysis(db.Model):
     status = db.Column(db.String(50), default='active')  # active, archived, contacted
     notes = db.Column(Text)  # Recruiter notes
     
+    # Trades-specific fields
+    licenses = db.Column(Text)  # JSON string of licenses (state electrical, plumbing, etc.)
+    certifications = db.Column(Text)  # JSON string of certifications (OSHA 10/30, EPA, etc.)
+    union_status = db.Column(db.String(100))  # Union member, non-union, etc.
+    years_experience = db.Column(db.Integer)  # Years in the trade
+    hourly_rate_expectation = db.Column(db.Float)  # Expected hourly rate
+    willing_to_travel = db.Column(db.Boolean, default=False)
+    has_own_tools = db.Column(db.Boolean, default=True)
+    valid_drivers_license = db.Column(db.Boolean, default=True)
+    
     # Relationship to skills and tags
     skills = db.relationship('CandidateSkill', backref='candidate', lazy='dynamic', cascade='all, delete-orphan')
     tags = db.relationship('CandidateTag', backref='candidate', lazy='dynamic', cascade='all, delete-orphan')

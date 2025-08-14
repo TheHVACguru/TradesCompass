@@ -155,17 +155,24 @@ class SourcingToolbox:
         """Get common variations of a job title"""
         variations = [job_title]
         
-        # Common variations mapping
+        # Trades job title variations
         title_map = {
-            'software engineer': ['software developer', 'programmer', 'SWE'],
-            'data scientist': ['data analyst', 'ML engineer', 'machine learning engineer'],
-            'product manager': ['PM', 'product owner', 'PO'],
-            'devops engineer': ['site reliability engineer', 'SRE', 'infrastructure engineer'],
-            'frontend developer': ['front-end developer', 'UI developer', 'frontend engineer'],
-            'backend developer': ['back-end developer', 'backend engineer', 'server-side developer'],
-            'full stack developer': ['fullstack developer', 'full-stack engineer'],
-            'ux designer': ['user experience designer', 'UX/UI designer', 'product designer'],
-            'qa engineer': ['QA analyst', 'test engineer', 'quality assurance engineer']
+            # Construction
+            'carpenter': ['framer', 'finish carpenter', 'trim carpenter', 'cabinetmaker'],
+            'electrician': ['electrical technician', 'journeyman electrician', 'master electrician', 'electrical installer'],
+            'plumber': ['pipefitter', 'plumbing technician', 'journeyman plumber', 'master plumber'],
+            'hvac technician': ['hvac installer', 'hvac mechanic', 'air conditioning tech', 'refrigeration tech'],
+            'construction worker': ['laborer', 'construction laborer', 'general laborer', 'helper'],
+            'foreman': ['site supervisor', 'construction supervisor', 'lead', 'crew chief'],
+            'roofer': ['roofing mechanic', 'shingle installer', 'flat roofer', 'roofing technician'],
+            'mason': ['bricklayer', 'block mason', 'stone mason', 'concrete finisher'],
+            'painter': ['commercial painter', 'residential painter', 'industrial painter', 'finish painter'],
+            'welder': ['mig welder', 'tig welder', 'stick welder', 'pipe welder'],
+            'drywall installer': ['drywall hanger', 'taper', 'finisher', 'drywall mechanic'],
+            'flooring installer': ['carpet installer', 'tile setter', 'hardwood installer', 'flooring mechanic'],
+            'window installer': ['glazier', 'glass installer', 'window technician', 'fenestration installer'],
+            'door installer': ['door technician', 'garage door tech', 'entry door specialist'],
+            'hurricane shutter installer': ['storm shutter tech', 'impact window installer', 'storm protection specialist']
         }
         
         job_title_lower = job_title.lower()
