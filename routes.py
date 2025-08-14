@@ -689,6 +689,9 @@ def create_talent_pool():
         # Parse criteria if provided
         criteria = {}
         if request.form.get('min_rating'):
+            min_rating_str = request.form['min_rating'].strip().lower()
+            if min_rating_str in ('nan', 'inf', '-inf'):
+                raise ValueError("Invalid rating value")
             criteria['min_rating'] = float(request.form['min_rating'])
         if request.form.get('skills'):
             criteria['skills'] = [s.strip() for s in request.form['skills'].split(',')]
