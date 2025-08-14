@@ -36,55 +36,64 @@
                             <i class="fas fa-upload me-1"></i>Upload
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('candidate_database') }}">
+                    
+                    <!-- Candidates Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="candidatesDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-users me-1"></i>Candidates
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="candidatesDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('candidate_database') }}">
+                                <i class="fas fa-database me-2"></i>Database
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('smart_search') }}">
+                                <i class="fas fa-search-plus me-2"></i>Smart Search
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('talent_pools') }}">
+                                <i class="fas fa-layer-group me-2"></i>Talent Pools
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('view_history') }}">
+                                <i class="fas fa-history me-2"></i>History
+                            </a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('smart_search') }}">
-                            <i class="fas fa-search-plus me-1"></i>Smart Search
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('tasks_dashboard') }}">
-                            <i class="fas fa-tasks me-1"></i>Tasks
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('analytics_dashboard') }}">
-                            <i class="fas fa-chart-line me-1"></i>Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('referrals_dashboard') }}">
-                            <i class="fas fa-user-friends me-1"></i>Referrals
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('talent_pools') }}">
-                            <i class="fas fa-layer-group me-1"></i>Pools
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('candidate_sourcing') }}">
+                    
+                    <!-- Sourcing Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="sourcingDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-plus me-1"></i>Sourcing
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="sourcingDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('candidate_sourcing') }}">
+                                <i class="fas fa-search me-2"></i>Find Candidates
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('email_processing') }}">
+                                <i class="fas fa-envelope me-2"></i>Email Processing
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('referrals_dashboard') }}">
+                                <i class="fas fa-user-friends me-2"></i>Referrals
+                            </a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('email_processing') }}">
-                            <i class="fas fa-envelope me-1"></i>Email
+                    
+                    <!-- Management Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>Manage
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('salesforce_dashboard') }}">
-                            <i class="fas fa-cloud me-1"></i>Salesforce
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('view_history') }}">
-                            <i class="fas fa-history me-1"></i>History
-                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="managementDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('tasks_dashboard') }}">
+                                <i class="fas fa-tasks me-2"></i>Tasks
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('analytics_dashboard') }}">
+                                <i class="fas fa-chart-line me-2"></i>Analytics
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('salesforce_dashboard') }}">
+                                <i class="fas fa-cloud me-2"></i>Salesforce
+                            </a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -121,8 +130,40 @@
         </div>
     </footer>
 
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Theme Toggle Script -->
+    <script>
+        // Check for saved theme preference or default to dark
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-bs-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-bs-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+        
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+    </script>
     
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>

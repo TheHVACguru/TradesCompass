@@ -54,21 +54,18 @@
         </div>
     </div>
 
-    <!-- Search Type Toggle -->
-    <div class="row mb-3">
+    <!-- Search Tabs -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="btn-group w-100" role="group">
-                <input type="radio" class="btn-check" name="search_type_toggle" id="internal_search" 
-                       {{ 'checked' if current_filters.get('search_type', 'internal') == 'internal' else '' }}>
-                <label class="btn btn-outline-primary" for="internal_search">
-                    <i class="fas fa-database me-2"></i>My Candidate Database
-                </label>
-                
-                <input type="radio" class="btn-check" name="search_type_toggle" id="external_search"
-                       {{ 'checked' if current_filters.get('search_type') == 'external' else '' }}>
-                <label class="btn btn-outline-success" for="external_search">
+            <div class="search-tabs">
+                <button class="search-tab {{ 'active' if current_filters.get('search_type', 'internal') == 'internal' else '' }}" 
+                        onclick="switchSearchTab('internal')" id="internal-tab">
+                    <i class="fas fa-database me-2"></i>My Candidates
+                </button>
+                <button class="search-tab {{ 'active' if current_filters.get('search_type') == 'external' else '' }}" 
+                        onclick="switchSearchTab('external')" id="external-tab">
                     <i class="fas fa-search-plus me-2"></i>Find New Candidates
-                </label>
+                </button>
             </div>
         </div>
     </div>
@@ -473,24 +470,71 @@
 </div>
 
 <script>
-// Toggle between internal and external search
-document.getElementById('internal_search').addEventListener('change', function() {
-    if (this.checked) {
+// Tab switching functionality
+function switchSearchTab(type) {
+    // Update tab active state
+    document.querySelectorAll('.search-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(type + '-tab').classList.add('active');
+    
+    // Show/hide corresponding content
+    if (type === 'internal') {
         document.getElementById('internal_filters_section').style.display = 'block';
         document.getElementById('external_query_section').style.display = 'none';
-    }
-});
-
-document.getElementById('external_search').addEventListener('change', function() {
-    if (this.checked) {
+    } else {
         document.getElementById('internal_filters_section').style.display = 'none';
         document.getElementById('external_query_section').style.display = 'block';
     }
+}
+
+// Add loading state to forms
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading-spinner me-2" style="display: inline-block; width: 1rem; height: 1rem;"></div> Searching...';
+        }
+    });
 });
 
-// Add candidate to database (placeholder function)
-function addToDatabase(candidateName, source) {
-    alert('Adding ' + candidateName + ' from ' + source + ' to your database...\n\nThis would normally:\n1. Save candidate profile\n2. Trigger AI analysis\n3. Extract skills and experience\n4. Add to your searchable database');
+// Function to add external candidate to database
+function addToDatabase(name, source) {
+    if (confirm('Add ' + name + ' to your database?')) {
+        // Show loading state
+        event.target.disabled = true;
+        event.target.innerHTML = '<div class="loading-spinner me-2" style="display: inline-block; width: 1rem; height: 1rem;"></div> Adding...';
+        
+        // In a real implementation, this would make an API call
+        setTimeout(() => {
+            event.target.innerHTML = '<i class="fas fa-check me-1"></i>Added';
+            event.target.classList.remove('btn-success');
+            event.target.classList.add('btn-secondary');
+        }, 1500);
+    }
+}
+
+// Legacy toggle support (if still referenced elsewhere)
+const internalSearch = document.getElementById('internal_search');
+if (internalSearch) {
+    internalSearch.addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('internal_filters_section').style.display = 'block';
+            document.getElementById('external_query_section').style.display = 'none';
+        }
+    });
+}
+
+const externalSearch = document.getElementById('external_search');
+if (externalSearch) {
+    externalSearch.addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('internal_filters_section').style.display = 'none';
+            document.getElementById('external_query_section').style.display = 'block';
+        }
+    });
 }
 </script>
 

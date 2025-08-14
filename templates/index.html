@@ -17,47 +17,146 @@
         </div>
     </div>
 
-    <!-- Upload Form -->
+    <!-- Upload Form with Wizard -->
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-upload me-2"></i>
-                        Upload Resume for Analysis
-                    </h3>
+        <div class="col-lg-10">
+            <!-- Progress Wizard -->
+            <div class="wizard-progress mb-4">
+                <div class="wizard-step active" id="step1">
+                    <div class="wizard-step-icon">1</div>
+                    <div class="wizard-step-label">Upload Resume</div>
                 </div>
-                <div class="card-body">
+                <div class="wizard-step" id="step2">
+                    <div class="wizard-step-icon">2</div>
+                    <div class="wizard-step-label">Job Description</div>
+                </div>
+                <div class="wizard-step" id="step3">
+                    <div class="wizard-step-icon">3</div>
+                    <div class="wizard-step-label">Review & Analyze</div>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body p-4">
                     <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="uploadForm">
-                        <!-- File Upload -->
-                        <div class="mb-4">
-                            <label for="file" class="form-label">Resume File</label>
-                            <input type="file" class="form-control" id="file" name="file" 
-                                   accept=".pdf,.docx,.txt" required>
-                            <div class="form-text">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Supported formats: PDF, DOCX, TXT (Max size: 16MB)
+                        <!-- Step 1: File Upload -->
+                        <div class="wizard-content" id="content-step1">
+                            <h4 class="mb-4">
+                                <i class="fas fa-file-upload me-2"></i>
+                                Step 1: Upload Resume
+                            </h4>
+                            <div class="mb-4">
+                                <label for="file" class="form-label fw-bold">Select Resume File</label>
+                                <div class="upload-area border-2 border-dashed rounded p-4 text-center" 
+                                     style="border-color: var(--bs-gray-600); background: var(--bs-gray-800);">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                    <p class="mb-2">Drag and drop a file here, or click to browse</p>
+                                    <input type="file" class="form-control" id="file" name="file" 
+                                           accept=".pdf,.docx,.txt" required>
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Supported formats: PDF, DOCX, TXT (Max size: 16MB)
+                                    </div>
+                                </div>
+                                <div id="fileInfo" class="mt-3" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-file me-2"></i>
+                                        <span id="fileName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                    Next: Job Description
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Job Description -->
-                        <div class="mb-4">
-                            <label for="job_description" class="form-label">Job Description</label>
-                            <textarea class="form-control" id="job_description" name="job_description" 
-                                      rows="8" required 
-                                      placeholder="Paste the job description here to analyze how well the candidate matches the requirements..."></textarea>
-                            <div class="form-text">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Provide detailed job requirements for accurate analysis
+                        <!-- Step 2: Job Description -->
+                        <div class="wizard-content" id="content-step2" style="display: none;">
+                            <h4 class="mb-4">
+                                <i class="fas fa-clipboard-list me-2"></i>
+                                Step 2: Job Description
+                            </h4>
+                            <div class="mb-4">
+                                <label for="job_description" class="form-label fw-bold">Paste Job Requirements</label>
+                                <textarea class="form-control" id="job_description" name="job_description" 
+                                          rows="10" required 
+                                          placeholder="Example:&#10;&#10;HVAC Service Technician - Largo, FL&#10;&#10;Requirements:&#10;- EPA Universal Certification required&#10;- Minimum 5 years HVAC experience&#10;- Experience with heat pumps and split systems&#10;- Valid driver's license&#10;&#10;Responsibilities:&#10;- Install and repair HVAC systems&#10;- Perform preventive maintenance&#10;- Troubleshoot system issues"></textarea>
+                                <div class="form-text mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Include specific requirements, certifications, and responsibilities for accurate matching
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="previousStep(1)">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Previous
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+                                    Next: Review
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <i class="fas fa-cogs me-2"></i>
-                                Analyze Resume
-                            </button>
+                        <!-- Step 3: Review & Submit -->
+                        <div class="wizard-content" id="content-step3" style="display: none;">
+                            <h4 class="mb-4">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Step 3: Review & Analyze
+                            </h4>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-dark">
+                                        <div class="card-body">
+                                            <h6 class="text-muted mb-3">Resume</h6>
+                                            <p class="mb-0" id="reviewFileName">
+                                                <i class="fas fa-file me-2"></i>
+                                                <span></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-dark">
+                                        <div class="card-body">
+                                            <h6 class="text-muted mb-3">Job Description</h6>
+                                            <p class="mb-0 text-truncate" id="reviewJobDesc">
+                                                <i class="fas fa-clipboard me-2"></i>
+                                                <span></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Optional fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Recruiter Name (Optional)</label>
+                                    <input type="text" class="form-control" name="recruiter_name" 
+                                           placeholder="Your name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Company (Optional)</label>
+                                    <input type="text" class="form-control" name="company_name" 
+                                           placeholder="Company name">
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="previousStep(2)">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Previous
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-cogs me-2"></i>
+                                    <span id="submitText">Analyze Resume</span>
+                                    <div class="loading-spinner ms-2" style="display: none;" id="submitSpinner"></div>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -154,4 +253,137 @@
     </div>
     {% endif %}
 </div>
+
+<!-- JavaScript for Wizard Functionality -->
+<script>
+    // Wizard navigation
+    function nextStep(step) {
+        // Validation for step 1
+        if (step === 2) {
+            const fileInput = document.getElementById('file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a resume file before proceeding.');
+                return;
+            }
+        }
+        
+        // Validation for step 2
+        if (step === 3) {
+            const jobDesc = document.getElementById('job_description').value;
+            if (!jobDesc || jobDesc.trim() === '') {
+                alert('Please enter a job description before proceeding.');
+                return;
+            }
+            // Update review
+            updateReview();
+        }
+        
+        showStep(step);
+    }
+    
+    function previousStep(step) {
+        showStep(step);
+    }
+    
+    function showStep(step) {
+        // Hide all content
+        document.querySelectorAll('.wizard-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        
+        // Show current step content
+        document.getElementById('content-step' + step).style.display = 'block';
+        
+        // Update wizard progress
+        document.querySelectorAll('.wizard-step').forEach((stepEl, index) => {
+            stepEl.classList.remove('active', 'completed');
+            if (index + 1 < step) {
+                stepEl.classList.add('completed');
+            } else if (index + 1 === step) {
+                stepEl.classList.add('active');
+            }
+        });
+    }
+    
+    function updateReview() {
+        // Update file name
+        const fileInput = document.getElementById('file');
+        if (fileInput.files && fileInput.files.length > 0) {
+            document.querySelector('#reviewFileName span').textContent = fileInput.files[0].name;
+        }
+        
+        // Update job description preview
+        const jobDesc = document.getElementById('job_description').value;
+        const preview = jobDesc.length > 100 ? jobDesc.substring(0, 100) + '...' : jobDesc;
+        document.querySelector('#reviewJobDesc span').textContent = preview;
+    }
+    
+    // File upload handling
+    document.getElementById('file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('fileInfo').style.display = 'block';
+            document.getElementById('fileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+        }
+    });
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+    
+    // Form submission with loading state
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const submitSpinner = document.getElementById('submitSpinner');
+        
+        submitBtn.disabled = true;
+        submitText.textContent = 'Analyzing...';
+        submitSpinner.style.display = 'inline-block';
+    });
+    
+    // Drag and drop functionality
+    const uploadArea = document.querySelector('.upload-area');
+    if (uploadArea) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight(e) {
+            uploadArea.classList.add('border-primary');
+        }
+        
+        function unhighlight(e) {
+            uploadArea.classList.remove('border-primary');
+        }
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            document.getElementById('file').files = files;
+            const event = new Event('change', { bubbles: true });
+            document.getElementById('file').dispatchEvent(event);
+        }
+    }
+</script>
 {% endblock %}
