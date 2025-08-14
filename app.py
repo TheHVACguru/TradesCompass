@@ -35,8 +35,10 @@ db.init_app(app)
 with app.app_context():
     # Import models to ensure tables are created
     import models  # noqa: F401
+    import models_learning  # noqa: F401
     db.create_all()
 
 # Import and register routes
 import routes  # noqa: F401
 import routes_ai_assistant  # noqa: F401
+import routes_learning  # noqa: F401

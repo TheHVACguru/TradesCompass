@@ -1,6 +1,6 @@
 # Overview
 
-TradesCompass Pro - A specialized Flask-based AI-powered recruitment platform designed specifically for hiring skilled tradesmen in construction, HVAC, electrical, plumbing, window/door installation, hurricane shutters, and other trades. The system provides comprehensive trades-focused features including license/certification verification, safety compliance tracking, union status management, and skill-based matching. Key capabilities include multi-channel resume intake, trades-specific AI analysis, job matching through JSearch API (150,000+ sources), OSHA/EPA certification tracking, hourly rate management, tool ownership verification, travel willingness tracking, and a playful AI assistant named Scout. The platform helps contractors and construction companies efficiently source, evaluate, and hire qualified tradesmen while ensuring compliance and safety standards through intelligent guidance and personalized recruiting assistance.
+TradesCompass Pro - A specialized Flask-based AI-powered recruitment platform designed specifically for hiring skilled tradesmen in construction, HVAC, electrical, plumbing, window/door installation, hurricane shutters, and other trades. The system provides comprehensive trades-focused features including license/certification verification, safety compliance tracking, union status management, and skill-based matching. Key capabilities include multi-channel resume intake, trades-specific AI analysis, job matching through JSearch API (150,000+ sources), OSHA/EPA certification tracking, hourly rate management, tool ownership verification, travel willingness tracking, and Scout - an AI assistant with self-learning capabilities. Scout can now search external sources (LinkedIn, Indeed, GitHub, trade boards), learn from user interactions, optimize database performance, and continuously improve through feedback. The platform helps contractors and construction companies efficiently source, evaluate, and hire qualified tradesmen while ensuring compliance and safety standards through intelligent guidance and personalized recruiting assistance.
 
 # User Preferences
 
@@ -35,6 +35,14 @@ Preferred communication style: Simple, everyday language.
 - **Trades Candidate Services**: License verification, certification tracking, safety compliance scoring, and union affiliation management
 - **Contractor Email Processing**: Automated processing of resumes from general contractors, subcontractors, and trade unions
 - **Trades-Focused AI**: Specialized analysis for trade certifications (OSHA, EPA), state licenses, years of hands-on experience, and safety record evaluation
+
+## Self-Learning Capabilities (Added 2025-08-14)
+- **Learning Engine**: Tracks user interactions, search patterns, and successful placements to continuously improve
+- **Query Optimization**: AI-powered query improvements based on historical success patterns
+- **Database Optimization**: Automatic analysis of database usage patterns and performance optimization suggestions
+- **Skill Association Learning**: Identifies which skills commonly appear together in successful hires
+- **User Preference Learning**: Adapts to user preferences based on feedback and behavior patterns
+- **Insights Reporting**: Generates comprehensive reports on learned patterns and optimization opportunities
 
 ## Security & Configuration
 - **Database Security**: PostgreSQL with connection pooling and environment-based configuration

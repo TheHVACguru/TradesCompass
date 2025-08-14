@@ -12,6 +12,7 @@ from config import Config
 from openai import OpenAI
 from services.candidate_sourcing import CandidateSourcingService
 from services.enhanced_sourcing import EnhancedSourcingService
+from services.learning_engine import LearningEngine
 
 class RecruitmentAssistant:
     """Friendly AI assistant to guide recruiters through the hiring process"""
@@ -26,6 +27,10 @@ class RecruitmentAssistant:
         if Config.XAI_API_KEY or Config.RAPIDAPI_KEY:
             self.enhanced_sourcing = EnhancedSourcingService()
             self.logger.info("Enhanced sourcing with xAI/RapidAPI initialized")
+        
+        # Initialize learning engine for self-improvement
+        self.learning_engine = LearningEngine()
+        self.logger.info("Self-learning engine initialized")
         
         # Assistant personality traits
         self.personality = {

@@ -147,8 +147,19 @@
                     <button class="btn btn-info btn-sm w-100 mb-2" onclick="analyzeCurrentSearch()">
                         <i class="fas fa-chart-line me-2"></i>Analyze My Search
                     </button>
-                    <button class="btn btn-success btn-sm w-100" onclick="getInterviewQuestions()">
+                    <button class="btn btn-success btn-sm w-100 mb-2" onclick="getInterviewQuestions()">
                         <i class="fas fa-question-circle me-2"></i>Interview Questions
+                    </button>
+                    <hr>
+                    <h6 class="text-primary mb-3">🧠 Self-Learning Features</h6>
+                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="showLearningInsights()">
+                        <i class="fas fa-brain me-2"></i>View Learning Insights
+                    </button>
+                    <button class="btn btn-outline-success btn-sm w-100 mb-2" onclick="optimizeDatabase()">
+                        <i class="fas fa-database me-2"></i>Optimize Database
+                    </button>
+                    <button class="btn btn-outline-info btn-sm w-100" onclick="provideFeedback()">
+                        <i class="fas fa-comment me-2"></i>Provide Feedback
                     </button>
                 </div>
             </div>
@@ -547,6 +558,161 @@ function getInterviewQuestions() {
             </div>
         `;
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+function showLearningInsights() {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML += `
+        <div class="user-message">
+            <strong>You:</strong> Show me Scout's learning insights
+        </div>
+    `;
+    
+    fetch('/api/learning/insights')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Format the report with HTML
+            let formattedReport = data.report.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedReport = formattedReport.replace(/\n/g, '<br>');
+            
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <div class="alert alert-info">
+                        <h5>🧠 Scout's Learning Insights</h5>
+                        ${formattedReport}
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Recent interactions: ${data.metrics.recent_interactions}<br>
+                            Total successful placements tracked: ${data.metrics.total_placements}
+                        </small>
+                    </div>
+                </div>
+            `;
+        } else {
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <strong>{{ assistant_name }}:</strong> I'm having trouble accessing my learning insights right now.
+                </div>
+            `;
+        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+function optimizeDatabase() {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML += `
+        <div class="user-message">
+            <strong>You:</strong> Analyze and optimize the database
+        </div>
+    `;
+    
+    chatMessages.innerHTML += `
+        <div class="assistant-message">
+            <strong>{{ assistant_name }}:</strong> 🔍 Analyzing database performance and usage patterns...
+        </div>
+    `;
+    
+    fetch('/api/learning/optimize-database', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let message = '✅ Database analysis complete!<br><br>';
+            
+            if (data.optimizations.suggested_indexes && data.optimizations.suggested_indexes.length > 0) {
+                message += '<strong>Suggested Indexes:</strong><br>';
+                data.optimizations.suggested_indexes.forEach(idx => {
+                    message += `• ${idx.column} on ${idx.table}: ${idx.reason}<br>`;
+                });
+                message += '<br>';
+            }
+            
+            if (data.optimizations.data_quality_issues && data.optimizations.data_quality_issues.length > 0) {
+                message += '<strong>Data Quality Issues:</strong><br>';
+                data.optimizations.data_quality_issues.forEach(issue => {
+                    message += `• ${issue.type}: ${issue.description || issue.field} (${issue.severity})<br>`;
+                });
+            }
+            
+            if (!data.optimizations.suggested_indexes?.length && !data.optimizations.data_quality_issues?.length) {
+                message += 'Your database is already well-optimized! 🎉';
+            }
+            
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <strong>{{ assistant_name }}:</strong> ${message}
+                </div>
+            `;
+        } else {
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <strong>{{ assistant_name }}:</strong> I encountered an issue while analyzing the database. Please try again later.
+                </div>
+            `;
+        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+function provideFeedback() {
+    const feedback = prompt('How can Scout improve? Share your feedback:');
+    
+    if (feedback) {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML += `
+            <div class="user-message">
+                <strong>You:</strong> Feedback: ${feedback}
+            </div>
+        `;
+        
+        fetch('/api/learning/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                feedback: feedback,
+                type: 'general',
+                context: {
+                    page: 'ai_assistant',
+                    timestamp: new Date().toISOString()
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            let response = data.message;
+            if (data.sentiment === 'positive') {
+                response += ' 😊';
+            } else if (data.sentiment === 'negative') {
+                response += ' I\'ll work on improving that area.';
+            }
+            
+            chatMessages.innerHTML += `
+                <div class="assistant-message">
+                    <strong>{{ assistant_name }}:</strong> ${response}
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    }
+}
+
+// Track search interactions when user clicks on results
+function trackSearchInteraction(query, action, resultId, resultRank) {
+    fetch('/api/learning/track-search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            query: query,
+            action: action,
+            result_id: resultId,
+            result_rank: resultRank,
+            results: []  // Would include actual results in production
+        })
     });
 }
 </script>
