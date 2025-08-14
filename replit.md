@@ -46,17 +46,21 @@ Preferred communication style: Simple, everyday language.
 
 ## APIs & Services
 - **OpenAI API**: GPT-4o model for resume analysis and enhanced candidate information extraction
+- **xAI API (Grok-2)**: Enhanced intelligent candidate search with natural language understanding and AI-powered ranking (Added 2025-08-14)
 - **JSearch API (RapidAPI)**: Primary job aggregator accessing Google for Jobs and 150,000+ sources including LinkedIn, Indeed, Glassdoor, ZipRecruiter, Monster with comprehensive job data
 - **ZipRecruiter API**: Direct job search API (fallback when JSearch unavailable)
 - **Indeed Publisher API**: Direct Indeed database access (fallback when JSearch unavailable)
 - **USAJobs API**: Federal job opportunities with government position details (supplementary)
 - **Email Services**: IMAP integration for Gmail, Outlook, Yahoo, and other providers
 
-## Expanded Candidate Sourcing APIs (Added 2025-08-14)
-- **GitHub API**: Active - searches public developer profiles and repositories
-- **PeopleDataLabs API**: Professional profiles with contact info, work history, and skills
-- **SeekOut API**: Active job seekers with diversity data and availability status
-- **SourceHub API**: Candidate profiles with salary expectations and immediate availability
+## Enhanced Candidate Sourcing APIs (Updated 2025-08-14)
+- **GitHub API**: Active - searches public developer profiles and repositories for technical trades
+- **LinkedIn Profiles API (RapidAPI)**: Active - searches LinkedIn professional profiles with detailed experience data
+- **Indeed Resumes API (RapidAPI)**: Active - searches Indeed's resume database for trade professionals
+- **Trade Job Boards (RapidAPI)**: Active - aggregates from specialized construction and trades job boards
+- **PeopleDataLabs API**: Professional profiles with contact info, work history, and skills (requires API key)
+- **SeekOut API**: Active job seekers with diversity data and availability status (requires API key)
+- **SourceHub API**: Candidate profiles with salary expectations and immediate availability (requires API key)
 
 ## Enhanced Third-Party Libraries  
 - **Flask Ecosystem**: Flask, Flask-SQLAlchemy with PostgreSQL adapter (psycopg2-binary)
@@ -64,6 +68,7 @@ Preferred communication style: Simple, everyday language.
 - **Email Processing**: Built-in Python email and imaplib libraries for attachment processing
 - **HTTP Client**: Requests with timeout handling and retry logic for API reliability
 - **Frontend**: Bootstrap 5 dark theme, Font Awesome icons, enhanced JavaScript interactions
+- **AI Models**: OpenAI GPT-4o (primary), xAI Grok-2 (enhanced search and ranking)
 
 ## Database Infrastructure
 - **Production**: PostgreSQL with advanced indexing and relationship management

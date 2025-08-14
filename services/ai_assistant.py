@@ -11,6 +11,7 @@ from datetime import datetime
 from config import Config
 from openai import OpenAI
 from services.candidate_sourcing import CandidateSourcingService
+from services.enhanced_sourcing import EnhancedSourcingService
 
 class RecruitmentAssistant:
     """Friendly AI assistant to guide recruiters through the hiring process"""
@@ -19,6 +20,12 @@ class RecruitmentAssistant:
         self.logger = logging.getLogger(__name__)
         self.client = OpenAI(api_key=Config.OPENAI_API_KEY) if Config.OPENAI_API_KEY else None
         self.sourcing_service = CandidateSourcingService()
+        
+        # Initialize enhanced sourcing if xAI or RapidAPI is available
+        self.enhanced_sourcing = None
+        if Config.XAI_API_KEY or Config.RAPIDAPI_KEY:
+            self.enhanced_sourcing = EnhancedSourcingService()
+            self.logger.info("Enhanced sourcing with xAI/RapidAPI initialized")
         
         # Assistant personality traits
         self.personality = {
@@ -357,23 +364,40 @@ class RecruitmentAssistant:
         }
         experience_years = experience_map.get(intent['experience_level'], None)
         
-        # Call the sourcing service
+        # Use enhanced sourcing if available, otherwise fallback to basic sourcing
         try:
-            self.logger.info(f"Searching external sources for: {job_title} in {location}")
-            candidates = self.sourcing_service.search_public_profiles(
-                job_title=job_title,
-                location=location,
-                skills=skills[:3],  # Limit to top 3 skills
-                experience_years=experience_years
-            )
-            
-            return {
-                'success': True,
-                'candidates': candidates,
-                'search_query': query,
-                'sources_searched': candidates[0]['sources_searched'] if candidates else [],
-                'count': len(candidates)
-            }
+            if self.enhanced_sourcing:
+                # Use the intelligent search with xAI/RapidAPI
+                self.logger.info(f"Using enhanced sourcing with xAI/RapidAPI for: {query}")
+                search_result = self.enhanced_sourcing.intelligent_search(
+                    query=query,
+                    context={'location': location}
+                )
+                
+                return {
+                    'success': True,
+                    'candidates': search_result.get('candidates', []),
+                    'search_query': query,
+                    'sources_searched': search_result.get('sources_searched', []),
+                    'count': search_result.get('total_found', 0)
+                }
+            else:
+                # Fallback to basic sourcing
+                self.logger.info(f"Using basic sourcing for: {job_title} in {location}")
+                candidates = self.sourcing_service.search_public_profiles(
+                    job_title=job_title,
+                    location=location,
+                    skills=skills[:3],  # Limit to top 3 skills
+                    experience_years=experience_years
+                )
+                
+                return {
+                    'success': True,
+                    'candidates': candidates,
+                    'search_query': query,
+                    'sources_searched': candidates[0]['sources_searched'] if candidates else [],
+                    'count': len(candidates)
+                }
         except Exception as e:
             self.logger.error(f"Error searching external candidates: {e}")
             return {
@@ -390,24 +414,44 @@ class RecruitmentAssistant:
         
         response = f"🔍 I found {len(candidates)} potential candidates from external sources:\n\n"
         
-        for idx, candidate in enumerate(candidates[:5], 1):  # Show top 5
+        for idx, candidate in enumerate(candidates[:10], 1):  # Show top 10 with enhanced sourcing
             source = candidate.get('source', 'Unknown')
             profile_url = candidate.get('profile_url', '')
             name = candidate.get('name', candidate.get('username', 'Candidate'))
-            skills = ', '.join(candidate.get('skills', [])[:3])
+            title = candidate.get('title', '')
+            company = candidate.get('company', '')
+            skills = ', '.join(candidate.get('skills', [])[:3]) if candidate.get('skills') else ''
             location = candidate.get('location', 'Not specified')
+            fit_score = candidate.get('fit_score', 0)
+            experience_years = candidate.get('experience_years', '')
             
-            response += f"**{idx}. {name}** ({source})\n"
+            response += f"**{idx}. {name}**"
+            if fit_score > 0:
+                response += f" (Match: {fit_score}%)"
+            response += f" - {source}\n"
+            
+            if title:
+                response += f"   Current Role: {title}"
+                if company:
+                    response += f" at {company}"
+                response += "\n"
+            
+            if experience_years:
+                response += f"   Experience: {experience_years} years\n"
+            
             if skills:
                 response += f"   Skills: {skills}\n"
+            
             response += f"   Location: {location}\n"
+            
             if profile_url:
                 response += f"   [View Profile]({profile_url})\n"
             response += "\n"
         
-        if len(candidates) > 5:
-            response += f"...and {len(candidates) - 5} more candidates.\n\n"
+        if len(candidates) > 10:
+            response += f"...and {len(candidates) - 10} more candidates.\n\n"
         
+        response += "💡 **Tip:** These candidates were found using our enhanced AI-powered search across LinkedIn, Indeed, GitHub, and specialized trade boards.\n\n"
         response += "Would you like me to add any of these candidates to your database for further review?"
         
         return response
@@ -452,7 +496,8 @@ class RecruitmentAssistant:
             Keep responses concise and actionable. Focus on practical recruiting advice.
             
             If someone asks about finding or searching for candidates, mention that you can search both the internal database 
-            and external sources like GitHub and other professional networks."""
+            and external sources including LinkedIn, Indeed Resumes, GitHub, and specialized trade job boards through our 
+            enhanced AI-powered search capabilities."""
             
             # Add context if available
             context_info = ""

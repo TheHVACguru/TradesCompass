@@ -21,6 +21,7 @@ class Config:
     
     # Core AI Service
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    XAI_API_KEY = os.getenv('XAI_API_KEY')  # For Grok AI model
     
     # Job Search APIs
     RAPIDAPI_KEY = os.getenv('RAPIDAPI_KEY')  # For JSearch
