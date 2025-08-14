@@ -735,7 +735,7 @@ def add_to_talent_pool(pool_id):
     else:
         flash('Candidate already in pool or error occurred', 'warning')
     
-    return redirect(request.referrer or url_for('talent_pools'))
+    return safe_redirect(request.referrer, 'talent_pools')
 
 @app.route('/talent-pools/<int:pool_id>/remove-candidate/<int:candidate_id>', methods=['POST'])
 def remove_from_talent_pool(pool_id, candidate_id):
@@ -749,7 +749,7 @@ def remove_from_talent_pool(pool_id, candidate_id):
     else:
         flash('Error removing candidate', 'error')
     
-    return redirect(request.referrer or url_for('talent_pools'))
+    return safe_redirect(request.referrer, 'talent_pools')
 
 @app.route('/talent-pools/<int:pool_id>/view')
 def view_talent_pool(pool_id):
