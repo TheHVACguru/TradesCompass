@@ -52,6 +52,12 @@ Preferred communication style: Simple, everyday language.
 - **USAJobs API**: Federal job opportunities with government position details (supplementary)
 - **Email Services**: IMAP integration for Gmail, Outlook, Yahoo, and other providers
 
+## Expanded Candidate Sourcing APIs (Added 2025-08-14)
+- **GitHub API**: Active - searches public developer profiles and repositories
+- **PeopleDataLabs API**: Professional profiles with contact info, work history, and skills
+- **SeekOut API**: Active job seekers with diversity data and availability status
+- **SourceHub API**: Candidate profiles with salary expectations and immediate availability
+
 ## Enhanced Third-Party Libraries  
 - **Flask Ecosystem**: Flask, Flask-SQLAlchemy with PostgreSQL adapter (psycopg2-binary)
 - **File Processing**: PyPDF2 (PDFs), python-docx (Word), enhanced text encoding handling

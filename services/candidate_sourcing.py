@@ -22,7 +22,7 @@ class CandidateSourcingService:
                               skills: List[str] = None,
                               experience_years: int = None) -> List[Dict[str, Any]]:
         """
-        Search for candidates using public data sources
+        Search for candidates using multiple data sources
         
         Args:
             job_title: Target job title/role
@@ -31,9 +31,9 @@ class CandidateSourcingService:
             experience_years: Minimum years of experience
         
         Returns:
-            List of candidate profiles from public sources
+            List of candidate profiles from multiple sources, deduplicated
         """
-        candidates = []
+        all_candidates = []
         
         # Build search query
         query_parts = [job_title]
@@ -44,16 +44,36 @@ class CandidateSourcingService:
         
         search_query = ' '.join(query_parts)
         
-        # Search using GitHub Jobs API (if available)
-        github_candidates = self._search_github_profiles(search_query, skills)
-        candidates.extend(github_candidates)
+        # Search using multiple providers
+        providers = [
+            ('GitHub', self._search_github_profiles),
+            ('PeopleDataLabs', self._search_peopledata),
+            ('SeekOut', self._search_seekout),
+            ('SourceHub', self._search_sourcehub)
+        ]
         
-        # Search using other public APIs
-        # Note: Many APIs require authentication
+        sources_searched = []
+        for provider_name, search_method in providers:
+            try:
+                self.logger.info(f"Searching {provider_name} for: {search_query}")
+                candidates = search_method(search_query, location, skills)
+                if candidates:
+                    all_candidates.extend(candidates)
+                    sources_searched.append(provider_name)
+                    self.logger.info(f"Found {len(candidates)} candidates from {provider_name}")
+            except Exception as e:
+                self.logger.error(f"Error searching {provider_name}: {e}")
         
-        return candidates
+        # Deduplicate candidates by email or name
+        deduped_candidates = self._deduplicate_candidates(all_candidates)
+        
+        # Add metadata about sources searched
+        for candidate in deduped_candidates:
+            candidate['sources_searched'] = sources_searched
+        
+        return deduped_candidates
     
-    def _search_github_profiles(self, query: str, skills: List[str] = None) -> List[Dict[str, Any]]:
+    def _search_github_profiles(self, query: str, location: str = None, skills: List[str] = None) -> List[Dict[str, Any]]:
         """
         Search GitHub for developer profiles (public data)
         """
@@ -91,7 +111,8 @@ class CandidateSourcingService:
                                 'username': user.get('login'),
                                 'avatar_url': user.get('avatar_url'),
                                 'type': 'Developer',
-                                'skills': [skill]
+                                'skills': [skill],
+                                'location': location or 'Not specified'
                             }
                             candidates.append(candidate)
         
@@ -99,6 +120,263 @@ class CandidateSourcingService:
             self.logger.error(f"Error searching GitHub profiles: {e}")
         
         return candidates
+    
+    def _search_peopledata(self, query: str, location: str = None, skills: List[str] = None) -> List[Dict[str, Any]]:
+        """
+        Search PeopleDataLabs for candidate profiles
+        """
+        import os
+        api_key = os.environ.get('PEOPLEDATA_KEY')
+        if not api_key:
+            self.logger.warning('PEOPLEDATA_KEY is not set - skipping PeopleDataLabs search')
+            return []
+        
+        candidates = []
+        try:
+            # Build search parameters
+            params = {
+                'api_key': api_key,
+                'query': query,
+                'size': 10  # Limit results
+            }
+            
+            if location:
+                params['location'] = location
+            
+            if skills:
+                params['skills'] = ','.join(skills[:5])  # Include top 5 skills
+            
+            # Make API request
+            response = requests.get(
+                'https://api.peopledatalabs.com/v5/person/search',
+                params=params,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                for person in data.get('data', []):
+                    candidate = {
+                        'source': 'PeopleDataLabs',
+                        'first_name': person.get('first_name', ''),
+                        'last_name': person.get('last_name', ''),
+                        'name': person.get('full_name', ''),
+                        'email': person.get('email', ''),
+                        'phone': person.get('phone', ''),
+                        'location': person.get('location', {}).get('name', location or ''),
+                        'title': person.get('job_title', ''),
+                        'company': person.get('job_company_name', ''),
+                        'skills': person.get('skills', []),
+                        'summary': person.get('summary', ''),
+                        'experience': person.get('experience', []),
+                        'education': person.get('education', []),
+                        'linkedin_url': person.get('linkedin_url', ''),
+                        'estimated_fit': self._estimate_fit_score(person, query, skills)
+                    }
+                    candidates.append(candidate)
+            elif response.status_code == 401:
+                self.logger.error('PeopleDataLabs API key is invalid')
+            elif response.status_code == 429:
+                self.logger.warning('PeopleDataLabs rate limit exceeded')
+            else:
+                self.logger.error(f'PeopleDataLabs API error: {response.status_code}')
+        
+        except Exception as e:
+            self.logger.error(f"Error searching PeopleDataLabs: {e}")
+        
+        return candidates
+    
+    def _search_seekout(self, query: str, location: str = None, skills: List[str] = None) -> List[Dict[str, Any]]:
+        """
+        Search SeekOut for candidate profiles
+        """
+        import os
+        api_key = os.environ.get('SEEKOUT_API_KEY')
+        if not api_key:
+            self.logger.warning('SEEKOUT_API_KEY is not set - skipping SeekOut search')
+            return []
+        
+        candidates = []
+        try:
+            # Build search request
+            headers = {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            search_data = {
+                'query': query,
+                'filters': {
+                    'location': location,
+                    'skills': skills[:5] if skills else [],
+                    'actively_looking': True  # Focus on active job seekers
+                },
+                'limit': 10
+            }
+            
+            # Make API request
+            response = requests.post(
+                'https://api.seekout.com/v1/talent/search',
+                headers=headers,
+                json=search_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                for profile in data.get('profiles', []):
+                    candidate = {
+                        'source': 'SeekOut',
+                        'first_name': profile.get('firstName', ''),
+                        'last_name': profile.get('lastName', ''),
+                        'name': f"{profile.get('firstName', '')} {profile.get('lastName', '')}".strip(),
+                        'email': profile.get('email', ''),
+                        'phone': profile.get('phoneNumber', ''),
+                        'location': profile.get('location', location or ''),
+                        'title': profile.get('currentTitle', ''),
+                        'company': profile.get('currentCompany', ''),
+                        'skills': profile.get('skills', []),
+                        'summary': profile.get('bio', ''),
+                        'linkedin_url': profile.get('linkedinUrl', ''),
+                        'github_url': profile.get('githubUrl', ''),
+                        'experience_years': profile.get('yearsOfExperience', 0),
+                        'estimated_fit': self._estimate_fit_score(profile, query, skills)
+                    }
+                    candidates.append(candidate)
+            elif response.status_code == 401:
+                self.logger.error('SeekOut API key is invalid')
+            elif response.status_code == 429:
+                self.logger.warning('SeekOut rate limit exceeded')
+            else:
+                self.logger.error(f'SeekOut API error: {response.status_code}')
+        
+        except Exception as e:
+            self.logger.error(f"Error searching SeekOut: {e}")
+        
+        return candidates
+    
+    def _search_sourcehub(self, query: str, location: str = None, skills: List[str] = None) -> List[Dict[str, Any]]:
+        """
+        Search SourceHub for candidate profiles
+        """
+        import os
+        api_key = os.environ.get('SOURCEHUB_API_KEY')
+        if not api_key:
+            self.logger.warning('SOURCEHUB_API_KEY is not set - skipping SourceHub search')
+            return []
+        
+        candidates = []
+        try:
+            # Build search parameters
+            headers = {
+                'X-API-Key': api_key,
+                'Accept': 'application/json'
+            }
+            
+            params = {
+                'q': query,
+                'location': location,
+                'skills': ','.join(skills[:5]) if skills else '',
+                'limit': 10,
+                'active_only': 'true'  # Focus on active candidates
+            }
+            
+            # Make API request
+            response = requests.get(
+                'https://api.sourcehub.com/v1/candidates/search',
+                headers=headers,
+                params=params,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                for candidate_data in data.get('candidates', []):
+                    candidate = {
+                        'source': 'SourceHub',
+                        'first_name': candidate_data.get('first_name', ''),
+                        'last_name': candidate_data.get('last_name', ''),
+                        'name': candidate_data.get('full_name', ''),
+                        'email': candidate_data.get('email', ''),
+                        'phone': candidate_data.get('phone', ''),
+                        'location': candidate_data.get('location', location or ''),
+                        'title': candidate_data.get('job_title', ''),
+                        'company': candidate_data.get('company', ''),
+                        'skills': candidate_data.get('skills', []),
+                        'summary': candidate_data.get('summary', ''),
+                        'resume_text': candidate_data.get('resume_snippet', ''),
+                        'linkedin_url': candidate_data.get('linkedin', ''),
+                        'availability': candidate_data.get('availability', 'Unknown'),
+                        'salary_expectation': candidate_data.get('salary_range', ''),
+                        'estimated_fit': self._estimate_fit_score(candidate_data, query, skills)
+                    }
+                    candidates.append(candidate)
+            elif response.status_code == 401:
+                self.logger.error('SourceHub API key is invalid')
+            elif response.status_code == 429:
+                self.logger.warning('SourceHub rate limit exceeded')
+            else:
+                self.logger.error(f'SourceHub API error: {response.status_code}')
+        
+        except Exception as e:
+            self.logger.error(f"Error searching SourceHub: {e}")
+        
+        return candidates
+    
+    def _estimate_fit_score(self, candidate_data: Dict, query: str, required_skills: List[str] = None) -> float:
+        """
+        Estimate a fit score for a candidate based on available data
+        """
+        score = 5.0  # Base score
+        
+        # Check job title match
+        if candidate_data.get('title') or candidate_data.get('job_title'):
+            title = (candidate_data.get('title') or candidate_data.get('job_title', '')).lower()
+            if query.lower() in title:
+                score += 2.0
+        
+        # Check skills match
+        if required_skills and candidate_data.get('skills'):
+            candidate_skills = [s.lower() for s in candidate_data.get('skills', [])]
+            matched_skills = sum(1 for skill in required_skills if skill.lower() in candidate_skills)
+            score += min(matched_skills * 0.5, 2.0)  # Max 2 points for skills
+        
+        # Check experience
+        if candidate_data.get('yearsOfExperience') or candidate_data.get('experience_years'):
+            years = candidate_data.get('yearsOfExperience') or candidate_data.get('experience_years', 0)
+            if years >= 5:
+                score += 1.0
+        
+        return min(score, 10.0)  # Cap at 10
+    
+    def _deduplicate_candidates(self, candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Deduplicate candidates by email or name
+        """
+        seen_emails = set()
+        seen_names = set()
+        unique_candidates = []
+        
+        for candidate in candidates:
+            # Check email uniqueness
+            email = candidate.get('email', '').lower().strip()
+            if email and email in seen_emails:
+                continue
+            
+            # Check name uniqueness (for candidates without email)
+            name = candidate.get('name', '').lower().strip()
+            if not email and name and name in seen_names:
+                continue
+            
+            # Add to unique list
+            if email:
+                seen_emails.add(email)
+            if name:
+                seen_names.add(name)
+            
+            unique_candidates.append(candidate)
+        
+        return unique_candidates
     
     def import_candidate_profile(self, profile_data: Dict[str, Any]) -> Optional[ResumeAnalysis]:
         """

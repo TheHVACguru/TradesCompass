@@ -1,0 +1,18 @@
+3.	Integrate contact‑discovery tools.
+Many email/phone‑finding services (Lusha, ContactOut, AnymailFinder) provide browser plugins rather than open APIs.  If you need to automate enrichment, choose a service that offers an API and create a helper (e.g., enrich_contact_info(email)), then call it after importing a candidate.
+	4.	Surface provider selection in the UI.
+In candidate_sourcing.html, add checkboxes or a multi‑select for “Data sources” so recruiters can choose which providers to query.  Pass the selection to your Flask route and call only the selected provider methods.
+
+2. Improve search precision with fuzzy/semantic matching
+	1.	Enable PostgreSQL full‑text search.
+If you’re using Postgres, you can leverage its to_tsvector and to_tsquery functions for tokenisation and stemming.  Add a resume_vector column to ResumeAnalysis and create a trigger to populate it.  Then modify search_candidates to rank results based on the ts_rank score rather than simple ILIKE matches.
+	2.	Introduce vector embeddings.
+For truly semantic search, generate an embedding vector for each resume using OpenAI’s text-embedding-3-small or a local model like SentenceTransformers.  Store these vectors in your database or in a vector store such as FAISS or Pinecone.  When a user searches (e.g., “licensed electrician Florida with OSHA‑30”), embed the query and retrieve the nearest neighbours.  Libraries like pgvector add vector‑similarity support to PostgreSQL, while external services like Pinecone can handle similarity search at scale.
+	3.	Add fuzzy matching for fields.
+Use Python libraries such as fuzzywuzzy or rapidfuzz to compute similarity scores between candidate skills and search terms.  Modify your search logic to include candidates whose skill similarity exceeds a threshold.
+	4.	Expose advanced search options in the UI.
+Provide checkboxes or toggles for “Fuzzy match” and “Semantic match.”  When enabled, call the appropriate search backend and display a similarity score alongside the results.
+
+3. Manage API keys and environment variables
+	1.	Centralise configuration.
+Create a config.py or use Flask’s built‑in configuration classes to load all external API keys from environment variables.  For example:
